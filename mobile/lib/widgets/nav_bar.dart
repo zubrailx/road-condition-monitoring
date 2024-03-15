@@ -1,0 +1,63 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+
+class NavBar extends StatefulWidget {
+  const NavBar(
+      {super.key,
+      required this.tabController,
+      required this.titles,
+      required this.icons});
+
+  final TabController tabController;
+  final List<String> titles;
+  final List<Widget> icons;
+
+  @override
+  State<StatefulWidget> createState() => _NavBarState();
+}
+
+class _NavBarState extends State<NavBar> {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Text(widget.titles[widget.tabController.index],
+                style: theme.textTheme.titleMedium
+              ),
+            ),
+            Wrap(
+              direction: Axis.horizontal,
+              spacing: 15,
+              children: <Widget>[
+                IconButton(
+                    icon: SvgPicture.asset("assets/svg/NetworkUpload.svg"),
+                    onPressed: () {}),
+                IconButton(
+                    icon: SvgPicture.asset("assets/svg/Pause.svg"),
+                    onPressed: () {}),
+                IconButton(
+                    icon: SvgPicture.asset("assets/svg/MenuVertical.svg"),
+                    onPressed: () {}),
+              ],
+            )
+          ],
+        ),
+        TabBar(
+          controller: widget.tabController,
+          indicatorColor: Colors.amber,
+          indicatorSize: TabBarIndicatorSize.tab,
+          indicatorWeight: 4,
+          dividerHeight: 0,
+          tabs: widget.icons.map<Widget>((e) => Tab(icon: e)).toList(),
+        )
+      ],
+    );
+  }
+}
