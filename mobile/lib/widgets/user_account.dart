@@ -55,7 +55,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
             GetIt.I<Talker>().info('user account loaded');
           }
           return Container(
-            margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
+            margin: const EdgeInsets.only(left: 20, right: 20, top: 16),
             child: Form(
               key: _formKey,
               child: Column(

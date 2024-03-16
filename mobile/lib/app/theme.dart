@@ -4,7 +4,8 @@ import 'package:talker_flutter/talker_flutter.dart';
 enum UsedColors {
   black(value: Color.fromARGB(255, 10, 10, 10)),
   yellow(value: Color.fromARGB(255, 255, 214, 0)),
-  white(value: Color.fromARGB(255, 255, 255, 255));
+  white(value: Color.fromARGB(255, 255, 255, 255)),
+  gray(value: Color.fromARGB(255, 38, 38, 38));
 
   const UsedColors({required this.value});
 
