@@ -4,7 +4,7 @@ import 'package:mobile/entities/user_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum SharedPrefKeys {
-  accountId('account_id');
+  userAccount('user_account');
 
   const SharedPrefKeys(this.k);
 
@@ -23,13 +23,13 @@ class SharedPrefGateway {
   final SharedPreferences _prefs;
 
   Future<UserAccount?> getUserAccount() async {
-    final data = _prefs.getString(SharedPrefKeys.accountId.k);
+    final data = _prefs.getString(SharedPrefKeys.userAccount.k);
     return data != null ? UserAccount.fromJson(jsonDecode(data)) : null;
   }
 
   Future<bool> setUserAccount(UserAccount account) async {
     final data = jsonEncode(account);
-    return _prefs.setString(SharedPrefKeys.accountId.k, data);
+    return _prefs.setString(SharedPrefKeys.userAccount.k, data);
   }
 }
 
