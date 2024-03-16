@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.10+1
+  get_it: ^7.6.7
+  talker_flutter: ^4.0.3
 
 dev_dependencies:
   flutter_test:

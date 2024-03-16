@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class DebugWidget extends StatefulWidget {
   const DebugWidget({super.key});
@@ -11,7 +13,10 @@ class DebugWidget extends StatefulWidget {
 class _DebugWidgetState extends State<DebugWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text("Debug Widget");
+    return TalkerScreen(
+      talker: GetIt.I<Talker>(),
+      appBarTitle: 'Logs',
+    );
   }
 
 }

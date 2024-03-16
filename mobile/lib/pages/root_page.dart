@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile/widgets/debug.dart';
-import 'package:mobile/widgets/map_layers.dart';
+import 'package:mobile/widgets/map.dart';
 import 'package:mobile/widgets/nav_bar.dart';
 import 'package:mobile/widgets/sensors.dart';
 import 'package:mobile/widgets/user_account.dart';
+
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -14,13 +15,15 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin {
+  static const double iconWidth = 32;
+
   final icons = <Widget>[
-    SvgPicture.asset("assets/svg/RadioFill.svg"),
-    SvgPicture.asset("assets/svg/Layer.svg"),
-    SvgPicture.asset("assets/svg/UserCard.svg"),
-    SvgPicture.asset("assets/svg/Command.svg")
+    SvgPicture.asset("assets/svg/RadioFill.svg", width: iconWidth),
+    SvgPicture.asset("assets/svg/Map.svg", width: iconWidth * 0.9),
+    SvgPicture.asset("assets/svg/UserCard.svg", width: iconWidth),
+    SvgPicture.asset("assets/svg/Command.svg", width: iconWidth * 0.8)
   ];
-  final titles = <String>[ "Sensors", "Map Layers", "User Account", "Debug"];
+  final titles = <String>[ "Sensors", "Map", "User Account", "Debug"];
 
   late final TabController _tabController;
   int tabIndex = 0;
@@ -58,7 +61,7 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
                 controller: _tabController,
                 children: const <Widget>[
                   SensorsWidget(),
-                  MapLayersWidget(),
+                  MapWidget(),
                   UserAccountWidget(),
                   DebugWidget()
                 ],

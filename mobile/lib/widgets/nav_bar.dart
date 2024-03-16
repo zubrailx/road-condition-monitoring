@@ -17,6 +17,8 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
+  static const double iconWidth = 32;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -37,13 +39,13 @@ class _NavBarState extends State<NavBar> {
               spacing: 15,
               children: <Widget>[
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/NetworkUpload.svg"),
+                    icon: SvgPicture.asset("assets/svg/NetworkClose.svg", width: iconWidth),
                     onPressed: () {}),
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/Pause.svg"),
+                    icon: SvgPicture.asset("assets/svg/Play.svg", width: iconWidth),
                     onPressed: () {}),
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/MenuVertical.svg"),
+                    icon: SvgPicture.asset("assets/svg/MenuVertical.svg", width: iconWidth),
                     onPressed: () {}),
               ],
             )
