@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 enum UsedColors {
   black(value: Color.fromARGB(255, 10, 10, 10)),
@@ -30,4 +31,8 @@ final darkTheme = ThemeData.dark().copyWith(
             borderSide: BorderSide(color: UsedColors.yellow.value)),
         focusedErrorBorder: _buttonBorder.copyWith(
             borderSide: BorderSide(color: UsedColors.yellow.value))),
+);
+
+final talkerScreenTheme = TalkerScreenTheme(
+  backgroundColor: UsedColors.black.value
 );
