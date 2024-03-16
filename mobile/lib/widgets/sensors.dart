@@ -11,7 +11,7 @@ class SensorsWidget extends StatefulWidget {
 class _SensorsWidgetState extends State<SensorsWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text("SensorsWidget");
+    return const Text("SensorsWidget");
   }
 
 }

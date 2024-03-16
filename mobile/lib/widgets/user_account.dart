@@ -11,7 +11,7 @@ class UserAccountWidget extends StatefulWidget {
 class _UserAccountWidgetState extends State<UserAccountWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text("User Account");
+    return const Text("User Account");
   }
 
 }

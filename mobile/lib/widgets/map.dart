@@ -11,7 +11,7 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   @override
   Widget build(BuildContext context) {
-    return Text("Map");
+    return const Text("Map");
   }
 
 }

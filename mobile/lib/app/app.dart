@@ -16,7 +16,7 @@ class _AppState extends State<App> {
       title: 'RoadCondition',
       theme: darkTheme,
       routes: {
-        '/': (context) => RootPage(),
+        '/': (context) => const RootPage(),
       },
     );
   }

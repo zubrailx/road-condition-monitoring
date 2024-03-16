@@ -16,8 +16,14 @@ final darkTheme = ThemeData.dark().copyWith(
   iconTheme: IconThemeData(
     color: UsedColors.white.value,
   ),
-  textTheme: TextTheme(
-
-
+  textTheme: const TextTheme(
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    focusedBorder: OutlineInputBorder(
+      borderRadius: const BorderRadius.all(Radius.circular(10)),
+      borderSide: BorderSide(
+        color: UsedColors.yellow.value,
+      )
+    )
   )
 );
