@@ -52,7 +52,7 @@ class _AccelerometerWidgetState extends State<AccelerometerWidget> {
             Text(_userAccelerometerEvent?.y.toStringAsFixed(2) ?? '?'),
           ]),
           Row(children: [
-            const Text("Y:"),
+            const Text("Z:"),
             const SizedBox(width: 10),
             Text(_userAccelerometerEvent?.z.toStringAsFixed(2) ?? '?'),
           ]),

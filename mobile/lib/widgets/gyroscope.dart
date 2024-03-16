@@ -52,7 +52,7 @@ class _GyroscopeWidgetState extends State<GyroscopeWidget> {
             Text(_gyroscopeEvent?.y.toStringAsFixed(2) ?? '?'),
           ]),
           Row(children: [
-            const Text("Y:"),
+            const Text("Z:"),
             const SizedBox(width: 10),
             Text(_gyroscopeEvent?.z.toStringAsFixed(2) ?? '?'),
           ]),
