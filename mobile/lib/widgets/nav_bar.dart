@@ -31,21 +31,23 @@ class _NavBarState extends State<NavBar> {
             Padding(
               padding: const EdgeInsets.only(left: 15.0),
               child: Text(widget.titles[widget.tabController.index],
-                style: theme.textTheme.titleMedium
-              ),
+                  style: theme.textTheme.titleMedium),
             ),
             Wrap(
               direction: Axis.horizontal,
               spacing: 15,
               children: <Widget>[
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/NetworkClose.svg", width: iconWidth),
+                    icon: SvgPicture.asset("assets/svg/NetworkClose.svg",
+                        width: iconWidth),
                     onPressed: () {}),
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/Play.svg", width: iconWidth),
+                    icon: SvgPicture.asset("assets/svg/Play.svg",
+                        width: iconWidth),
                     onPressed: () {}),
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/MenuVertical.svg", width: iconWidth),
+                    icon: SvgPicture.asset("assets/svg/MenuVertical.svg",
+                        width: iconWidth),
                     onPressed: () {}),
               ],
             )
@@ -61,5 +63,10 @@ class _NavBarState extends State<NavBar> {
         )
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

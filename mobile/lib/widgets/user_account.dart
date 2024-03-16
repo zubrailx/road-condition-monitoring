@@ -10,7 +10,6 @@ class UserAccountWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _UserAccountWidgetState();
-
 }
 
 class _UserAccountWidgetState extends State<UserAccountWidget> {
@@ -28,8 +27,8 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
   _saveButtonOnPressed() async {
     if (_formKey.currentState!.validate()) {
       final account = UserAccount(
-          accountId: _accountIdController.text,
-          name: _accountNameController.text,
+        accountId: _accountIdController.text,
+        name: _accountNameController.text,
       );
       await saveUserAccount(account);
       GetIt.I<Talker>().info('user account saved');
@@ -45,8 +44,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      FutureBuilder(
+    return FutureBuilder(
         future: getUserAccount(),
         builder: (context, AsyncSnapshot<UserAccount?> snapshot) {
           if (snapshot.hasData) {
@@ -62,33 +60,32 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
                 children: <Widget>[
                   TextFormField(
                     controller: _accountIdController,
-                    decoration: const InputDecoration(
-                      labelText: 'Account ID'
-                    ),
+                    decoration: const InputDecoration(labelText: 'Account ID'),
                     validator: _buttonValidator,
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: _accountNameController,
-                    decoration: const InputDecoration(
-                        labelText: 'Account Name'
-                    ),
+                    decoration:
+                        const InputDecoration(labelText: 'Account Name'),
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(onPressed: _generateOnPressed, child: const Text('Generate ID')),
+                      ElevatedButton(
+                          onPressed: _generateOnPressed,
+                          child: const Text('Generate ID')),
                       const SizedBox(width: 20),
-                      ElevatedButton( onPressed: _saveButtonOnPressed, child: const Text('Save')),
+                      ElevatedButton(
+                          onPressed: _saveButtonOnPressed,
+                          child: const Text('Save')),
                     ],
                   ),
                 ],
               ),
             ),
           );
-        }
-      );
+        });
   }
-
 }

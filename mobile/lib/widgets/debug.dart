@@ -8,7 +8,6 @@ class DebugWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _DebugWidgetState();
-
 }
 
 class _DebugWidgetState extends State<DebugWidget> {
@@ -21,4 +20,8 @@ class _DebugWidgetState extends State<DebugWidget> {
     );
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }

@@ -6,7 +6,6 @@ class MapWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _MapWidgetState();
-
 }
 
 class _MapWidgetState extends State<MapWidget> {

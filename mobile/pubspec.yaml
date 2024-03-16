@@ -11,7 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^2.0.10+1
+  geolocator: ^11.0.0
   get_it: ^7.6.7
+  sensors_plus: ^4.0.2
   shared_preferences: ^2.2.2
   talker_flutter: ^4.0.3
   uuid: ^4.3.3
