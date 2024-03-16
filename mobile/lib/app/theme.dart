@@ -10,20 +10,24 @@ enum UsedColors {
   final Color value;
 }
 
-final darkTheme = ThemeData.dark().copyWith(
-  scaffoldBackgroundColor: UsedColors.black.value,
-  highlightColor: UsedColors.yellow.value,
-  iconTheme: IconThemeData(
+final _buttonBorder = OutlineInputBorder(
+  borderRadius: const BorderRadius.all(Radius.circular(10)),
+  borderSide: BorderSide(
     color: UsedColors.white.value,
   ),
-  textTheme: const TextTheme(
-  ),
-  inputDecorationTheme: InputDecorationTheme(
-    focusedBorder: OutlineInputBorder(
-      borderRadius: const BorderRadius.all(Radius.circular(10)),
-      borderSide: BorderSide(
-        color: UsedColors.yellow.value,
-      )
-    )
-  )
+);
+
+final darkTheme = ThemeData.dark().copyWith(
+    scaffoldBackgroundColor: UsedColors.black.value,
+    highlightColor: UsedColors.yellow.value,
+    iconTheme: IconThemeData(
+      color: UsedColors.white.value,
+    ),
+    textTheme: const TextTheme(),
+    inputDecorationTheme: InputDecorationTheme(
+        border: _buttonBorder,
+        focusedBorder: _buttonBorder.copyWith(
+            borderSide: BorderSide(color: UsedColors.yellow.value)),
+        focusedErrorBorder: _buttonBorder.copyWith(
+            borderSide: BorderSide(color: UsedColors.yellow.value))),
 );
