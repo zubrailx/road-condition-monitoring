@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mobile/widgets/debug.dart';
+import 'package:mobile/widgets/map_layers.dart';
 import 'package:mobile/widgets/nav_bar.dart';
+import 'package:mobile/widgets/sensors.dart';
+import 'package:mobile/widgets/user_account.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -53,10 +57,10 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
             child: TabBarView(
                 controller: _tabController,
                 children: const <Widget>[
-                  Text("sensors"),
-                  Text("layers"),
-                  Text("user"),
-                  Text("options")
+                  SensorsWidget(),
+                  MapLayersWidget(),
+                  UserAccountWidget(),
+                  DebugWidget()
                 ],
               )
           )
