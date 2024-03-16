@@ -27,6 +27,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
     if (_formKey.currentState!.validate()) {
       final account = UserAccount(accountId: _accountIdController.text);
       await saveUserAccount(account);
+      GetIt.I<Talker>().info('user account saved');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Saved')),
       );
@@ -41,6 +42,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
         builder: (context, AsyncSnapshot<UserAccount?> snapshot) {
           if (snapshot.hasData) {
             _accountIdController.text = snapshot.data!.accountId;
+            GetIt.I<Talker>().info('user account loaded');
           }
           return Container(
             margin: const EdgeInsets.only(left: 20, right: 20, top: 20),
