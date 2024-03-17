@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mobile/widgets/debug.dart';
+import 'package:mobile/widgets/logs.dart';
 import 'package:mobile/widgets/map.dart';
 import 'package:mobile/widgets/nav_bar.dart';
+import 'package:mobile/widgets/options.dart';
 import 'package:mobile/widgets/sensors.dart';
 import 'package:mobile/widgets/user_account.dart';
 
@@ -21,9 +22,9 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
     SvgPicture.asset("assets/svg/RadioFill.svg", width: iconWidth),
     SvgPicture.asset("assets/svg/Map.svg", width: iconWidth * 0.9),
     SvgPicture.asset("assets/svg/UserCard.svg", width: iconWidth),
-    SvgPicture.asset("assets/svg/Command.svg", width: iconWidth * 0.8)
+    SvgPicture.asset("assets/svg/Options.svg", width: iconWidth * 0.8)
   ];
-  final titles = <String>[ "Sensors", "Map", "User Account", "Debug"];
+  final titles = <String>[ "Sensors", "Map", "User Account", "Options"];
 
   late final TabController _tabController;
   int tabIndex = 0;
@@ -63,7 +64,7 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
                   SensorsWidget(),
                   MapWidget(),
                   UserAccountWidget(),
-                  DebugWidget()
+                  OptionsWidget()
                 ],
               )
           )

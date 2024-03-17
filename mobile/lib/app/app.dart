@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/app/route.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/gateway/shared_preferences.dart';
+import 'package:mobile/pages/logs_page.dart';
 import 'package:mobile/pages/root_page.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:mobile/state/gyroscope.dart';
@@ -23,7 +25,8 @@ class App extends StatelessWidget {
       title: 'RoadCondition',
       theme: darkTheme,
       routes: {
-        '/': (context) => const RootPage(),
+        AppRoutes.root.v: (context) => const RootPage(),
+        AppRoutes.logs.v: (context) => const LogsPage(),
       },
     );
 

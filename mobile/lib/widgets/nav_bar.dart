@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mobile/app/route.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar(
@@ -38,17 +39,17 @@ class _NavBarState extends State<NavBar> {
               spacing: 15,
               children: <Widget>[
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/NetworkClose.svg",
-                        width: iconWidth),
-                    onPressed: () {}),
-                IconButton(
                     icon: SvgPicture.asset("assets/svg/Play.svg",
                         width: iconWidth),
                     onPressed: () {}),
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/MenuVertical.svg",
+                    icon: SvgPicture.asset("assets/svg/NetworkClose.svg",
                         width: iconWidth),
                     onPressed: () {}),
+                IconButton(
+                    icon: SvgPicture.asset("assets/svg/FileSearch.svg",
+                        width: iconWidth),
+                    onPressed: () => Navigator.of(context).pushNamed(AppRoutes.logs.v)),
               ],
             )
           ],
