@@ -69,7 +69,8 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
                     child: const Text('Generate ID')),
                 const SizedBox(width: 20),
                 ElevatedButton(
-                    onPressed: () => _saveButtonOnPressed(context), child: const Text('Save')),
+                    onPressed: () => _saveButtonOnPressed(context),
+                    child: const Text('Save')),
               ],
             ),
           ],

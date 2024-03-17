@@ -13,9 +13,8 @@ class GpsModel with ChangeNotifier {
 
   late bool _serviceEnabled;
   late LocationPermission _permission;
-  late final StreamSubscription<Position> _positionStream;
+  late final StreamSubscription<Position> _streamSubscription;
   String? _error;
-
   Position? _position;
 
   GpsModel() {
@@ -32,11 +31,20 @@ class GpsModel with ChangeNotifier {
   Position? get position => _position;
   bool get hasError => error != null;
   String? get error => _error;
+  bool get isPaused => _streamSubscription.isPaused;
+
+  void pause() {
+    _streamSubscription.pause();
+  }
+
+  void resume() {
+    _streamSubscription.resume();
+  }
 
   @override
   void dispose() {
     super.dispose();
-    _positionStream.cancel();
+    _streamSubscription.cancel();
   }
 
   _trySubscribeGeolocation() async {
@@ -58,12 +66,13 @@ class GpsModel with ChangeNotifier {
     }
 
     if (_permission == LocationPermission.deniedForever) {
-      _error = 'Location permissions are permanently denied, we cannot request permissions.';
+      _error =
+          'Location permissions are permanently denied, we cannot request permissions.';
       notifyListeners();
       return;
     }
 
-    _positionStream =
+    _streamSubscription =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position? position) {
       _position = position;

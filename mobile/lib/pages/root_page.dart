@@ -7,7 +7,6 @@ import 'package:mobile/widgets/options.dart';
 import 'package:mobile/widgets/sensors.dart';
 import 'package:mobile/widgets/user_account.dart';
 
-
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
 
@@ -15,7 +14,8 @@ class RootPage extends StatefulWidget {
   State<RootPage> createState() => _RootPageState();
 }
 
-class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin {
+class _RootPageState extends State<RootPage>
+    with SingleTickerProviderStateMixin {
   static const double iconWidth = 32;
 
   final icons = <Widget>[
@@ -24,7 +24,7 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
     SvgPicture.asset("assets/svg/UserCard.svg", width: iconWidth),
     SvgPicture.asset("assets/svg/Options.svg", width: iconWidth * 0.8)
   ];
-  final titles = <String>[ "Sensors", "Map", "User Account", "Options"];
+  final titles = <String>["Sensors", "Map", "User Account", "Options"];
 
   late final TabController _tabController;
   int tabIndex = 0;
@@ -32,7 +32,8 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this, initialIndex: tabIndex);
+    _tabController =
+        TabController(length: 4, vsync: this, initialIndex: tabIndex);
     _tabController.addListener(() {
       if (tabIndex != _tabController.index) {
         setState(() {
@@ -51,26 +52,21 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).viewPadding.top,
-          ),
-          NavBar(tabController: _tabController, icons: icons, titles: titles),
-          Expanded(
-            child: TabBarView(
-                controller: _tabController,
-                children: <Widget>[
-                  const SensorsWidget(),
-                  const MapWidget(),
-                  UserAccountWidget(),
-                  const OptionsWidget()
-                ],
-              )
-          )
-        ]
-
-      )
-    );
+        body: Column(children: [
+      Container(
+        height: MediaQuery.of(context).viewPadding.top,
+      ),
+      NavBar(tabController: _tabController, icons: icons, titles: titles),
+      Expanded(
+          child: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          const SensorsWidget(),
+          const MapWidget(),
+          UserAccountWidget(),
+          const OptionsWidget()
+        ],
+      ))
+    ]));
   }
 }

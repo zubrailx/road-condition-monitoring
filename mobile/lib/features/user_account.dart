@@ -5,6 +5,7 @@ import 'package:mobile/gateway/shared_preferences.dart';
 Future<bool> saveUserAccount(UserAccount account) {
   return GetIt.I<SharedPrefGateway>().setUserAccount(account);
 }
+
 Future<UserAccount?> getUserAccount() {
   return GetIt.I<SharedPrefGateway>().getUserAccount();
 }

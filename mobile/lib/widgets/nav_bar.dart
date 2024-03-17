@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile/app/route.dart';
+import 'package:mobile/widgets/network_switch.dart';
+import 'package:mobile/widgets/sensor_switch.dart';
 
 class NavBar extends StatelessWidget {
   const NavBar(
@@ -33,18 +35,13 @@ class NavBar extends StatelessWidget {
               direction: Axis.horizontal,
               spacing: 15,
               children: <Widget>[
-                IconButton(
-                    icon: SvgPicture.asset("assets/svg/Play.svg",
-                        width: iconWidth),
-                    onPressed: () {}),
-                IconButton(
-                    icon: SvgPicture.asset("assets/svg/NetworkClose.svg",
-                        width: iconWidth),
-                    onPressed: () {}),
+                SensorSwitchWidget(width: iconWidth),
+                NetworkSwitchWidget(width: iconWidth),
                 IconButton(
                     icon: SvgPicture.asset("assets/svg/FileSearch.svg",
                         width: iconWidth),
-                    onPressed: () => Navigator.of(context).pushNamed(AppRoutes.logs.v)),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(AppRoutes.logs.v)),
               ],
             )
           ],
@@ -60,5 +57,4 @@ class NavBar extends StatelessWidget {
       ],
     );
   }
-
 }

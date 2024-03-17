@@ -12,7 +12,7 @@ class GyroscopeModel with ChangeNotifier {
   int? _gyroscopeLastInterval;
   String? _error;
 
-  final _streamSubscriptions = <StreamSubscription<dynamic>>[];
+  StreamSubscription<GyroscopeEvent>? _streamSubscription;
   final Duration _sensorInterval = SensorInterval.uiInterval;
 
   GyroscopeModel() {
@@ -20,44 +20,48 @@ class GyroscopeModel with ChangeNotifier {
   }
 
   GyroscopeEvent? get event => _gyroscopeEvent;
-
   int? get lastInterval => _gyroscopeLastInterval;
-
   bool get hasError => error != null;
-
   String? get error => _error;
+  bool? get isPaused => _streamSubscription?.isPaused;
+
+  void pause() {
+    _streamSubscription?.pause();
+    notifyListeners();
+  }
+
+  void resume() {
+    _streamSubscription?.resume();
+    notifyListeners();
+  }
 
   @override
   void dispose() {
     super.dispose();
-    for (final subscription in _streamSubscriptions) {
-      subscription.cancel();
-    }
+    _streamSubscription?.cancel();
   }
 
   void _subscribeStream() {
-    _streamSubscriptions.add(
-      gyroscopeEventStream(samplingPeriod: _sensorInterval).listen(
-            (GyroscopeEvent event) {
-          final now = DateTime.now();
-          _gyroscopeEvent = event;
-          if (_gyroscopeUpdateTime != null) {
-            final interval = now.difference(_gyroscopeUpdateTime!);
-            if (interval > _ignoreDuration) {
-              _gyroscopeLastInterval = interval.inMilliseconds;
-            }
+    _streamSubscription =
+        gyroscopeEventStream(samplingPeriod: _sensorInterval).listen(
+      (GyroscopeEvent event) {
+        final now = DateTime.now();
+        _gyroscopeEvent = event;
+        if (_gyroscopeUpdateTime != null) {
+          final interval = now.difference(_gyroscopeUpdateTime!);
+          if (interval > _ignoreDuration) {
+            _gyroscopeLastInterval = interval.inMilliseconds;
           }
-          _gyroscopeUpdateTime = now;
-          notifyListeners();
-        },
-        onError: (e) {
-          _error =
-          "It seems that your device doesn't support Gyroscope Sensor";
-          GetIt.I<Talker>().error(_error);
-          notifyListeners();
-        },
-        cancelOnError: true,
-      ),
+        }
+        _gyroscopeUpdateTime = now;
+        notifyListeners();
+      },
+      onError: (e) {
+        _error = "It seems that your device doesn't support Gyroscope Sensor";
+        GetIt.I<Talker>().error(_error);
+        notifyListeners();
+      },
+      cancelOnError: true,
     );
   }
 }

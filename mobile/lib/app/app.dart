@@ -30,15 +30,12 @@ class App extends StatelessWidget {
       },
     );
 
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserAccountModel()),
-        ChangeNotifierProvider(create: (_) => GpsModel()),
-        ChangeNotifierProvider(create: (_) => UserAccelerometerModel()),
-        ChangeNotifierProvider(create: (_) => GyroscopeModel()),
-      ],
-      child: app
-    );
+    return MultiProvider(providers: [
+      ChangeNotifierProvider(create: (_) => UserAccountModel()),
+      ChangeNotifierProvider(create: (_) => GpsModel()),
+      ChangeNotifierProvider(create: (_) => UserAccelerometerModel()),
+      ChangeNotifierProvider(create: (_) => GyroscopeModel()),
+    ], child: app);
   }
 }
 

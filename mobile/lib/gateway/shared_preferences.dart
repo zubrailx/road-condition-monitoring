@@ -12,7 +12,6 @@ enum SharedPrefKeys {
 }
 
 class SharedPrefGateway {
-
   SharedPrefGateway(this._prefs);
 
   static Future<SharedPrefGateway> create() async {
@@ -32,4 +31,3 @@ class SharedPrefGateway {
     return _prefs.setString(SharedPrefKeys.userAccount.k, data);
   }
 }
-

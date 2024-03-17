@@ -12,7 +12,7 @@ class UserAccelerometerModel with ChangeNotifier {
   int? _userAccelerometerLastInterval;
   String? _error;
 
-  final _streamSubscriptions = <StreamSubscription<dynamic>>[];
+  StreamSubscription<UserAccelerometerEvent>? _streamSubscription;
   final Duration _sensorInterval = SensorInterval.uiInterval;
 
   UserAccelerometerModel() {
@@ -23,37 +23,46 @@ class UserAccelerometerModel with ChangeNotifier {
   int? get lastInterval => _userAccelerometerLastInterval;
   bool get hasError => error != null;
   String? get error => _error;
+  bool? get isPaused => _streamSubscription?.isPaused;
+
+  void pause() {
+    _streamSubscription?.pause();
+    notifyListeners();
+  }
+
+  void resume() {
+    _streamSubscription?.resume();
+    notifyListeners();
+  }
 
   @override
   void dispose() {
     super.dispose();
-    for (final subscription in _streamSubscriptions) {
-      subscription.cancel();
-    }
+    _streamSubscription?.cancel();
   }
 
   void _subscribeStream() {
-    _streamSubscriptions.add(
-      userAccelerometerEventStream(samplingPeriod: _sensorInterval).listen(
-            (UserAccelerometerEvent event) {
-          final now = DateTime.now();
-            _userAccelerometerEvent = event;
-            if (_userAccelerometerUpdateTime != null) {
-              final interval = now.difference(_userAccelerometerUpdateTime!);
-              if (interval > _ignoreDuration) {
-                _userAccelerometerLastInterval = interval.inMilliseconds;
-              }
-            }
-          _userAccelerometerUpdateTime = now;
-          notifyListeners();
-        },
-        onError: (e) {
-          _error = "It seems that your device doesn't support User Accelerometer Sensor";
-          GetIt.I<Talker>().error(_error);
-          notifyListeners();
-        },
-        cancelOnError: true,
-      ),
+    _streamSubscription =
+        userAccelerometerEventStream(samplingPeriod: _sensorInterval).listen(
+      (UserAccelerometerEvent event) {
+        final now = DateTime.now();
+        _userAccelerometerEvent = event;
+        if (_userAccelerometerUpdateTime != null) {
+          final interval = now.difference(_userAccelerometerUpdateTime!);
+          if (interval > _ignoreDuration) {
+            _userAccelerometerLastInterval = interval.inMilliseconds;
+          }
+        }
+        _userAccelerometerUpdateTime = now;
+        notifyListeners();
+      },
+      onError: (e) {
+        _error =
+            "It seems that your device doesn't support User Accelerometer Sensor";
+        GetIt.I<Talker>().error(_error);
+        notifyListeners();
+      },
+      cancelOnError: true,
     );
   }
 }

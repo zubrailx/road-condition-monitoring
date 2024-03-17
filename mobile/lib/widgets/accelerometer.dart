@@ -57,5 +57,4 @@ class _AccelerometerWidgetState extends State<AccelerometerWidget> {
       ],
     );
   }
-
 }

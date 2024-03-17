@@ -57,5 +57,4 @@ class _GyroscopeWidgetState extends State<GyroscopeWidget> {
       ],
     );
   }
-
 }
