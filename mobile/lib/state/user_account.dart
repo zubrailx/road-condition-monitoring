@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mobile/entities/user_account.dart';
 import 'package:mobile/features/user_account.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class UserAccountModel with ChangeNotifier {
   UserAccount _userAccount = const UserAccount(accountId: "", name: "");
@@ -12,6 +14,7 @@ class UserAccountModel with ChangeNotifier {
 
   void _init() async {
     _userAccount = await getUserAccount() ?? _userAccount;
+    GetIt.I<Talker>().info("User account loaded.");
     notifyListeners();
   }
 
@@ -24,6 +27,11 @@ class UserAccountModel with ChangeNotifier {
     notifyListeners();
     (() async {
       _saved = await saveUserAccount(_userAccount);
+      if (_saved) {
+        GetIt.I<Talker>().info("User account saved.");
+      } else {
+        GetIt.I<Talker>().error("User account is not saved.");
+      }
       notifyListeners();
     })();
   }

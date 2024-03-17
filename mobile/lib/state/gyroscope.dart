@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class GyroscopeModel with ChangeNotifier {
   final Duration _ignoreDuration = const Duration(milliseconds: 20);
@@ -51,6 +53,7 @@ class GyroscopeModel with ChangeNotifier {
         onError: (e) {
           _error =
           "It seems that your device doesn't support Gyroscope Sensor";
+          GetIt.I<Talker>().error(_error);
           notifyListeners();
         },
         cancelOnError: true,

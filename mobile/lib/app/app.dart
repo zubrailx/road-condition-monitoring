@@ -48,7 +48,6 @@ void run() async {
 
     final talker = TalkerFlutter.init();
     GetIt.I.registerSingleton(talker);
-    GetIt.I<Talker>().debug('Talker started...');
 
     final sharedPrefGateway = await SharedPrefGateway.create();
     GetIt.I.registerSingleton(sharedPrefGateway);
