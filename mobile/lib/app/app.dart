@@ -6,8 +6,12 @@ import 'package:get_it/get_it.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/gateway/shared_preferences.dart';
 import 'package:mobile/pages/root_page.dart';
+import 'package:mobile/state/gps.dart';
+import 'package:mobile/state/gyroscope.dart';
+import 'package:mobile/state/user_accelerometer.dart';
 import 'package:mobile/state/user_account.dart';
 import 'package:provider/provider.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class App extends StatelessWidget {
@@ -26,6 +30,9 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserAccountModel()),
+        ChangeNotifierProvider(create: (_) => GpsModel()),
+        ChangeNotifierProvider(create: (_) => UserAccelerometerModel()),
+        ChangeNotifierProvider(create: (_) => GyroscopeModel()),
       ],
       child: app
     );

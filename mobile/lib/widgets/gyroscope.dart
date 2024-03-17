@@ -1,8 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:mobile/app/theme.dart';
-import 'package:sensors_plus/sensors_plus.dart';
+import 'package:mobile/state/gyroscope.dart';
+import 'package:provider/provider.dart';
 
 class GyroscopeWidget extends StatefulWidget {
   const GyroscopeWidget({super.key});
@@ -14,16 +13,9 @@ class GyroscopeWidget extends StatefulWidget {
 }
 
 class _GyroscopeWidgetState extends State<GyroscopeWidget> {
-  static const Duration _ignoreDuration = Duration(milliseconds: 20);
-  GyroscopeEvent? _gyroscopeEvent;
-  DateTime? _gyroscopeUpdateTime;
-  int? _gyroscopeLastInterval;
-
-  final _streamSubscriptions = <StreamSubscription<dynamic>>[];
-  Duration sensorInterval = SensorInterval.uiInterval;
-
   @override
   Widget build(BuildContext context) {
+    final model = context.watch<GyroscopeModel>();
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -44,67 +36,26 @@ class _GyroscopeWidgetState extends State<GyroscopeWidget> {
           Row(children: [
             const Text("X:"),
             const SizedBox(width: 10),
-            Text(_gyroscopeEvent?.x.toStringAsFixed(2) ?? '?'),
+            Text(model.event?.x.toStringAsFixed(2) ?? '?'),
           ]),
           Row(children: [
             const Text("Y:"),
             const SizedBox(width: 10),
-            Text(_gyroscopeEvent?.y.toStringAsFixed(2) ?? '?'),
+            Text(model.event?.y.toStringAsFixed(2) ?? '?'),
           ]),
           Row(children: [
             const Text("Z:"),
             const SizedBox(width: 10),
-            Text(_gyroscopeEvent?.z.toStringAsFixed(2) ?? '?'),
+            Text(model.event?.z.toStringAsFixed(2) ?? '?'),
           ]),
           Row(children: [
             const Text("Interval:"),
             const SizedBox(width: 10),
-            Text('${_gyroscopeLastInterval?.toString() ?? '?'} ms'),
+            Text('${model.lastInterval?.toString() ?? '?'} ms'),
           ]),
         ])
       ],
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    for (final subscription in _streamSubscriptions) {
-      subscription.cancel();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _streamSubscriptions.add(
-      gyroscopeEventStream(samplingPeriod: sensorInterval).listen(
-        (GyroscopeEvent event) {
-          final now = DateTime.now();
-          setState(() {
-            _gyroscopeEvent = event;
-            if (_gyroscopeUpdateTime != null) {
-              final interval = now.difference(_gyroscopeUpdateTime!);
-              if (interval > _ignoreDuration) {
-                _gyroscopeLastInterval = interval.inMilliseconds;
-              }
-            }
-          });
-          _gyroscopeUpdateTime = now;
-        },
-        onError: (e) {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return const AlertDialog(
-                  title: Text("Sensor Not Found"),
-                  content: Text(
-                      "It seems that your device doesn't support Gyroscope Sensor"),
-                );
-              });
-        },
-        cancelOnError: true,
-      ),
-    );
-  }
 }

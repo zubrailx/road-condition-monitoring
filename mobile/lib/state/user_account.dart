@@ -3,17 +3,14 @@ import 'package:mobile/entities/user_account.dart';
 import 'package:mobile/features/user_account.dart';
 
 class UserAccountModel with ChangeNotifier {
-  UserAccount _userAccount;
-  bool _saved;
+  UserAccount _userAccount = const UserAccount(accountId: "", name: "");
+  bool _saved = false;
 
-  UserAccountModel() :
-        _userAccount = const UserAccount(accountId: "", name: ""),
-        _saved = false
-  {
-    init();
+  UserAccountModel() {
+    _init();
   }
 
-  void init() async {
+  void _init() async {
     _userAccount = await getUserAccount() ?? _userAccount;
     notifyListeners();
   }
