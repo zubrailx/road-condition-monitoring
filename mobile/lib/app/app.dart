@@ -10,10 +10,11 @@ import 'package:mobile/pages/logs_page.dart';
 import 'package:mobile/pages/root_page.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:mobile/state/gyroscope.dart';
+import 'package:mobile/state/gyroscope_history.dart';
 import 'package:mobile/state/user_accelerometer.dart';
+import 'package:mobile/state/accelerometer_history.dart';
 import 'package:mobile/state/user_account.dart';
 import 'package:provider/provider.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class App extends StatelessWidget {
@@ -35,6 +36,26 @@ class App extends StatelessWidget {
       ChangeNotifierProvider(create: (_) => GpsModel()),
       ChangeNotifierProvider(create: (_) => UserAccelerometerModel()),
       ChangeNotifierProvider(create: (_) => GyroscopeModel()),
+      ChangeNotifierProxyProvider<UserAccelerometerModel,
+              AccelerometerHistoryModel>(
+          create: (_) => AccelerometerHistoryModel(),
+          update: (_, model, historyModel) {
+            historyModel ??= AccelerometerHistoryModel();
+            historyModel.append(model.record);
+            return historyModel;
+          },
+      lazy: false
+      ),
+      ChangeNotifierProxyProvider<GyroscopeModel,
+          GyroscopeHistoryModel>(
+          create: (_) => GyroscopeHistoryModel(),
+          update: (_, model, historyModel) {
+            historyModel ??= GyroscopeHistoryModel();
+            historyModel.append(model.record);
+            return historyModel;
+          },
+          lazy: false
+      ),
     ], child: app);
   }
 }

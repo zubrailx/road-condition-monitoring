@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/state/accelerometer_record.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -24,15 +25,21 @@ class UserAccelerometerModel with ChangeNotifier {
   bool get hasError => error != null;
   String? get error => _error;
   bool? get isPaused => _streamSubscription?.isPaused;
+  DateTime? get lastTime => _userAccelerometerUpdateTime;
+  AccelerometerRecord get record => AccelerometerRecord(
+        time: _userAccelerometerUpdateTime,
+        x: _userAccelerometerEvent?.x,
+        y: _userAccelerometerEvent?.y,
+        z: _userAccelerometerEvent?.z,
+        ms: _userAccelerometerLastInterval,
+      );
 
   void pause() {
     _streamSubscription?.pause();
-    notifyListeners();
   }
 
   void resume() {
     _streamSubscription?.resume();
-    notifyListeners();
   }
 
   @override

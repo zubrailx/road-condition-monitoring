@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/state/gyroscope_record.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -24,15 +25,21 @@ class GyroscopeModel with ChangeNotifier {
   bool get hasError => error != null;
   String? get error => _error;
   bool? get isPaused => _streamSubscription?.isPaused;
+  DateTime? get lastTime => _gyroscopeUpdateTime;
+  GyroscopeRecord get record => GyroscopeRecord(
+        time: _gyroscopeUpdateTime,
+        x: _gyroscopeEvent?.x,
+        y: _gyroscopeEvent?.y,
+        z: _gyroscopeEvent?.z,
+        ms: _gyroscopeLastInterval,
+      );
 
   void pause() {
     _streamSubscription?.pause();
-    notifyListeners();
   }
 
   void resume() {
     _streamSubscription?.resume();
-    notifyListeners();
   }
 
   @override
