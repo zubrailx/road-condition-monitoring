@@ -1,20 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:provider/provider.dart';
 
-class GPSWidget extends StatefulWidget {
+class GPSWidget extends StatelessWidget {
   const GPSWidget({super.key});
-
-  @override
-  State createState() {
-    return _GPSWidgetState();
-  }
-}
-
-class _GPSWidgetState extends State<GPSWidget> {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<GpsModel>();
@@ -42,10 +31,4 @@ class _GPSWidgetState extends State<GPSWidget> {
       ],
     );
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
 }

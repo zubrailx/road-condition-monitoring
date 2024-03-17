@@ -23,7 +23,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
     return null;
   }
 
-  _saveButtonOnPressed() {
+  _saveButtonOnPressed(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       final account = UserAccount(
         accountId: _accountIdController.text,
@@ -69,12 +69,19 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
                     child: const Text('Generate ID')),
                 const SizedBox(width: 20),
                 ElevatedButton(
-                    onPressed: _saveButtonOnPressed, child: const Text('Save')),
+                    onPressed: () => _saveButtonOnPressed(context), child: const Text('Save')),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _accountNameController.dispose();
+    _accountIdController.dispose();
   }
 }

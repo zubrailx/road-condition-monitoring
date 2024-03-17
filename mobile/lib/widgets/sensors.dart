@@ -3,14 +3,9 @@ import 'package:mobile/widgets/accelerometer.dart';
 import 'package:mobile/widgets/gps.dart';
 import 'package:mobile/widgets/gyroscope.dart';
 
-class SensorsWidget extends StatefulWidget {
+class SensorsWidget extends StatelessWidget {
   const SensorsWidget({super.key});
 
-  @override
-  State<StatefulWidget> createState() => _SensorsWidgetState();
-}
-
-class _SensorsWidgetState extends State<SensorsWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(

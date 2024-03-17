@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile/app/route.dart';
 
-class NavBar extends StatefulWidget {
+class NavBar extends StatelessWidget {
   const NavBar(
       {super.key,
       required this.tabController,
@@ -13,11 +13,6 @@ class NavBar extends StatefulWidget {
   final List<String> titles;
   final List<Widget> icons;
 
-  @override
-  State<StatefulWidget> createState() => _NavBarState();
-}
-
-class _NavBarState extends State<NavBar> {
   static const double iconWidth = 32;
 
   @override
@@ -31,7 +26,7 @@ class _NavBarState extends State<NavBar> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 15.0),
-              child: Text(widget.titles[widget.tabController.index],
+              child: Text(titles[tabController.index],
                   style: theme.textTheme.titleMedium),
             ),
             Wrap(
@@ -55,19 +50,15 @@ class _NavBarState extends State<NavBar> {
           ],
         ),
         TabBar(
-          controller: widget.tabController,
+          controller: tabController,
           indicatorColor: Colors.amber,
           indicatorSize: TabBarIndicatorSize.tab,
           indicatorWeight: 4,
           dividerHeight: 0,
-          tabs: widget.icons.map<Widget>((e) => Tab(icon: e)).toList(),
+          tabs: icons.map<Widget>((e) => Tab(icon: e)).toList(),
         )
       ],
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

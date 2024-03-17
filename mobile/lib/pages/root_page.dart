@@ -60,11 +60,11 @@ class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin
           Expanded(
             child: TabBarView(
                 controller: _tabController,
-                children: const <Widget>[
-                  SensorsWidget(),
-                  MapWidget(),
+                children: <Widget>[
+                  const SensorsWidget(),
+                  const MapWidget(),
                   UserAccountWidget(),
-                  OptionsWidget()
+                  const OptionsWidget()
                 ],
               )
           )
