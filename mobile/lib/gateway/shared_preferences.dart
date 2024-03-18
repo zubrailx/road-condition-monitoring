@@ -21,12 +21,12 @@ class SharedPrefGateway {
 
   final SharedPreferences _prefs;
 
-  Future<UserAccount?> getUserAccount() async {
+  Future<UserAccountData?> getUserAccount() async {
     final data = _prefs.getString(SharedPrefKeys.userAccount.k);
-    return data != null ? UserAccount.fromJson(jsonDecode(data)) : null;
+    return data != null ? UserAccountData.fromJson(jsonDecode(data)) : null;
   }
 
-  Future<bool> setUserAccount(UserAccount account) async {
+  Future<bool> setUserAccount(UserAccountData account) async {
     final data = jsonEncode(account);
     return _prefs.setString(SharedPrefKeys.userAccount.k, data);
   }

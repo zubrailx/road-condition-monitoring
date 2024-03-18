@@ -5,7 +5,7 @@ import 'package:mobile/entities/accelerometer.dart';
 
 class AccelerometerHistoryState with ChangeNotifier {
   late final int maxLength;
-  late final ListQueue<AccelerometerRecord> _records;
+  late final ListQueue<AccelerometerData> _records;
 
   AccelerometerHistoryState() {
     maxLength = 10000;
@@ -14,7 +14,7 @@ class AccelerometerHistoryState with ChangeNotifier {
 
   get records => _records;
 
-  void append(AccelerometerRecord record) {
+  void append(AccelerometerData record) {
     if (_records.length == maxLength) {
       _records.removeFirst();
     }

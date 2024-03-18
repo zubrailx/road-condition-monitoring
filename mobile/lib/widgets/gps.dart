@@ -19,12 +19,12 @@ class GPSWidget extends StatelessWidget {
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           Row(children: [
             const Text("latitude:"),
-            const SizedBox(width: 10),
+            const SizedBox(width: 5),
             Text(model.position?.latitude.toStringAsFixed(4) ?? '?'),
           ]),
           Row(children: [
             const Text("longitude:"),
-            const SizedBox(width: 10),
+            const SizedBox(width: 5),
             Text(model.position?.longitude.toStringAsFixed(4) ?? '?'),
           ]),
         ])

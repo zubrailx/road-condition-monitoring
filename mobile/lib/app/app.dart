@@ -44,18 +44,15 @@ class App extends StatelessWidget {
             historyModel.append(model.record);
             return historyModel;
           },
-      lazy: false
-      ),
-      ChangeNotifierProxyProvider<GyroscopeState,
-          GyroscopeHistoryState>(
+          lazy: false),
+      ChangeNotifierProxyProvider<GyroscopeState, GyroscopeHistoryState>(
           create: (_) => GyroscopeHistoryState(),
           update: (_, model, historyModel) {
             historyModel ??= GyroscopeHistoryState();
             historyModel.append(model.record);
             return historyModel;
           },
-          lazy: false
-      ),
+          lazy: false),
     ], child: app);
   }
 }

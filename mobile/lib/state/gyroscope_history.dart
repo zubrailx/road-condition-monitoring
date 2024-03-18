@@ -5,16 +5,16 @@ import 'package:mobile/entities/gyroscope.dart';
 
 class GyroscopeHistoryState with ChangeNotifier {
   late final int maxLength;
-  late final ListQueue<GyroscopeRecord> _records;
+  late final ListQueue<GyroscopeData> _records;
 
   GyroscopeHistoryState() {
-   maxLength = 10000;
-   _records = ListQueue(maxLength);
+    maxLength = 10000;
+    _records = ListQueue(maxLength);
   }
 
   get records => _records;
 
-  void append(GyroscopeRecord record) {
+  void append(GyroscopeData record) {
     if (_records.length == maxLength) {
       _records.removeFirst();
     }

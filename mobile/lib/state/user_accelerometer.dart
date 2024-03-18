@@ -26,7 +26,7 @@ class UserAccelerometerState with ChangeNotifier {
   String? get error => _error;
   bool? get isPaused => _streamSubscription?.isPaused;
   DateTime? get lastTime => _userAccelerometerUpdateTime;
-  AccelerometerRecord get record => AccelerometerRecord(
+  AccelerometerData get record => AccelerometerData(
         time: _userAccelerometerUpdateTime,
         x: _userAccelerometerEvent?.x,
         y: _userAccelerometerEvent?.y,

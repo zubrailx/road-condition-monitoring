@@ -5,7 +5,7 @@ import 'package:mobile/features/user_account.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class UserAccountState with ChangeNotifier {
-  UserAccount _userAccount = const UserAccount(accountId: "", name: "");
+  UserAccountData _userAccount = const UserAccountData(accountId: "", name: "");
   bool _saved = false;
 
   UserAccountState() {
@@ -18,10 +18,10 @@ class UserAccountState with ChangeNotifier {
     notifyListeners();
   }
 
-  UserAccount get userAccount => _userAccount;
+  UserAccountData get userAccount => _userAccount;
   bool get saved => _saved;
 
-  set userAccount(UserAccount userAccount) {
+  set userAccount(UserAccountData userAccount) {
     _userAccount = userAccount;
     _saved = false;
     notifyListeners();

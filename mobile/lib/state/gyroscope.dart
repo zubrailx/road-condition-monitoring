@@ -26,7 +26,7 @@ class GyroscopeState with ChangeNotifier {
   String? get error => _error;
   bool? get isPaused => _streamSubscription?.isPaused;
   DateTime? get lastTime => _gyroscopeUpdateTime;
-  GyroscopeRecord get record => GyroscopeRecord(
+  GyroscopeData get record => GyroscopeData(
         time: _gyroscopeUpdateTime,
         x: _gyroscopeEvent?.x,
         y: _gyroscopeEvent?.y,

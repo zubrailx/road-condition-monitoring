@@ -1,5 +1,5 @@
-class UserAccount {
-  const UserAccount({required this.accountId, required this.name});
+class UserAccountData {
+  const UserAccountData({required this.accountId, required this.name});
 
   final String accountId;
   final String name;
@@ -11,7 +11,7 @@ class UserAccount {
     };
   }
 
-  factory UserAccount.fromJson(Map<String, dynamic> json) {
-    return UserAccount(accountId: json['account_id'], name: json['name']);
+  factory UserAccountData.fromJson(Map<String, dynamic> json) {
+    return UserAccountData(accountId: json['account_id'], name: json['name']);
   }
 }

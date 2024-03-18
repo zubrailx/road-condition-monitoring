@@ -1,5 +1,5 @@
-class GyroscopeRecord {
-  const GyroscopeRecord(
+class GyroscopeData {
+  const GyroscopeData(
       {required this.time,
       required this.x,
       required this.y,

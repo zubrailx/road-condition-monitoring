@@ -25,7 +25,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
 
   _saveButtonOnPressed(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      final account = UserAccount(
+      final account = UserAccountData(
         accountId: _accountIdController.text,
         name: _accountNameController.text,
       );

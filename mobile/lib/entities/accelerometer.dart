@@ -1,5 +1,5 @@
-class AccelerometerRecord {
-  const AccelerometerRecord(
+class AccelerometerData {
+  const AccelerometerData(
       {required this.time,
       required this.x,
       required this.y,
