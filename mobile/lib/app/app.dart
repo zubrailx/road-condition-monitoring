@@ -8,11 +8,12 @@ import 'package:mobile/app/theme.dart';
 import 'package:mobile/gateway/shared_preferences.dart';
 import 'package:mobile/pages/logs_page.dart';
 import 'package:mobile/pages/root_page.dart';
+import 'package:mobile/state/chart.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:mobile/state/gyroscope.dart';
-import 'package:mobile/state/gyroscope_history.dart';
-import 'package:mobile/state/user_accelerometer.dart';
-import 'package:mobile/state/accelerometer_history.dart';
+import 'package:mobile/state/gyroscope_buffer.dart';
+import 'package:mobile/state/accelerometer.dart';
+import 'package:mobile/state/accelerometer_buffer.dart';
 import 'package:mobile/state/user_account.dart';
 import 'package:provider/provider.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -37,22 +38,23 @@ class App extends StatelessWidget {
       ChangeNotifierProvider(create: (_) => UserAccelerometerState()),
       ChangeNotifierProvider(create: (_) => GyroscopeState()),
       ChangeNotifierProxyProvider<UserAccelerometerState,
-              AccelerometerHistoryState>(
-          create: (_) => AccelerometerHistoryState(),
+              AccelerometerBufferState>(
+          create: (_) => AccelerometerBufferState(),
           update: (_, model, historyModel) {
-            historyModel ??= AccelerometerHistoryState();
+            historyModel ??= AccelerometerBufferState();
             historyModel.append(model.record);
             return historyModel;
           },
           lazy: false),
-      ChangeNotifierProxyProvider<GyroscopeState, GyroscopeHistoryState>(
-          create: (_) => GyroscopeHistoryState(),
+      ChangeNotifierProxyProvider<GyroscopeState, GyroscopeBufferState>(
+          create: (_) => GyroscopeBufferState(),
           update: (_, model, historyModel) {
-            historyModel ??= GyroscopeHistoryState();
+            historyModel ??= GyroscopeBufferState();
             historyModel.append(model.record);
             return historyModel;
           },
           lazy: false),
+      ChangeNotifierProvider(create: (_) => ChartState()),
     ], child: app);
   }
 }

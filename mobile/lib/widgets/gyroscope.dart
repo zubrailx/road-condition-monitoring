@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/entities/gyroscope.dart';
+import 'package:mobile/state/chart.dart';
 import 'package:mobile/state/gyroscope.dart';
-import 'package:mobile/state/gyroscope_history.dart';
+import 'package:mobile/state/gyroscope_buffer.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -29,7 +30,7 @@ class GyroscopeWidget extends StatelessWidget {
   }
 }
 
-class GyroscopeChartWidget extends StatelessWidget {
+class GyroscopeChartWidget extends StatefulWidget {
   const GyroscopeChartWidget({
     super.key,
     this.xColor = Colors.red,
@@ -42,8 +43,19 @@ class GyroscopeChartWidget extends StatelessWidget {
   final Color zColor;
 
   @override
+  State<StatefulWidget> createState() {
+    return _GyroscopeChartWidgetState();
+  }
+}
+
+
+class _GyroscopeChartWidgetState extends State<GyroscopeChartWidget> {
+  final double animationDuration = 0;
+
+  @override
   Widget build(BuildContext context) {
-    final state = context.watch<GyroscopeHistoryState>();
+    final signal = context.watch<ChartState>();
+    final state = context.watch<GyroscopeBufferState>();
     return Container(
       height: 200,
       decoration: BoxDecoration(
@@ -54,21 +66,20 @@ class GyroscopeChartWidget extends StatelessWidget {
           series: <FastLineSeries<GyroscopeData, DateTime>>[
             FastLineSeries<GyroscopeData, DateTime>(
                 dataSource: state.records,
-                animationDuration: 0,
-                color: xColor,
+                animationDuration: animationDuration,
+                color: widget.xColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
                 yValueMapper: (GyroscopeData data, _) => data.x),
             FastLineSeries<GyroscopeData, DateTime>(
                 dataSource: state.records,
-                animationDuration: 0,
-                color: yColor,
+                animationDuration: animationDuration,
+                color: widget.yColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
                 yValueMapper: (GyroscopeData data, _) => data.y),
             FastLineSeries<GyroscopeData, DateTime>(
-                // Bind data source
                 dataSource: state.records,
-                animationDuration: 0,
-                color: zColor,
+                animationDuration: animationDuration,
+                color: widget.zColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
                 yValueMapper: (GyroscopeData data, _) => data.z),
           ]),

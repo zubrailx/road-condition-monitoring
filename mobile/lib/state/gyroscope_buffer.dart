@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:mobile/entities/gyroscope.dart';
 
-class GyroscopeHistoryState with ChangeNotifier {
+class GyroscopeBufferState with ChangeNotifier {
   late final int maxLength;
   late final List<GyroscopeData> _records;
 
-  GyroscopeHistoryState() {
-    maxLength = 100;
+  GyroscopeBufferState() {
+    maxLength = 300;
     _records = <GyroscopeData>[];
   }
 

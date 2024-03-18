@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:mobile/state/gyroscope.dart';
-import 'package:mobile/state/user_accelerometer.dart';
+import 'package:mobile/state/accelerometer.dart';
 import 'package:provider/provider.dart';
 
 class SensorSwitchWidget extends StatefulWidget {

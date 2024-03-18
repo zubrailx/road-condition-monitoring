@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:mobile/entities/accelerometer.dart';
 
-class AccelerometerHistoryState with ChangeNotifier {
+class AccelerometerBufferState with ChangeNotifier {
   late final int maxLength;
   late final List<AccelerometerData> _records;
 
-  AccelerometerHistoryState() {
-    maxLength = 250;
+  AccelerometerBufferState() {
+    maxLength = 1000;
     _records = <AccelerometerData>[];
   }
 

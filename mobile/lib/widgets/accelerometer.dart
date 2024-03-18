@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/entities/accelerometer.dart';
-import 'package:mobile/state/accelerometer_history.dart';
-import 'package:mobile/state/user_accelerometer.dart';
+import 'package:mobile/state/accelerometer_buffer.dart';
+import 'package:mobile/state/accelerometer.dart';
+import 'package:mobile/state/chart.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -33,7 +35,7 @@ class AccelerometerWidget extends StatelessWidget {
   }
 }
 
-class AccelerometerChartWidget extends StatelessWidget {
+class AccelerometerChartWidget extends StatefulWidget {
   const AccelerometerChartWidget({
     super.key,
     this.xColor = Colors.red,
@@ -46,8 +48,19 @@ class AccelerometerChartWidget extends StatelessWidget {
   final Color zColor;
 
   @override
+  State<StatefulWidget> createState() {
+    return _AccelerometerChartWidgetState();
+  }
+
+}
+
+class _AccelerometerChartWidgetState extends State<AccelerometerChartWidget> {
+  final double animationDuration = 0;
+
+  @override
   Widget build(BuildContext context) {
-    final state = context.watch<AccelerometerHistoryState>();
+    final signal = context.watch<ChartState>();
+    final state = context.read<AccelerometerBufferState>();
     final data = state.records;
     return Container(
       height: 200,
@@ -59,21 +72,20 @@ class AccelerometerChartWidget extends StatelessWidget {
           series: <FastLineSeries<AccelerometerData, DateTime>>[
             FastLineSeries<AccelerometerData, DateTime>(
                 dataSource: data,
-                animationDuration: 0,
-                color: xColor,
+                animationDuration: animationDuration,
+                color: widget.xColor,
                 xValueMapper: (AccelerometerData data, _) => data.time,
                 yValueMapper: (AccelerometerData data, _) => data.x),
             FastLineSeries<AccelerometerData, DateTime>(
                 dataSource: data,
-                animationDuration: 0,
-                color: yColor,
+                animationDuration: animationDuration,
+                color: widget.yColor,
                 xValueMapper: (AccelerometerData data, _) => data.time,
                 yValueMapper: (AccelerometerData data, _) => data.y),
             FastLineSeries<AccelerometerData, DateTime>(
-                // Bind data source
                 dataSource: data,
-                animationDuration: 0,
-                color: zColor,
+                animationDuration: animationDuration,
+                color: widget.zColor,
                 xValueMapper: (AccelerometerData data, _) => data.time,
                 yValueMapper: (AccelerometerData data, _) => data.z),
           ]),
