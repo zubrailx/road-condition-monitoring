@@ -19,14 +19,14 @@ class SensorSwitchWidget extends StatefulWidget {
 class _SensorSwitchWidgetState extends State<SensorSwitchWidget> {
   bool isPaused = false;
 
-  _pause(UserAccelerometerState accelModel, GyroscopeState gyroModel,
+  _pause(AccelerometerState accelModel, GyroscopeState gyroModel,
       GpsState gpsModel) {
     accelModel.pause();
     gyroModel.pause();
     gpsModel.pause();
   }
 
-  _resume(UserAccelerometerState accelModel, GyroscopeState gyroModel,
+  _resume(AccelerometerState accelModel, GyroscopeState gyroModel,
       GpsState gpsModel) {
     accelModel.resume();
     gyroModel.resume();
@@ -35,7 +35,7 @@ class _SensorSwitchWidgetState extends State<SensorSwitchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final accelModel = context.read<UserAccelerometerState>();
+    final accelModel = context.read<AccelerometerState>();
     final gyroModel = context.read<GyroscopeState>();
     final gpsModel = context.read<GpsState>();
 

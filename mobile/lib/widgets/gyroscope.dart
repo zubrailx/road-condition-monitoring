@@ -5,6 +5,7 @@ import 'package:mobile/entities/gyroscope.dart';
 import 'package:mobile/state/chart.dart';
 import 'package:mobile/state/gyroscope.dart';
 import 'package:mobile/state/gyroscope_buffer.dart';
+import 'package:mobile/state/gyroscope_window.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -56,7 +57,7 @@ class _GyroscopeChartWidgetState extends State<GyroscopeChartWidget> {
   @override
   Widget build(BuildContext context) {
     final signal = context.watch<ChartState>();
-    final state = context.watch<GyroscopeBufferState>();
+    final state = context.read<GyroscopeWindowState>();
     return Container(
       height: 200,
       decoration: BoxDecoration(

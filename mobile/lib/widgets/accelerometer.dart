@@ -5,6 +5,7 @@ import 'package:mobile/app/theme.dart';
 import 'package:mobile/entities/accelerometer.dart';
 import 'package:mobile/state/accelerometer_buffer.dart';
 import 'package:mobile/state/accelerometer.dart';
+import 'package:mobile/state/accelerometer_window.dart';
 import 'package:mobile/state/chart.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -61,7 +62,7 @@ class _AccelerometerChartWidgetState extends State<AccelerometerChartWidget> {
   @override
   Widget build(BuildContext context) {
     final signal = context.watch<ChartState>();
-    final state = context.read<AccelerometerBufferState>();
+    final state = context.read<AccelerometerWindowState>();
     final data = state.records;
     return Container(
       height: 200,
@@ -119,7 +120,7 @@ class AccelerometerValuesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<UserAccelerometerState>();
+    final model = context.watch<AccelerometerState>();
 
     return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
       Row(children: [

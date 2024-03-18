@@ -8,12 +8,14 @@ import 'package:mobile/app/theme.dart';
 import 'package:mobile/gateway/shared_preferences.dart';
 import 'package:mobile/pages/logs_page.dart';
 import 'package:mobile/pages/root_page.dart';
+import 'package:mobile/state/accelerometer_window.dart';
 import 'package:mobile/state/chart.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:mobile/state/gyroscope.dart';
 import 'package:mobile/state/gyroscope_buffer.dart';
 import 'package:mobile/state/accelerometer.dart';
 import 'package:mobile/state/accelerometer_buffer.dart';
+import 'package:mobile/state/gyroscope_window.dart';
 import 'package:mobile/state/user_account.dart';
 import 'package:provider/provider.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -35,26 +37,42 @@ class App extends StatelessWidget {
     return MultiProvider(providers: [
       ChangeNotifierProvider(create: (_) => UserAccountState()),
       ChangeNotifierProvider(create: (_) => GpsState()),
-      ChangeNotifierProvider(create: (_) => UserAccelerometerState()),
+      ChangeNotifierProvider(create: (_) => AccelerometerState()),
       ChangeNotifierProvider(create: (_) => GyroscopeState()),
-      ChangeNotifierProxyProvider<UserAccelerometerState,
+      ChangeNotifierProxyProvider<AccelerometerState,
               AccelerometerBufferState>(
           create: (_) => AccelerometerBufferState(),
-          update: (_, model, historyModel) {
-            historyModel ??= AccelerometerBufferState();
-            historyModel.append(model.record);
-            return historyModel;
+          update: (_, state, bufferState) {
+            bufferState ??= AccelerometerBufferState();
+            bufferState.append(state.record);
+            return bufferState;
           },
           lazy: false),
       ChangeNotifierProxyProvider<GyroscopeState, GyroscopeBufferState>(
           create: (_) => GyroscopeBufferState(),
-          update: (_, model, historyModel) {
-            historyModel ??= GyroscopeBufferState();
-            historyModel.append(model.record);
-            return historyModel;
+          update: (_, state, bufferState) {
+            bufferState ??= GyroscopeBufferState();
+            bufferState.append(state.record);
+            return bufferState;
           },
           lazy: false),
       ChangeNotifierProvider(create: (_) => ChartState()),
+      ChangeNotifierProxyProvider<AccelerometerState, AccelerometerWindowState>(
+          create: (_) => AccelerometerWindowState(),
+          update: (_, state, windowState) {
+            windowState ??= AccelerometerWindowState();
+            windowState.append(state.record);
+            return windowState;
+          },
+          lazy: false),
+      ChangeNotifierProxyProvider<GyroscopeState, GyroscopeWindowState>(
+          create: (_) => GyroscopeWindowState(),
+          update: (_, state, windowState) {
+            windowState ??= GyroscopeWindowState();
+            windowState.append(state.record);
+            return windowState;
+          },
+          lazy: false),
     ], child: app);
   }
 }
