@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-class GpsModel with ChangeNotifier {
+class GpsState with ChangeNotifier {
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.high,
     distanceFilter: 100,
@@ -17,7 +17,7 @@ class GpsModel with ChangeNotifier {
   String? _error;
   Position? _position;
 
-  GpsModel() {
+  GpsState() {
     () async {
       await _trySubscribeGeolocation();
       if (hasError) {

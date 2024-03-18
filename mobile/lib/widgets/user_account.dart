@@ -29,7 +29,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
         accountId: _accountIdController.text,
         name: _accountNameController.text,
       );
-      context.read<UserAccountModel>().userAccount = account;
+      context.read<UserAccountState>().userAccount = account;
     }
   }
 
@@ -39,7 +39,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<UserAccountModel>();
+    final model = context.watch<UserAccountState>();
 
     _accountIdController.text = model.userAccount.accountId;
     _accountNameController.text = model.userAccount.name;

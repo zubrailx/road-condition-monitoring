@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/state/accelerometer_record.dart';
+import 'package:mobile/entities/accelerometer.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-class UserAccelerometerModel with ChangeNotifier {
+class UserAccelerometerState with ChangeNotifier {
   final Duration _ignoreDuration = const Duration(milliseconds: 20);
   UserAccelerometerEvent? _userAccelerometerEvent;
   DateTime? _userAccelerometerUpdateTime;
@@ -16,7 +16,7 @@ class UserAccelerometerModel with ChangeNotifier {
   StreamSubscription<UserAccelerometerEvent>? _streamSubscription;
   final Duration _sensorInterval = SensorInterval.uiInterval;
 
-  UserAccelerometerModel() {
+  UserAccelerometerState() {
     _subscribeStream();
   }
 

@@ -32,25 +32,25 @@ class App extends StatelessWidget {
     );
 
     return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (_) => UserAccountModel()),
-      ChangeNotifierProvider(create: (_) => GpsModel()),
-      ChangeNotifierProvider(create: (_) => UserAccelerometerModel()),
-      ChangeNotifierProvider(create: (_) => GyroscopeModel()),
-      ChangeNotifierProxyProvider<UserAccelerometerModel,
-              AccelerometerHistoryModel>(
-          create: (_) => AccelerometerHistoryModel(),
+      ChangeNotifierProvider(create: (_) => UserAccountState()),
+      ChangeNotifierProvider(create: (_) => GpsState()),
+      ChangeNotifierProvider(create: (_) => UserAccelerometerState()),
+      ChangeNotifierProvider(create: (_) => GyroscopeState()),
+      ChangeNotifierProxyProvider<UserAccelerometerState,
+              AccelerometerHistoryState>(
+          create: (_) => AccelerometerHistoryState(),
           update: (_, model, historyModel) {
-            historyModel ??= AccelerometerHistoryModel();
+            historyModel ??= AccelerometerHistoryState();
             historyModel.append(model.record);
             return historyModel;
           },
       lazy: false
       ),
-      ChangeNotifierProxyProvider<GyroscopeModel,
-          GyroscopeHistoryModel>(
-          create: (_) => GyroscopeHistoryModel(),
+      ChangeNotifierProxyProvider<GyroscopeState,
+          GyroscopeHistoryState>(
+          create: (_) => GyroscopeHistoryState(),
           update: (_, model, historyModel) {
-            historyModel ??= GyroscopeHistoryModel();
+            historyModel ??= GyroscopeHistoryState();
             historyModel.append(model.record);
             return historyModel;
           },

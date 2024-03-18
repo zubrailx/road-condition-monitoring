@@ -4,11 +4,11 @@ import 'package:mobile/entities/user_account.dart';
 import 'package:mobile/features/user_account.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-class UserAccountModel with ChangeNotifier {
+class UserAccountState with ChangeNotifier {
   UserAccount _userAccount = const UserAccount(accountId: "", name: "");
   bool _saved = false;
 
-  UserAccountModel() {
+  UserAccountState() {
     _init();
   }
 

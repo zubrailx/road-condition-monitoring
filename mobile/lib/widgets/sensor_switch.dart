@@ -19,15 +19,15 @@ class SensorSwitchWidget extends StatefulWidget {
 class _SensorSwitchWidgetState extends State<SensorSwitchWidget> {
   bool isPaused = false;
 
-  _pause(UserAccelerometerModel accelModel, GyroscopeModel gyroModel,
-      GpsModel gpsModel) {
+  _pause(UserAccelerometerState accelModel, GyroscopeState gyroModel,
+      GpsState gpsModel) {
     accelModel.pause();
     gyroModel.pause();
     gpsModel.pause();
   }
 
-  _resume(UserAccelerometerModel accelModel, GyroscopeModel gyroModel,
-      GpsModel gpsModel) {
+  _resume(UserAccelerometerState accelModel, GyroscopeState gyroModel,
+      GpsState gpsModel) {
     accelModel.resume();
     gyroModel.resume();
     gpsModel.resume();
@@ -35,9 +35,9 @@ class _SensorSwitchWidgetState extends State<SensorSwitchWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final accelModel = context.read<UserAccelerometerModel>();
-    final gyroModel = context.read<GyroscopeModel>();
-    final gpsModel = context.read<GpsModel>();
+    final accelModel = context.read<UserAccelerometerState>();
+    final gyroModel = context.read<GyroscopeState>();
+    final gpsModel = context.read<GpsState>();
 
     return IconButton(
         icon: isPaused

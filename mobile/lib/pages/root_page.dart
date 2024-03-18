@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mobile/widgets/logs.dart';
 import 'package:mobile/widgets/map.dart';
 import 'package:mobile/widgets/nav_bar.dart';
 import 'package:mobile/widgets/options.dart';
@@ -60,11 +59,11 @@ class _RootPageState extends State<RootPage>
       Expanded(
           child: TabBarView(
         controller: _tabController,
-        children: <Widget>[
-          const SensorsWidget(),
-          const MapWidget(),
+        children: const <Widget>[
+          SensorsWidget(),
+          MapWidget(),
           UserAccountWidget(),
-          const OptionsWidget()
+          OptionsWidget()
         ],
       ))
     ]));

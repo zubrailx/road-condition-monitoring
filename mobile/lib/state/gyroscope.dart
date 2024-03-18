@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mobile/state/gyroscope_record.dart';
+import 'package:mobile/entities/gyroscope.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-class GyroscopeModel with ChangeNotifier {
+class GyroscopeState with ChangeNotifier {
   final Duration _ignoreDuration = const Duration(milliseconds: 20);
   GyroscopeEvent? _gyroscopeEvent;
   DateTime? _gyroscopeUpdateTime;
@@ -16,7 +16,7 @@ class GyroscopeModel with ChangeNotifier {
   StreamSubscription<GyroscopeEvent>? _streamSubscription;
   final Duration _sensorInterval = SensorInterval.uiInterval;
 
-  GyroscopeModel() {
+  GyroscopeState() {
     _subscribeStream();
   }
 

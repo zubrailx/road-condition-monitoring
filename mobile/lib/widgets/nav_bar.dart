@@ -35,8 +35,8 @@ class NavBar extends StatelessWidget {
               direction: Axis.horizontal,
               spacing: 15,
               children: <Widget>[
-                SensorSwitchWidget(width: iconWidth),
-                NetworkSwitchWidget(width: iconWidth),
+                const SensorSwitchWidget(width: iconWidth),
+                const NetworkSwitchWidget(width: iconWidth),
                 IconButton(
                     icon: SvgPicture.asset("assets/svg/FileSearch.svg",
                         width: iconWidth),

@@ -6,7 +6,7 @@ class GPSWidget extends StatelessWidget {
   const GPSWidget({super.key});
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<GpsModel>();
+    final model = context.watch<GpsState>();
     final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

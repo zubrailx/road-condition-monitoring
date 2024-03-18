@@ -1,13 +1,13 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:mobile/state/accelerometer_record.dart';
+import 'package:mobile/entities/accelerometer.dart';
 
-class AccelerometerHistoryModel with ChangeNotifier {
+class AccelerometerHistoryState with ChangeNotifier {
   late final int maxLength;
   late final ListQueue<AccelerometerRecord> _records;
 
-  AccelerometerHistoryModel() {
+  AccelerometerHistoryState() {
     maxLength = 10000;
     _records = ListQueue(maxLength);
   }

@@ -16,6 +16,7 @@ dependencies:
   provider: ^6.1.2
   sensors_plus: ^4.0.2
   shared_preferences: ^2.2.2
+  syncfusion_flutter_charts: ^25.1.35
   talker_flutter: ^4.0.3
   uuid: ^4.3.3
 

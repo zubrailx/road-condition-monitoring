@@ -44,7 +44,7 @@ class AccelerometerValuesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<UserAccelerometerModel>();
+    final model = context.watch<UserAccelerometerState>();
 
     return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
       Row(children: [

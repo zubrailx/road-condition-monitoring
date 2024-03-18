@@ -44,7 +44,7 @@ class GyroscopeValuesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<GyroscopeModel>();
+    final model = context.watch<GyroscopeState>();
 
     return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
       Row(children: [
