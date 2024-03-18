@@ -56,6 +56,7 @@ class AccelerometerChartWidget extends StatefulWidget {
 
 class _AccelerometerChartWidgetState extends State<AccelerometerChartWidget> {
   final double animationDuration = 0;
+  final double width = 1.5;
 
   @override
   Widget build(BuildContext context) {
@@ -72,18 +73,21 @@ class _AccelerometerChartWidgetState extends State<AccelerometerChartWidget> {
           series: <FastLineSeries<AccelerometerData, DateTime>>[
             FastLineSeries<AccelerometerData, DateTime>(
                 dataSource: data,
+                width: width,
                 animationDuration: animationDuration,
                 color: widget.xColor,
                 xValueMapper: (AccelerometerData data, _) => data.time,
                 yValueMapper: (AccelerometerData data, _) => data.x),
             FastLineSeries<AccelerometerData, DateTime>(
                 dataSource: data,
+                width: width,
                 animationDuration: animationDuration,
                 color: widget.yColor,
                 xValueMapper: (AccelerometerData data, _) => data.time,
                 yValueMapper: (AccelerometerData data, _) => data.y),
             FastLineSeries<AccelerometerData, DateTime>(
                 dataSource: data,
+                width: width,
                 animationDuration: animationDuration,
                 color: widget.zColor,
                 xValueMapper: (AccelerometerData data, _) => data.time,

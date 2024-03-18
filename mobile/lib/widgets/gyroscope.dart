@@ -51,6 +51,7 @@ class GyroscopeChartWidget extends StatefulWidget {
 
 class _GyroscopeChartWidgetState extends State<GyroscopeChartWidget> {
   final double animationDuration = 0;
+  final double width = 1.5;
 
   @override
   Widget build(BuildContext context) {
@@ -65,18 +66,21 @@ class _GyroscopeChartWidgetState extends State<GyroscopeChartWidget> {
           primaryXAxis: const DateTimeAxis(),
           series: <FastLineSeries<GyroscopeData, DateTime>>[
             FastLineSeries<GyroscopeData, DateTime>(
+                width: width,
                 dataSource: state.records,
                 animationDuration: animationDuration,
                 color: widget.xColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
                 yValueMapper: (GyroscopeData data, _) => data.x),
             FastLineSeries<GyroscopeData, DateTime>(
+                width: width,
                 dataSource: state.records,
                 animationDuration: animationDuration,
                 color: widget.yColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
                 yValueMapper: (GyroscopeData data, _) => data.y),
             FastLineSeries<GyroscopeData, DateTime>(
+                width: width,
                 dataSource: state.records,
                 animationDuration: animationDuration,
                 color: widget.zColor,
