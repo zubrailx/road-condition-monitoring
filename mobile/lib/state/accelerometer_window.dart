@@ -6,7 +6,7 @@ class AccelerometerWindowState with ChangeNotifier {
   late final List<AccelerometerData> _records;
 
   AccelerometerWindowState() {
-    _duration = const Duration(seconds: 60);
+    _duration = const Duration(seconds: 30);
     _records = <AccelerometerData>[];
   }
 

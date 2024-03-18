@@ -6,7 +6,7 @@ class GyroscopeWindowState with ChangeNotifier {
   late final List<GyroscopeData> _records;
 
   GyroscopeWindowState() {
-    _duration = const Duration(seconds: 60);
+    _duration = const Duration(seconds: 30);
     _records = <GyroscopeData>[];
   }
 
