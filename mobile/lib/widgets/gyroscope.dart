@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/entities/gyroscope.dart';
 import 'package:mobile/state/gyroscope.dart';
+import 'package:mobile/state/gyroscope_history.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -42,60 +43,30 @@ class GyroscopeChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final time = DateTime.timestamp();
-    final data = <GyroscopeData>[
-      GyroscopeData(
-          time: time.add(Duration(seconds: 1)), x: 0, y: 0.2, z: -0.2, ms: 20),
-      GyroscopeData(
-          time: time.add(Duration(seconds: 2)),
-          x: 0.3,
-          y: -0.2,
-          z: -0.5,
-          ms: 20),
-      GyroscopeData(
-          time: time.add(Duration(seconds: 3)),
-          x: 0.1,
-          y: 0.5,
-          z: -0.3,
-          ms: 20),
-      GyroscopeData(
-          time: time.add(Duration(seconds: 6)),
-          x: 0.5,
-          y: 0.6,
-          z: -0.7,
-          ms: 20),
-      GyroscopeData(
-          time: time.add(Duration(seconds: 7)),
-          x: -0.2,
-          y: 0.8,
-          z: -0.4,
-          ms: 20),
-      GyroscopeData(
-          time: time.add(Duration(seconds: 9)), x: 0.4, y: 2, z: 1, ms: 20),
-    ];
+    final state = context.watch<GyroscopeHistoryState>();
     return Container(
       height: 200,
       decoration: BoxDecoration(
         color: UsedColors.gray.value,
       ),
       child: SfCartesianChart(
-          primaryXAxis: DateTimeAxis(),
-          series: <LineSeries<GyroscopeData, DateTime>>[
-            LineSeries<GyroscopeData, DateTime>(
-                dataSource: data,
+          primaryXAxis: const DateTimeAxis(),
+          series: <FastLineSeries<GyroscopeData, DateTime>>[
+            FastLineSeries<GyroscopeData, DateTime>(
+                dataSource: state.records,
                 animationDuration: 0,
                 color: xColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
                 yValueMapper: (GyroscopeData data, _) => data.x),
-            LineSeries<GyroscopeData, DateTime>(
-                dataSource: data,
+            FastLineSeries<GyroscopeData, DateTime>(
+                dataSource: state.records,
                 animationDuration: 0,
                 color: yColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
                 yValueMapper: (GyroscopeData data, _) => data.y),
-            LineSeries<GyroscopeData, DateTime>(
+            FastLineSeries<GyroscopeData, DateTime>(
                 // Bind data source
-                dataSource: data,
+                dataSource: state.records,
                 animationDuration: 0,
                 color: zColor,
                 xValueMapper: (GyroscopeData data, _) => data.time,
