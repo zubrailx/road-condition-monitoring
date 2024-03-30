@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/gyroscope.dart';
+import 'package:mobile/features/stream.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -46,12 +48,12 @@ class GyroscopeState with ChangeNotifier {
     );
   }
 
-  void pause() {
-    _streamSubscription?.pause();
-  }
-
-  void resume() {
-    _streamSubscription?.resume();
+  updateConfiguration(ConfigurationData? configurationData) {
+    if (configurationData == null || configurationData.sensorsEnabled) {
+      resume(_streamSubscription);
+    } else {
+      pause(_streamSubscription);
+    }
   }
 
   @override

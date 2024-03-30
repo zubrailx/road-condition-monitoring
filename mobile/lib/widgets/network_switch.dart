@@ -1,35 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/state/configuration.dart';
+import 'package:provider/provider.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-class NetworkSwitchWidget extends StatefulWidget {
+class NetworkSwitchWidget extends StatelessWidget {
   const NetworkSwitchWidget({super.key, required this.width});
 
   final double width;
 
   @override
-  State createState() {
-    return _NetworkSwitchWidgetState();
-  }
-}
-
-class _NetworkSwitchWidgetState extends State<NetworkSwitchWidget> {
-  bool isPaused = false;
-
-  @override
   Widget build(BuildContext context) {
+    var configuration = context.watch<ConfigurationState>();
+    var isEnabled = configuration.configurationData?.networkEnabled ?? true;
     return IconButton(
-        icon: isPaused
-            ? SvgPicture.asset("assets/svg/NetworkClose.svg",
-                width: widget.width)
-            : SvgPicture.asset("assets/svg/NetworkUpload.svg",
-                width: widget.width),
+        icon: isEnabled
+            ? SvgPicture.asset("assets/svg/NetworkUpload.svg", width: width)
+            : SvgPicture.asset("assets/svg/NetworkClose.svg", width: width),
         onPressed: () {
-          GetIt.I<Talker>().warning("networking has not been implemented yet");
-          setState(() {
-            isPaused = !isPaused;
-          });
+          configuration.setNetworkEnabled(!isEnabled);
         });
   }
 }

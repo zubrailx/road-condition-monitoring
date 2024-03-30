@@ -1,57 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:mobile/state/gps.dart';
-import 'package:mobile/state/gyroscope.dart';
-import 'package:mobile/state/accelerometer.dart';
+import 'package:mobile/state/configuration.dart';
 import 'package:provider/provider.dart';
 
-class SensorSwitchWidget extends StatefulWidget {
+class SensorSwitchWidget extends StatelessWidget {
   const SensorSwitchWidget({super.key, required this.width});
 
   final double width;
 
   @override
-  State createState() {
-    return _SensorSwitchWidgetState();
-  }
-}
-
-class _SensorSwitchWidgetState extends State<SensorSwitchWidget> {
-  bool isPaused = false;
-
-  _pause(AccelerometerState accelModel, GyroscopeState gyroModel,
-      GpsState gpsModel) {
-    accelModel.pause();
-    gyroModel.pause();
-    gpsModel.pause();
-  }
-
-  _resume(AccelerometerState accelModel, GyroscopeState gyroModel,
-      GpsState gpsModel) {
-    accelModel.resume();
-    gyroModel.resume();
-    gpsModel.resume();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final accelModel = context.read<AccelerometerState>();
-    final gyroModel = context.read<GyroscopeState>();
-    final gpsModel = context.read<GpsState>();
-
+    var configuration = context.watch<ConfigurationState>();
+    var isEnabled = configuration.configurationData?.sensorsEnabled ?? true;
     return IconButton(
-        icon: isPaused
-            ? SvgPicture.asset("assets/svg/Pause.svg", width: widget.width)
-            : SvgPicture.asset("assets/svg/Play.svg", width: widget.width),
+        icon: isEnabled
+            ? SvgPicture.asset("assets/svg/Play.svg", width: width)
+            : SvgPicture.asset("assets/svg/Pause.svg", width: width),
         onPressed: () {
-          if (isPaused) {
-            _resume(accelModel, gyroModel, gpsModel);
-          } else {
-            _pause(accelModel, gyroModel, gpsModel);
-          }
-          setState(() {
-            isPaused = !isPaused;
-          });
+          configuration.setSensorsEnabled(!isEnabled);
         });
   }
 }

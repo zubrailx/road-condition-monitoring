@@ -51,16 +51,30 @@ class ConfigurationState with ChangeNotifier {
 
   Configuration get configuration => _configuration;
 
+  ConfigurationData? get configurationData {
+    if (configuration.runtimeType == ConfigurationLoaded) {
+      return (configuration as ConfigurationLoaded).configuration;
+    }
+    return null;
+  }
+
   setConfiguration(ConfigurationData configuration) {
     _configuration = ConfigurationLoaded(configuration: configuration);
     _save();
   }
 
   setUserAccount(UserAccountData userAccountData) {
-    if (_configuration.runtimeType == ConfigurationLoaded) {
-      (_configuration as ConfigurationLoaded).configuration.userAccountData =
-          userAccountData;
-      _save();
-    }
+    configurationData?.userAccountData = userAccountData;
+    _save();
+  }
+
+  setSensorsEnabled(bool value) {
+    configurationData?.sensorsEnabled = value;
+    _save();
+  }
+
+  setNetworkEnabled(bool value) {
+    configurationData?.networkEnabled = value;
+    _save();
   }
 }

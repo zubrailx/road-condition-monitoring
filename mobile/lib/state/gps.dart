@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/gps.dart';
+import 'package:mobile/features/stream.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class GpsState with ChangeNotifier {
@@ -14,7 +16,7 @@ class GpsState with ChangeNotifier {
 
   late bool _serviceEnabled;
   late LocationPermission _permission;
-  late final StreamSubscription<Position> _streamSubscription;
+  StreamSubscription<Position>? _streamSubscription;
   String? _error;
   Position? _position;
   DateTime? _gyroscopeUpdateTime;
@@ -41,7 +43,7 @@ class GpsState with ChangeNotifier {
 
   String? get error => _error;
 
-  bool get isPaused => _streamSubscription.isPaused;
+  bool? get isPaused => _streamSubscription?.isPaused;
 
   int? get lastInterval => _gyroscopeLastInterval;
 
@@ -49,25 +51,25 @@ class GpsState with ChangeNotifier {
 
   _buildRecord() {
     return GpsData(
-      time: _gyroscopeUpdateTime,
-      latitude: position?.latitude,
-      longitude: position?.longitude,
-      accuracy: position?.accuracy,
-      ms: _gyroscopeLastInterval);
+        time: _gyroscopeUpdateTime,
+        latitude: position?.latitude,
+        longitude: position?.longitude,
+        accuracy: position?.accuracy,
+        ms: _gyroscopeLastInterval);
   }
 
-  void pause() {
-    _streamSubscription.pause();
-  }
-
-  void resume() {
-    _streamSubscription.resume();
+  updateConfiguration(ConfigurationData? configurationData) {
+    if (configurationData == null || configurationData.sensorsEnabled) {
+      resume(_streamSubscription);
+    } else {
+      pause(_streamSubscription);
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
-    _streamSubscription.cancel();
+    _streamSubscription?.cancel();
   }
 
   _trySubscribeGeolocation() async {

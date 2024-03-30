@@ -37,9 +37,30 @@ class App extends StatelessWidget {
       // Configuration
       ChangeNotifierProvider(create: (_) => ConfigurationState()),
       // Sensors
-      ChangeNotifierProvider(create: (_) => GpsState()),
-      ChangeNotifierProvider(create: (_) => AccelerometerState()),
-      ChangeNotifierProvider(create: (_) => GyroscopeState()),
+      ChangeNotifierProxyProvider<ConfigurationState, GpsState>(
+        create: (_) => GpsState(),
+        update: (_, ConfigurationState value, GpsState? previous) {
+          previous ??= GpsState();
+          previous.updateConfiguration(value.configurationData);
+          return previous;
+        },
+      ),
+      ChangeNotifierProxyProvider<ConfigurationState, AccelerometerState>(
+        create: (_) => AccelerometerState(),
+        update: (_, value, AccelerometerState? previous) {
+          previous ??= AccelerometerState();
+          previous.updateConfiguration(value.configurationData);
+          return previous;
+        },
+      ),
+      ChangeNotifierProxyProvider<ConfigurationState, GyroscopeState>(
+        create: (_) => GyroscopeState(),
+        update: (_, value, GyroscopeState? previous) {
+          previous ??= GyroscopeState();
+          previous.updateConfiguration(value.configurationData);
+          return previous;
+        },
+      ),
       // Chart
       ChangeNotifierProxyProvider<AccelerometerState, AccelerometerWindowState>(
           create: (_) => AccelerometerWindowState(),
@@ -57,15 +78,18 @@ class App extends StatelessWidget {
           }),
       ChangeNotifierProvider(create: (_) => ChartState()),
       // Sensor Translation
-      ChangeNotifierProxyProvider3<AccelerometerState, GyroscopeState, GpsState, SensorTransmitter>(
-          create: (_) => SensorTransmitter(),
-          update: (_, accelerometerState, gyroscopeState, gpsState, transmitter) {
-            transmitter ??= SensorTransmitter();
-            transmitter.appendAccelerometer(accelerometerState.record);
-            transmitter.appendGyroscope(gyroscopeState.record);
-            transmitter.appendGps(gpsState.record);
-            return transmitter;
-          }, lazy: false,),
+      ChangeNotifierProxyProvider3<AccelerometerState, GyroscopeState, GpsState,
+          SensorTransmitter>(
+        create: (_) => SensorTransmitter(),
+        update: (_, accelerometerState, gyroscopeState, gpsState, transmitter) {
+          transmitter ??= SensorTransmitter();
+          transmitter.appendAccelerometer(accelerometerState.record);
+          transmitter.appendGyroscope(gyroscopeState.record);
+          transmitter.appendGps(gpsState.record);
+          return transmitter;
+        },
+        lazy: false,
+      ),
     ], child: app);
   }
 }

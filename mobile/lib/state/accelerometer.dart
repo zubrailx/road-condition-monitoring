@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/entities/accelerometer.dart';
+import 'package:mobile/entities/configuration.dart';
+import 'package:mobile/features/stream.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -31,21 +33,21 @@ class AccelerometerState with ChangeNotifier {
   AccelerometerData get record => _record;
 
   AccelerometerData _buildRecord() {
-     return AccelerometerData(
-        time: _userAccelerometerUpdateTime,
-        x: _userAccelerometerEvent?.x,
-        y: _userAccelerometerEvent?.y,
-        z: _userAccelerometerEvent?.z,
-        ms: _userAccelerometerLastInterval,
-     );
+    return AccelerometerData(
+      time: _userAccelerometerUpdateTime,
+      x: _userAccelerometerEvent?.x,
+      y: _userAccelerometerEvent?.y,
+      z: _userAccelerometerEvent?.z,
+      ms: _userAccelerometerLastInterval,
+    );
   }
 
-  void pause() {
-    _streamSubscription?.pause();
-  }
-
-  void resume() {
-    _streamSubscription?.resume();
+  updateConfiguration(ConfigurationData? configurationData) {
+    if (configurationData == null || configurationData.sensorsEnabled) {
+      resume(_streamSubscription);
+    } else {
+      pause(_streamSubscription);
+    }
   }
 
   @override

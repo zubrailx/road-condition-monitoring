@@ -25,11 +25,13 @@ class SensorTransmitter extends ChangeNotifier {
   }
 
   void appendAccelerometer(AccelerometerData record) {
-    if (_accelerometerRecords.isNotEmpty && record == _accelerometerRecords.last) {
+    if (_accelerometerRecords.isNotEmpty &&
+        record == _accelerometerRecords.last) {
       return;
     }
     _accelerometerRecords.add(record);
-    GetIt.I<Talker>().info('${_accelerometerRecords.length},${_gyroscopeRecords.length},${_gpsRecords.length}');
+    GetIt.I<Talker>().info(
+        '${_accelerometerRecords.length},${_gyroscopeRecords.length},${_gpsRecords.length}');
   }
 
   void appendGyroscope(GyroscopeData record) {
