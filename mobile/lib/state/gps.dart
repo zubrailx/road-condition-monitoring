@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mobile/entities/gps.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class GpsState with ChangeNotifier {
@@ -16,8 +17,12 @@ class GpsState with ChangeNotifier {
   late final StreamSubscription<Position> _streamSubscription;
   String? _error;
   Position? _position;
+  DateTime? _gyroscopeUpdateTime;
+  int? _gyroscopeLastInterval;
+  late GpsData _record;
 
   GpsState() {
+    _record = _buildRecord();
     () async {
       await _trySubscribeGeolocation();
       if (hasError) {
@@ -27,11 +32,29 @@ class GpsState with ChangeNotifier {
   }
 
   bool get serviceEnabled => _serviceEnabled;
+
   LocationPermission get permission => _permission;
+
   Position? get position => _position;
+
   bool get hasError => error != null;
+
   String? get error => _error;
+
   bool get isPaused => _streamSubscription.isPaused;
+
+  int? get lastInterval => _gyroscopeLastInterval;
+
+  GpsData get record => _record;
+
+  _buildRecord() {
+    return GpsData(
+      time: _gyroscopeUpdateTime,
+      latitude: position?.latitude,
+      longitude: position?.longitude,
+      accuracy: position?.accuracy,
+      ms: _gyroscopeLastInterval);
+  }
 
   void pause() {
     _streamSubscription.pause();
@@ -75,7 +98,13 @@ class GpsState with ChangeNotifier {
     _streamSubscription =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position? position) {
+      final now = DateTime.now();
       _position = position;
+      if (_gyroscopeUpdateTime != null) {
+        final interval = now.difference(_gyroscopeUpdateTime!);
+        _gyroscopeLastInterval = interval.inMilliseconds;
+      }
+      _gyroscopeUpdateTime = now;
       notifyListeners();
     });
   }

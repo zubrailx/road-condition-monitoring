@@ -1,16 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/entities/gyroscope.dart';
 import 'package:mobile/state/chart.dart';
 import 'package:mobile/state/gyroscope.dart';
-import 'package:mobile/state/gyroscope_buffer.dart';
 import 'package:mobile/state/gyroscope_window.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class GyroscopeWidget extends StatelessWidget {
+typedef OnChangeT = void Function(bool?);
+
+class GyroscopeWidget extends StatefulWidget {
+  static const xColor = Colors.red;
+  static const yColor = Colors.green;
+  static const zColor = Colors.blue;
+
   const GyroscopeWidget({super.key});
+
+  @override
+  State createState() {
+    return _GyroscopeWidgetState();
+  }
+}
+
+class _GyroscopeWidgetState extends State<GyroscopeWidget> {
+  bool xEnabled = true;
+  bool yEnabled = true;
+  bool zEnabled = true;
+
+  _xOnChange(_) {
+    setState(() {
+      xEnabled = !xEnabled;
+    });
+  }
+
+  _yOnChange(_) {
+    setState(() {
+      yEnabled = !yEnabled;
+    });
+  }
+
+  _zOnChange(_) {
+    setState(() {
+      zEnabled = !zEnabled;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +56,16 @@ class GyroscopeWidget extends StatelessWidget {
           child: Text("Gyroscope", style: theme.textTheme.titleMedium),
         ),
         const SizedBox(height: 10),
-        const GyroscopeChartWidget(),
+        GyroscopeChartWidget(
+            xEnabled: xEnabled, yEnabled: yEnabled, zEnabled: zEnabled),
         const SizedBox(height: 5),
-        const GyroscopeValuesWidget(),
+        GyroscopeValuesWidget(
+            xEnabled: xEnabled,
+            yEnabled: yEnabled,
+            zEnabled: zEnabled,
+            xOnChange: _xOnChange,
+            yOnChange: _yOnChange,
+            zOnChange: _zOnChange),
       ],
     );
   }
@@ -37,18 +77,23 @@ class GyroscopeChartWidget extends StatefulWidget {
     this.xColor = Colors.red,
     this.yColor = Colors.green,
     this.zColor = Colors.blue,
+    this.xEnabled = true,
+    this.yEnabled = true,
+    this.zEnabled = true,
   });
 
   final Color xColor;
   final Color yColor;
   final Color zColor;
+  final bool xEnabled;
+  final bool yEnabled;
+  final bool zEnabled;
 
   @override
   State<StatefulWidget> createState() {
     return _GyroscopeChartWidgetState();
   }
 }
-
 
 class _GyroscopeChartWidgetState extends State<GyroscopeChartWidget> {
   final double animationDuration = 0;
@@ -58,36 +103,46 @@ class _GyroscopeChartWidgetState extends State<GyroscopeChartWidget> {
   Widget build(BuildContext context) {
     final signal = context.watch<ChartState>();
     final state = context.read<GyroscopeWindowState>();
+    final data = state.records;
+
+    final series = <CartesianSeries<dynamic, dynamic>>[];
+    if (widget.xEnabled) {
+      series.add(FastLineSeries<GyroscopeData, DateTime>(
+          dataSource: data,
+          width: width,
+          animationDuration: animationDuration,
+          color: widget.xColor,
+          xValueMapper: (GyroscopeData data, _) => data.time,
+          yValueMapper: (GyroscopeData data, _) => data.x));
+    }
+
+    if (widget.yEnabled) {
+      series.add(FastLineSeries<GyroscopeData, DateTime>(
+          dataSource: data,
+          width: width,
+          animationDuration: animationDuration,
+          color: widget.yColor,
+          xValueMapper: (GyroscopeData data, _) => data.time,
+          yValueMapper: (GyroscopeData data, _) => data.y));
+    }
+
+    if (widget.zEnabled) {
+      series.add(FastLineSeries<GyroscopeData, DateTime>(
+          dataSource: data,
+          width: width,
+          animationDuration: animationDuration,
+          color: widget.zColor,
+          xValueMapper: (GyroscopeData data, _) => data.time,
+          yValueMapper: (GyroscopeData data, _) => data.z));
+    }
+
     return Container(
       height: 200,
       decoration: BoxDecoration(
         color: UsedColors.gray.value,
       ),
-      child: SfCartesianChart(
-          primaryXAxis: const DateTimeAxis(),
-          series: <FastLineSeries<GyroscopeData, DateTime>>[
-            FastLineSeries<GyroscopeData, DateTime>(
-                width: width,
-                dataSource: state.records,
-                animationDuration: animationDuration,
-                color: widget.xColor,
-                xValueMapper: (GyroscopeData data, _) => data.time,
-                yValueMapper: (GyroscopeData data, _) => data.x),
-            FastLineSeries<GyroscopeData, DateTime>(
-                width: width,
-                dataSource: state.records,
-                animationDuration: animationDuration,
-                color: widget.yColor,
-                xValueMapper: (GyroscopeData data, _) => data.time,
-                yValueMapper: (GyroscopeData data, _) => data.y),
-            FastLineSeries<GyroscopeData, DateTime>(
-                width: width,
-                dataSource: state.records,
-                animationDuration: animationDuration,
-                color: widget.zColor,
-                xValueMapper: (GyroscopeData data, _) => data.time,
-                yValueMapper: (GyroscopeData data, _) => data.z),
-          ]),
+      child:
+          SfCartesianChart(primaryXAxis: const DateTimeAxis(), series: series),
     );
   }
 }
@@ -98,11 +153,23 @@ class GyroscopeValuesWidget extends StatelessWidget {
     this.xColor = Colors.red,
     this.yColor = Colors.green,
     this.zColor = Colors.blue,
+    required this.xEnabled,
+    required this.yEnabled,
+    required this.zEnabled,
+    required this.xOnChange,
+    required this.yOnChange,
+    required this.zOnChange,
   });
 
   final Color xColor;
   final Color yColor;
   final Color zColor;
+  final bool xEnabled;
+  final bool yEnabled;
+  final bool zEnabled;
+  final OnChangeT xOnChange;
+  final OnChangeT yOnChange;
+  final OnChangeT zOnChange;
 
   String? _valueFormat(double? v) {
     return v?.toStringAsFixed(2).padRight(8, ' ');
@@ -118,25 +185,40 @@ class GyroscopeValuesWidget extends StatelessWidget {
 
     return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
       Row(children: [
-        SvgPicture.asset("assets/svg/Line.svg",
-            width: 16, colorFilter: ColorFilter.mode(xColor, BlendMode.srcIn)),
-        const SizedBox(width: 5),
+        SizedBox(
+            width: 32,
+            height: 32,
+            child: Checkbox(
+              activeColor: xColor,
+              value: xEnabled,
+              onChanged: xOnChange,
+            )),
         const Text("X:"),
         const SizedBox(width: 5),
         Text(_valueFormat(model.event?.x) ?? '?'),
       ]),
       Row(children: [
-        SvgPicture.asset("assets/svg/Line.svg",
-            width: 16, colorFilter: ColorFilter.mode(yColor, BlendMode.srcIn)),
-        const SizedBox(width: 5),
+        SizedBox(
+            width: 32,
+            height: 32,
+            child: Checkbox(
+              activeColor: yColor,
+              value: yEnabled,
+              onChanged: yOnChange,
+            )),
         const Text("Y:"),
         const SizedBox(width: 5),
         Text(_valueFormat(model.event?.y) ?? '?'),
       ]),
       Row(children: [
-        SvgPicture.asset("assets/svg/Line.svg",
-            width: 16, colorFilter: ColorFilter.mode(zColor, BlendMode.srcIn)),
-        const SizedBox(width: 5),
+        SizedBox(
+            width: 32,
+            height: 32,
+            child: Checkbox(
+              activeColor: zColor,
+              value: zEnabled,
+              onChanged: zOnChange,
+            )),
         const Text("Z:"),
         const SizedBox(width: 5),
         Text(_valueFormat(model.event?.z) ?? '?'),

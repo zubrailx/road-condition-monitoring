@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 class GPSWidget extends StatelessWidget {
   const GPSWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final model = context.watch<GpsState>();

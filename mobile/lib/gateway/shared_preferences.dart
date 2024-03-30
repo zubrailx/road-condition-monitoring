@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:mobile/entities/user_account.dart';
+import 'package:mobile/entities/configuration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum SharedPrefKeys {
-  userAccount('user_account');
+  configuration('configuration');
 
   const SharedPrefKeys(this.k);
 
@@ -21,13 +21,13 @@ class SharedPrefGateway {
 
   final SharedPreferences _prefs;
 
-  Future<UserAccountData?> getUserAccount() async {
-    final data = _prefs.getString(SharedPrefKeys.userAccount.k);
-    return data != null ? UserAccountData.fromJson(jsonDecode(data)) : null;
+  Future<ConfigurationData?> getConfiguration() async {
+    final data = _prefs.getString(SharedPrefKeys.configuration.k);
+    return data != null ? ConfigurationData.fromJson(jsonDecode(data)) : null;
   }
 
-  Future<bool> setUserAccount(UserAccountData account) async {
-    final data = jsonEncode(account);
-    return _prefs.setString(SharedPrefKeys.userAccount.k, data);
+  Future<bool> setConfiguration(ConfigurationData configuration) async {
+    final data = jsonEncode(configuration);
+    return _prefs.setString(SharedPrefKeys.configuration.k, data);
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/entities/user_account.dart';
+import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/features/util.dart';
-import 'package:mobile/state/user_account.dart';
+import 'package:mobile/state/configuration.dart';
+import 'package:mobile/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
 class UserAccountWidget extends StatefulWidget {
@@ -29,7 +30,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
         accountId: _accountIdController.text,
         name: _accountNameController.text,
       );
-      context.read<UserAccountState>().userAccount = account;
+      context.read<ConfigurationState>().setUserAccount(account);
     }
   }
 
@@ -39,44 +40,49 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final model = context.watch<UserAccountState>();
+    final model = context.watch<ConfigurationState>();
 
-    _accountIdController.text = model.userAccount.accountId;
-    _accountNameController.text = model.userAccount.name;
+    if (model.configuration.runtimeType == ConfigurationLoaded) {
+      var configuration =
+          (model.configuration as ConfigurationLoaded).configuration;
+      _accountIdController.text = configuration.userAccountData.accountId;
+      _accountNameController.text = configuration.userAccountData.name;
 
-    return Container(
-      margin: const EdgeInsets.only(left: 20, right: 20, top: 16),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              controller: _accountIdController,
-              decoration: const InputDecoration(labelText: 'Account ID'),
-              validator: _buttonValidator,
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _accountNameController,
-              decoration: const InputDecoration(labelText: 'Account Name'),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: _generateOnPressed,
-                    child: const Text('Generate ID')),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                    onPressed: () => _saveButtonOnPressed(context),
-                    child: const Text('Save')),
-              ],
-            ),
-          ],
+      return Container(
+        margin: const EdgeInsets.only(left: 20, right: 20, top: 16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                controller: _accountIdController,
+                decoration: const InputDecoration(labelText: 'Account ID'),
+                validator: _buttonValidator,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _accountNameController,
+                decoration: const InputDecoration(labelText: 'Account Name'),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      onPressed: _generateOnPressed,
+                      child: const Text('Generate ID')),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                      onPressed: () => _saveButtonOnPressed(context),
+                      child: const Text('Save')),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
+    return const LoadingWidget();
   }
 
   @override

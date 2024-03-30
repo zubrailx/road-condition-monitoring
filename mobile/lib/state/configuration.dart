@@ -1,0 +1,66 @@
+import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mobile/entities/configuration.dart';
+import 'package:mobile/features/configuration.dart';
+import 'package:talker_flutter/talker_flutter.dart';
+
+abstract class Configuration {
+  const Configuration();
+}
+
+class ConfigurationLoading extends Configuration {
+  const ConfigurationLoading();
+}
+
+class ConfigurationLoaded extends Configuration {
+  final ConfigurationData configuration;
+
+  const ConfigurationLoaded({required this.configuration});
+}
+
+class ConfigurationState with ChangeNotifier {
+  late Configuration _configuration;
+  bool _saved = false;
+
+  ConfigurationState() {
+    _configuration = const ConfigurationLoading();
+    _init();
+  }
+
+  void _init() async {
+    _configuration =
+        ConfigurationLoaded(configuration: await getConfiguration());
+    GetIt.I<Talker>().info("Configuration loaded.");
+    notifyListeners();
+  }
+
+  _save() async {
+    if (_configuration.runtimeType == ConfigurationLoaded) {
+      _saved = await saveConfiguration(
+          (_configuration as ConfigurationLoaded).configuration);
+      if (_saved) {
+        GetIt.I<Talker>().info("Configuration saved.");
+      } else {
+        GetIt.I<Talker>().error("Configuration is not saved.");
+      }
+      notifyListeners();
+    }
+  }
+
+  bool get saved => _saved;
+
+  Configuration get configuration => _configuration;
+
+  setConfiguration(ConfigurationData configuration) {
+    _configuration = ConfigurationLoaded(configuration: configuration);
+    _save();
+  }
+
+  setUserAccount(UserAccountData userAccountData) {
+    if (_configuration.runtimeType == ConfigurationLoaded) {
+      (_configuration as ConfigurationLoaded).configuration.userAccountData =
+          userAccountData;
+      _save();
+    }
+  }
+}

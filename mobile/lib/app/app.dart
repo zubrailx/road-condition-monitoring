@@ -12,11 +12,10 @@ import 'package:mobile/state/accelerometer_window.dart';
 import 'package:mobile/state/chart.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:mobile/state/gyroscope.dart';
-import 'package:mobile/state/gyroscope_buffer.dart';
 import 'package:mobile/state/accelerometer.dart';
-import 'package:mobile/state/accelerometer_buffer.dart';
+import 'package:mobile/state/sensor_transmitter.dart';
 import 'package:mobile/state/gyroscope_window.dart';
-import 'package:mobile/state/user_account.dart';
+import 'package:mobile/state/configuration.dart';
 import 'package:provider/provider.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -35,44 +34,38 @@ class App extends StatelessWidget {
     );
 
     return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (_) => UserAccountState()),
+      // Configuration
+      ChangeNotifierProvider(create: (_) => ConfigurationState()),
+      // Sensors
       ChangeNotifierProvider(create: (_) => GpsState()),
       ChangeNotifierProvider(create: (_) => AccelerometerState()),
       ChangeNotifierProvider(create: (_) => GyroscopeState()),
-      ChangeNotifierProxyProvider<AccelerometerState,
-              AccelerometerBufferState>(
-          create: (_) => AccelerometerBufferState(),
-          update: (_, state, bufferState) {
-            bufferState ??= AccelerometerBufferState();
-            bufferState.append(state.record);
-            return bufferState;
-          },
-          lazy: false),
-      ChangeNotifierProxyProvider<GyroscopeState, GyroscopeBufferState>(
-          create: (_) => GyroscopeBufferState(),
-          update: (_, state, bufferState) {
-            bufferState ??= GyroscopeBufferState();
-            bufferState.append(state.record);
-            return bufferState;
-          },
-          lazy: false),
-      ChangeNotifierProvider(create: (_) => ChartState()),
+      // Chart
       ChangeNotifierProxyProvider<AccelerometerState, AccelerometerWindowState>(
           create: (_) => AccelerometerWindowState(),
           update: (_, state, windowState) {
             windowState ??= AccelerometerWindowState();
             windowState.append(state.record);
             return windowState;
-          },
-          lazy: false),
+          }),
       ChangeNotifierProxyProvider<GyroscopeState, GyroscopeWindowState>(
           create: (_) => GyroscopeWindowState(),
           update: (_, state, windowState) {
             windowState ??= GyroscopeWindowState();
             windowState.append(state.record);
             return windowState;
-          },
-          lazy: false),
+          }),
+      ChangeNotifierProvider(create: (_) => ChartState()),
+      // Sensor Translation
+      ChangeNotifierProxyProvider3<AccelerometerState, GyroscopeState, GpsState, SensorTransmitter>(
+          create: (_) => SensorTransmitter(),
+          update: (_, accelerometerState, gyroscopeState, gpsState, transmitter) {
+            transmitter ??= SensorTransmitter();
+            transmitter.appendAccelerometer(accelerometerState.record);
+            transmitter.appendGyroscope(gyroscopeState.record);
+            transmitter.appendGps(gpsState.record);
+            return transmitter;
+          }, lazy: false,),
     ], child: app);
   }
 }
@@ -90,7 +83,6 @@ void run() async {
     final sharedPrefGateway = await SharedPrefGateway.create();
     GetIt.I.registerSingleton(sharedPrefGateway);
 
-    WidgetsFlutterBinding.ensureInitialized();
     SystemChrome.setPreferredOrientations(
       [
         DeviceOrientation.portraitUp,

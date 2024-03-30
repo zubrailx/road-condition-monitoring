@@ -8,7 +8,8 @@ class ChartState with ChangeNotifier {
   final int _tickDuration = 1000;
 
   ChartState() {
-    _timer = Timer.periodic(Duration(milliseconds: _tickDuration), (Timer t) => (_signal()));
+    _timer = Timer.periodic(
+        Duration(milliseconds: _tickDuration), (Timer t) => (_signal()));
   }
 
   int get counter => _counter;

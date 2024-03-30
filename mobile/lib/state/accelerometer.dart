@@ -12,27 +12,33 @@ class AccelerometerState with ChangeNotifier {
   DateTime? _userAccelerometerUpdateTime;
   int? _userAccelerometerLastInterval;
   String? _error;
+  late AccelerometerData _record;
 
   StreamSubscription<UserAccelerometerEvent>? _streamSubscription;
   final Duration _sensorInterval = SensorInterval.uiInterval;
 
   AccelerometerState() {
+    _record = _buildRecord();
     _subscribeStream();
   }
 
-  UserAccelerometerEvent? get event => _userAccelerometerEvent;
   int? get lastInterval => _userAccelerometerLastInterval;
+  UserAccelerometerEvent? get event => _userAccelerometerEvent;
+  DateTime? get lastTime => _userAccelerometerUpdateTime;
   bool get hasError => error != null;
   String? get error => _error;
   bool? get isPaused => _streamSubscription?.isPaused;
-  DateTime? get lastTime => _userAccelerometerUpdateTime;
-  AccelerometerData get record => AccelerometerData(
+  AccelerometerData get record => _record;
+
+  AccelerometerData _buildRecord() {
+     return AccelerometerData(
         time: _userAccelerometerUpdateTime,
         x: _userAccelerometerEvent?.x,
         y: _userAccelerometerEvent?.y,
         z: _userAccelerometerEvent?.z,
         ms: _userAccelerometerLastInterval,
-      );
+     );
+  }
 
   void pause() {
     _streamSubscription?.pause();
@@ -61,6 +67,7 @@ class AccelerometerState with ChangeNotifier {
           }
         }
         _userAccelerometerUpdateTime = now;
+        _record = _buildRecord();
         notifyListeners();
       },
       onError: (e) {

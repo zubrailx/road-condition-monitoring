@@ -12,27 +12,39 @@ class GyroscopeState with ChangeNotifier {
   DateTime? _gyroscopeUpdateTime;
   int? _gyroscopeLastInterval;
   String? _error;
+  late GyroscopeData _record;
 
   StreamSubscription<GyroscopeEvent>? _streamSubscription;
   final Duration _sensorInterval = SensorInterval.uiInterval;
 
   GyroscopeState() {
+    _record = _buildRecord();
     _subscribeStream();
   }
 
   GyroscopeEvent? get event => _gyroscopeEvent;
+
   int? get lastInterval => _gyroscopeLastInterval;
+
   bool get hasError => error != null;
+
   String? get error => _error;
+
   bool? get isPaused => _streamSubscription?.isPaused;
+
   DateTime? get lastTime => _gyroscopeUpdateTime;
-  GyroscopeData get record => GyroscopeData(
-        time: _gyroscopeUpdateTime,
-        x: _gyroscopeEvent?.x,
-        y: _gyroscopeEvent?.y,
-        z: _gyroscopeEvent?.z,
-        ms: _gyroscopeLastInterval,
-      );
+
+  GyroscopeData get record => _record;
+
+  GyroscopeData _buildRecord() {
+    return GyroscopeData(
+      time: _gyroscopeUpdateTime,
+      x: _gyroscopeEvent?.x,
+      y: _gyroscopeEvent?.y,
+      z: _gyroscopeEvent?.z,
+      ms: _gyroscopeLastInterval,
+    );
+  }
 
   void pause() {
     _streamSubscription?.pause();
@@ -61,6 +73,7 @@ class GyroscopeState with ChangeNotifier {
           }
         }
         _gyroscopeUpdateTime = now;
+        _record = _buildRecord();
         notifyListeners();
       },
       onError: (e) {
