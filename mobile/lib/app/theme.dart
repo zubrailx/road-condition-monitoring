@@ -19,6 +19,26 @@ final _buttonBorder = OutlineInputBorder(
   ),
 );
 
+final MaterialStateProperty<Color?> switchTrackColor =
+    MaterialStateProperty.resolveWith<Color?>(
+  (Set<MaterialState> states) {
+    if (states.contains(MaterialState.selected)) {
+      return UsedColors.yellow.value;
+    }
+    return null;
+  },
+);
+final MaterialStateProperty<Color?> switchOverlayColor =
+    MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+  if (states.contains(MaterialState.selected)) {
+    return UsedColors.yellow.value.withOpacity(0.54);
+  }
+  if (states.contains(MaterialState.disabled)) {
+    return Colors.grey.shade400;
+  }
+  return null;
+});
+
 final darkTheme = ThemeData.dark().copyWith(
   scaffoldBackgroundColor: UsedColors.black.value,
   highlightColor: UsedColors.yellow.value,
@@ -26,6 +46,10 @@ final darkTheme = ThemeData.dark().copyWith(
     color: UsedColors.white.value,
   ),
   textTheme: const TextTheme(),
+  switchTheme: SwitchThemeData(
+    trackColor: switchTrackColor,
+    overlayColor: switchOverlayColor,
+  ),
   inputDecorationTheme: InputDecorationTheme(
       border: _buttonBorder,
       focusedBorder: _buttonBorder.copyWith(

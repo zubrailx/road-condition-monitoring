@@ -1,16 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:mobile/entities/accelerometer.dart';
+import 'package:mobile/entities/configuration.dart';
 
 class AccelerometerWindowState with ChangeNotifier {
-  late final Duration _duration;
+  ConfigurationData? last;
+  late Duration _duration;
   late final List<AccelerometerData> _records;
 
   AccelerometerWindowState() {
-    _duration = const Duration(seconds: 30);
+    _duration = Duration(seconds: ConfigurationData.create().windowTimeSeconds);
     _records = <AccelerometerData>[];
   }
 
   List<AccelerometerData> get records => _records;
+
+  updateConfiguration(ConfigurationData? data) {
+    if (data != null && _duration.inSeconds != data.windowTimeSeconds) {
+      _duration = Duration(seconds: data.windowTimeSeconds);
+    }
+  }
 
   void append(AccelerometerData record) {
     var now = DateTime.timestamp();

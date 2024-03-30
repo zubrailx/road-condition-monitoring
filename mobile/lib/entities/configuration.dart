@@ -1,6 +1,10 @@
+import 'dart:ui';
+
 class ConfigurationData {
   bool gyroscopeChartEnabled;
   bool accelerometerChartEnabled;
+  bool gpsChartEnabled;
+  int windowTimeSeconds;
   bool networkEnabled;
   bool sensorsEnabled;
   String apiURL;
@@ -10,16 +14,21 @@ class ConfigurationData {
   ConfigurationData(
       {required this.gyroscopeChartEnabled,
       required this.accelerometerChartEnabled,
+      required this.gpsChartEnabled,
+      required this.windowTimeSeconds,
       required this.networkEnabled,
       required this.sensorsEnabled,
       required this.apiURL,
       required this.receiverURL,
-      required this.userAccountData});
+      required this.userAccountData,
+    });
 
   Map<String, dynamic> toJson() {
     return {
-      'gyroscope_enabled': gyroscopeChartEnabled,
-      'accelerometer_enabled': accelerometerChartEnabled,
+      'gyroscope_chart_enabled': gyroscopeChartEnabled,
+      'accelerometer_chart_enabled': accelerometerChartEnabled,
+      'gps_chart_enabled': gpsChartEnabled,
+      'window_time_seconds': windowTimeSeconds,
       'network_enabled': networkEnabled,
       'sensors_enabled': sensorsEnabled,
       'api_url': apiURL,
@@ -30,8 +39,10 @@ class ConfigurationData {
 
   factory ConfigurationData.fromJson(Map<String, dynamic> json) {
     return ConfigurationData(
-        gyroscopeChartEnabled: json['gyroscope_enabled'],
-        accelerometerChartEnabled: json['accelerometer_enabled'],
+        gyroscopeChartEnabled: json['gyroscope_chart_enabled'],
+        accelerometerChartEnabled: json['accelerometer_chart_enabled'],
+        gpsChartEnabled: json['gps_chart_enabled'],
+        windowTimeSeconds: json['window_time_seconds'],
         networkEnabled: json['network_enabled'],
         sensorsEnabled: json['sensors_enabled'],
         apiURL: json['api_url'],
@@ -43,6 +54,8 @@ class ConfigurationData {
     return ConfigurationData(
         gyroscopeChartEnabled: true,
         accelerometerChartEnabled: true,
+        gpsChartEnabled: true,
+        windowTimeSeconds: 30,
         networkEnabled: true,
         sensorsEnabled: true,
         apiURL: 'localhost:9000',

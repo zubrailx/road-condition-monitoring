@@ -30,7 +30,7 @@ class ConfigurationState with ChangeNotifier {
   void _init() async {
     _configuration =
         ConfigurationLoaded(configuration: await getConfiguration());
-    GetIt.I<Talker>().info("Configuration loaded.");
+    GetIt.I<Talker>().debug("Configuration loaded.");
     notifyListeners();
   }
 
@@ -39,7 +39,7 @@ class ConfigurationState with ChangeNotifier {
       _saved = await saveConfiguration(
           (_configuration as ConfigurationLoaded).configuration);
       if (_saved) {
-        GetIt.I<Talker>().info("Configuration saved.");
+        GetIt.I<Talker>().debug("Configuration saved.");
       } else {
         GetIt.I<Talker>().error("Configuration is not saved.");
       }
@@ -75,6 +75,36 @@ class ConfigurationState with ChangeNotifier {
 
   setNetworkEnabled(bool value) {
     configurationData?.networkEnabled = value;
+    _save();
+  }
+
+  setAccelerometerChartEnabled(bool value) {
+    configurationData?.accelerometerChartEnabled = value;
+    _save();
+  }
+
+  setGyroscopeChartEnabled(bool value) {
+    configurationData?.gyroscopeChartEnabled = value;
+    _save();
+  }
+
+  setGpsChartEnabled(bool value) {
+    configurationData?.gpsChartEnabled = value;
+    _save();
+  }
+
+  setApiURL(String value) {
+    configurationData?.apiURL = value;
+    _save();
+  }
+
+  setReceiverURL(String value) {
+    configurationData?.receiverURL = value;
+    _save();
+  }
+
+  setWindowTimeSeconds(int value) {
+    configurationData?.windowTimeSeconds = value;
     _save();
   }
 }

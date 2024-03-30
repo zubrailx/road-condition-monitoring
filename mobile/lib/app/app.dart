@@ -62,18 +62,20 @@ class App extends StatelessWidget {
         },
       ),
       // Chart
-      ChangeNotifierProxyProvider<AccelerometerState, AccelerometerWindowState>(
+      ChangeNotifierProxyProvider2<ConfigurationState, AccelerometerState, AccelerometerWindowState>(
           create: (_) => AccelerometerWindowState(),
-          update: (_, state, windowState) {
+          update: (_, config, state, windowState) {
             windowState ??= AccelerometerWindowState();
             windowState.append(state.record);
+            windowState.updateConfiguration(config.configurationData);
             return windowState;
           }),
-      ChangeNotifierProxyProvider<GyroscopeState, GyroscopeWindowState>(
+      ChangeNotifierProxyProvider2<ConfigurationState, GyroscopeState, GyroscopeWindowState>(
           create: (_) => GyroscopeWindowState(),
-          update: (_, state, windowState) {
+          update: (_, config, state, windowState) {
             windowState ??= GyroscopeWindowState();
             windowState.append(state.record);
+            windowState.updateConfiguration(config.configurationData);
             return windowState;
           }),
       ChangeNotifierProvider(create: (_) => ChartState()),

@@ -29,16 +29,14 @@ class SensorTransmitter extends ChangeNotifier {
         record == _accelerometerRecords.last) {
       return;
     }
-    _accelerometerRecords.add(record);
-    GetIt.I<Talker>().info(
-        '${_accelerometerRecords.length},${_gyroscopeRecords.length},${_gpsRecords.length}');
+    // _accelerometerRecords.add(record);
   }
 
   void appendGyroscope(GyroscopeData record) {
     if (_gyroscopeRecords.isNotEmpty && record == _gyroscopeRecords.last) {
       return;
     }
-    _gyroscopeRecords.add(record);
+    // _gyroscopeRecords.add(record);
   }
 
   // trigger send by gps update
@@ -47,11 +45,10 @@ class SensorTransmitter extends ChangeNotifier {
     if (_gpsRecords.isNotEmpty && record == _gpsRecords.last) {
       return;
     }
-    _gpsRecords.add(record);
+    // _gpsRecords.add(record);
     if (_lastUpdate != null && record.time != null) {
       if (record.time!.difference(_lastUpdate!) > _duration) {
         // send data
-        GetIt.I<Talker>().info('translate', _gpsRecords);
         _reset();
       }
     }

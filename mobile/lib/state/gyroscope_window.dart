@@ -1,16 +1,23 @@
 import 'package:flutter/foundation.dart';
+import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/gyroscope.dart';
 
 class GyroscopeWindowState with ChangeNotifier {
-  late final Duration _duration;
+  late Duration _duration;
   late final List<GyroscopeData> _records;
 
   GyroscopeWindowState() {
-    _duration = const Duration(seconds: 30);
+    _duration = Duration(seconds: ConfigurationData.create().windowTimeSeconds);
     _records = <GyroscopeData>[];
   }
 
   List<GyroscopeData> get records => _records;
+
+  updateConfiguration(ConfigurationData? data) {
+    if (data != null && _duration.inSeconds != data.windowTimeSeconds) {
+      _duration = Duration(seconds: data.windowTimeSeconds);
+    }
+  }
 
   void append(GyroscopeData record) {
     var now = DateTime.timestamp();
