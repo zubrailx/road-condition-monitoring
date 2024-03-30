@@ -20,7 +20,7 @@ class SensorsWidget extends StatelessWidget {
     }
 
     if (data == null || data.gyroscopeChartEnabled) {
-      children.add(const GyroscopeChartWidget());
+      children.add(const GyroscopeWidget());
       children.add(const SizedBox(height: 16));
     }
 
