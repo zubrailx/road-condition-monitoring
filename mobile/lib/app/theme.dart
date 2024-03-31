@@ -19,8 +19,7 @@ final _buttonBorder = OutlineInputBorder(
   ),
 );
 
-final MaterialStateProperty<Color?> switchTrackColor =
-    MaterialStateProperty.resolveWith<Color?>(
+final MaterialStateProperty<Color?> switchTrackColor = MaterialStateProperty.resolveWith<Color?>(
   (Set<MaterialState> states) {
     if (states.contains(MaterialState.selected)) {
       return UsedColors.yellow.value;
@@ -52,11 +51,9 @@ final darkTheme = ThemeData.dark().copyWith(
   ),
   inputDecorationTheme: InputDecorationTheme(
       border: _buttonBorder,
-      focusedBorder: _buttonBorder.copyWith(
-          borderSide: BorderSide(color: UsedColors.yellow.value)),
-      focusedErrorBorder: _buttonBorder.copyWith(
-          borderSide: BorderSide(color: UsedColors.yellow.value))),
+      focusedBorder: _buttonBorder.copyWith(borderSide: BorderSide(color: UsedColors.yellow.value)),
+      focusedErrorBorder:
+          _buttonBorder.copyWith(borderSide: BorderSide(color: UsedColors.yellow.value))),
 );
 
-final talkerScreenTheme =
-    TalkerScreenTheme(backgroundColor: UsedColors.black.value);
+final talkerScreenTheme = TalkerScreenTheme(backgroundColor: UsedColors.black.value);

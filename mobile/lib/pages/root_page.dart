@@ -13,8 +13,7 @@ class RootPage extends StatefulWidget {
   State<RootPage> createState() => _RootPageState();
 }
 
-class _RootPageState extends State<RootPage>
-    with SingleTickerProviderStateMixin {
+class _RootPageState extends State<RootPage> with SingleTickerProviderStateMixin {
   static const double iconWidth = 32;
 
   final icons = <Widget>[
@@ -31,8 +30,7 @@ class _RootPageState extends State<RootPage>
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: 4, vsync: this, initialIndex: tabIndex);
+    _tabController = TabController(length: 4, vsync: this, initialIndex: tabIndex);
     _tabController.addListener(() {
       if (tabIndex != _tabController.index) {
         setState(() {

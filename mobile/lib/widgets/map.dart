@@ -47,29 +47,25 @@ class _MapWidgetState extends State<MapWidget> {
 
     if (hasRecord) {
       return FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: LatLng(record.latitude!, record.longitude!),
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.example.flutter_map_example',
-              ),
-              MarkerLayer(
-                markers: [
-                 _getUserMarker(LatLng(record.latitude!, record.longitude!)),
-                ]
-              ),
-              const MarkerLayer(
-                  markers: []
-              ),
-            ],
-          );
+        mapController: _mapController,
+        options: MapOptions(
+          initialCenter: LatLng(record.latitude!, record.longitude!),
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'com.example.flutter_map_example',
+          ),
+          MarkerLayer(markers: [
+            _getUserMarker(LatLng(record.latitude!, record.longitude!)),
+          ]),
+          const MarkerLayer(markers: []),
+        ],
+      );
     }
 
     return Container(
-      decoration: BoxDecoration(
+        decoration: BoxDecoration(
       color: UsedColors.gray.value,
     ));
   }

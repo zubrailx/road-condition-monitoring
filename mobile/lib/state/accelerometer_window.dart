@@ -8,8 +8,7 @@ class AccelerometerWindowState with ChangeNotifier {
   late final List<AccelerometerData> _records;
 
   AccelerometerWindowState() {
-    _duration =
-        Duration(seconds: ConfigurationData.create().chartWindowTimeSeconds);
+    _duration = Duration(seconds: ConfigurationData.create().chartWindowTimeSeconds);
     _records = <AccelerometerData>[];
   }
 

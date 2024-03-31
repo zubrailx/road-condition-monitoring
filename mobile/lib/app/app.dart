@@ -71,8 +71,7 @@ class App extends StatelessWidget {
             windowState.append(state.record);
             return windowState;
           }),
-      ChangeNotifierProxyProvider2<ConfigurationState, GyroscopeState,
-              GyroscopeWindowState>(
+      ChangeNotifierProxyProvider2<ConfigurationState, GyroscopeState, GyroscopeWindowState>(
           create: (_) => GyroscopeWindowState(),
           update: (_, config, state, windowState) {
             windowState ??= GyroscopeWindowState();
@@ -107,8 +106,7 @@ class App extends StatelessWidget {
 }
 
 void run() async {
-  FlutterError.onError =
-      (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
+  FlutterError.onError = (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
 
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();

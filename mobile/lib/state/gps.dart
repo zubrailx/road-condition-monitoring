@@ -91,15 +91,13 @@ class GpsState with ChangeNotifier {
     }
 
     if (_permission == LocationPermission.deniedForever) {
-      _error =
-          'Location permissions are permanently denied, we cannot request permissions.';
+      _error = 'Location permissions are permanently denied, we cannot request permissions.';
       notifyListeners();
       return;
     }
 
-    _streamSubscription =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position? position) {
+    _streamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position? position) {
       final now = DateTime.now();
       _position = position;
       if (_gyroscopeUpdateTime != null) {

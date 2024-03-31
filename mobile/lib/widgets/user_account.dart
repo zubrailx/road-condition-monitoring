@@ -43,8 +43,7 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
     final model = context.watch<ConfigurationState>();
 
     if (model.configuration.runtimeType == ConfigurationLoaded) {
-      var configuration =
-          (model.configuration as ConfigurationLoaded).configuration;
+      var configuration = (model.configuration as ConfigurationLoaded).configuration;
       _accountIdController.text = configuration.userAccountData.accountId;
       _accountNameController.text = configuration.userAccountData.name;
 
@@ -69,13 +68,10 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
-                        onPressed: _generateOnPressed,
-                        child: const Text('Generate ID')),
+                    ElevatedButton(onPressed: _generateOnPressed, child: const Text('Generate ID')),
                     const SizedBox(width: 20),
                     ElevatedButton(
-                        onPressed: () => _saveButtonOnPressed(context),
-                        child: const Text('Save')),
+                        onPressed: () => _saveButtonOnPressed(context), child: const Text('Save')),
                   ],
                 ),
               ],

@@ -56,8 +56,7 @@ class _GyroscopeWidgetState extends State<GyroscopeWidget> {
           child: Text("Gyroscope", style: theme.textTheme.titleMedium),
         ),
         const SizedBox(height: 10),
-        GyroscopeChartWidget(
-            xEnabled: xEnabled, yEnabled: yEnabled, zEnabled: zEnabled),
+        GyroscopeChartWidget(xEnabled: xEnabled, yEnabled: yEnabled, zEnabled: zEnabled),
         const SizedBox(height: 5),
         GyroscopeValuesWidget(
             xEnabled: xEnabled,
@@ -141,8 +140,7 @@ class _GyroscopeChartWidgetState extends State<GyroscopeChartWidget> {
       decoration: BoxDecoration(
         color: UsedColors.gray.value,
       ),
-      child:
-          SfCartesianChart(primaryXAxis: const DateTimeAxis(), series: series),
+      child: SfCartesianChart(primaryXAxis: const DateTimeAxis(), series: series),
     );
   }
 }

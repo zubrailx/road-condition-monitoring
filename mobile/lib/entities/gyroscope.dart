@@ -1,10 +1,6 @@
 class GyroscopeData {
   const GyroscopeData(
-      {required this.time,
-      required this.x,
-      required this.y,
-      required this.z,
-      required this.ms});
+      {required this.time, required this.x, required this.y, required this.z, required this.ms});
 
   final DateTime? time;
   final double? x;

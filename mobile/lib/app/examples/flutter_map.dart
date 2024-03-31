@@ -24,19 +24,18 @@ class _MapScreenState extends State<MapScreen> {
         LatLng(54.629540, 39.741809),
       ];
 
-List<Marker> _getMarkers(List<LatLng> mapPoints) {
- return List.generate(
-   mapPoints.length,
-   (index) => Marker(
-     point: mapPoints[index],
-     child: SvgPicture.asset("assets/svg/FileSearch.svg",
-                        width: 32),
-     width: 50,
-     height: 50,
-     alignment: Alignment.center,
-   ),
- );
-}
+  List<Marker> _getMarkers(List<LatLng> mapPoints) {
+    return List.generate(
+      mapPoints.length,
+      (index) => Marker(
+        point: mapPoints[index],
+        child: SvgPicture.asset("assets/svg/FileSearch.svg", width: 32),
+        width: 50,
+        height: 50,
+        alignment: Alignment.center,
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -54,28 +53,28 @@ List<Marker> _getMarkers(List<LatLng> mapPoints) {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Map Screen',
-              textDirection: TextDirection.ltr,
-            ),
+      appBar: AppBar(
+        title: const Text(
+          'Map Screen',
+          textDirection: TextDirection.ltr,
+        ),
+      ),
+      body: FlutterMap(
+        mapController: _mapController,
+        options: const MapOptions(
+          initialCenter: LatLng(55.755793, 37.617134),
+          initialZoom: 5,
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: 'com.example.flutter_map_example',
           ),
-          body: FlutterMap(
-            mapController: _mapController,
-            options: const MapOptions(
-              initialCenter: LatLng(55.755793, 37.617134),
-              initialZoom: 5,
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.example.flutter_map_example',
-              ),
-              MarkerLayer(
-                markers: _getMarkers(_mapPoints),
-              ),
-            ],
+          MarkerLayer(
+            markers: _getMarkers(_mapPoints),
           ),
+        ],
+      ),
     ));
   }
 }

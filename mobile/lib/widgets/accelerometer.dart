@@ -56,8 +56,7 @@ class _AccelerometerWidgetState extends State<AccelerometerWidget> {
           child: Text("Accelerometer", style: theme.textTheme.titleMedium),
         ),
         const SizedBox(height: 10),
-        AccelerometerChartWidget(
-            xEnabled: xEnabled, yEnabled: yEnabled, zEnabled: zEnabled),
+        AccelerometerChartWidget(xEnabled: xEnabled, yEnabled: yEnabled, zEnabled: zEnabled),
         const SizedBox(height: 5),
         AccelerometerValuesWidget(
           xEnabled: xEnabled,
@@ -142,8 +141,7 @@ class _AccelerometerChartWidgetState extends State<AccelerometerChartWidget> {
       decoration: BoxDecoration(
         color: UsedColors.gray.value,
       ),
-      child:
-          SfCartesianChart(primaryXAxis: const DateTimeAxis(), series: series),
+      child: SfCartesianChart(primaryXAxis: const DateTimeAxis(), series: series),
     );
   }
 }

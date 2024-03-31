@@ -26,8 +26,7 @@ class SensorTransmitter extends ChangeNotifier {
   _transmit() {}
 
   void appendAccelerometer(AccelerometerData record) {
-    if (_accelerometerRecords.isNotEmpty &&
-        record == _accelerometerRecords.last) {
+    if (_accelerometerRecords.isNotEmpty && record == _accelerometerRecords.last) {
       return;
     }
     _accelerometerRecords.add(record);

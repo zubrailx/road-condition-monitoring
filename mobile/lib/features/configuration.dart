@@ -8,8 +8,7 @@ Future<bool> saveConfiguration(ConfigurationData configuration) async {
 }
 
 Future<ConfigurationData> getConfiguration() async {
-  var data =
-      await GetIt.I<SharedPrefGateway>().getConfiguration().catchError((e) {
+  var data = await GetIt.I<SharedPrefGateway>().getConfiguration().catchError((e) {
     GetIt.I<Talker>().warning(e.toString());
     var configuration = ConfigurationData.create();
     saveConfiguration(configuration);

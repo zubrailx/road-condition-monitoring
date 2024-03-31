@@ -30,26 +30,23 @@ class OptionsWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Enable accelerometer chart",
-                        style: theme.textTheme.bodyLarge),
+                    Text("Enable accelerometer chart", style: theme.textTheme.bodyLarge),
                     Switch(
                         value: data.chartAccelerometerEnabled,
                         onChanged: (_) {
-                          configuration.setChartAccelerometerEnabled(
-                              !data.chartAccelerometerEnabled);
+                          configuration
+                              .setChartAccelerometerEnabled(!data.chartAccelerometerEnabled);
                         }),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Enable gyroscope chart",
-                        style: theme.textTheme.bodyLarge),
+                    Text("Enable gyroscope chart", style: theme.textTheme.bodyLarge),
                     Switch(
                         value: data.chartGyroscopeEnabled,
                         onChanged: (_) {
-                          configuration.setChartGyroscopeEnabled(
-                              !data.chartGyroscopeEnabled);
+                          configuration.setChartGyroscopeEnabled(!data.chartGyroscopeEnabled);
                         }),
                   ],
                 ),
@@ -66,8 +63,7 @@ class OptionsWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 TextField(
-                  decoration:
-                      const InputDecoration(labelText: 'Window time seconds'),
+                  decoration: const InputDecoration(labelText: 'Window time seconds'),
                   controller: TextEditingController()
                     ..text = data.chartWindowTimeSeconds.toString(),
                   onSubmitted: (value) {
@@ -76,8 +72,7 @@ class OptionsWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 TextField(
-                  decoration:
-                  const InputDecoration(labelText: 'Refresh time milliseconds'),
+                  decoration: const InputDecoration(labelText: 'Refresh time milliseconds'),
                   controller: TextEditingController()
                     ..text = data.chartRefreshTimeMillis.toString(),
                   onSubmitted: (value) {
@@ -103,8 +98,7 @@ class OptionsWidget extends StatelessWidget {
                 const SizedBox(height: 20),
                 TextField(
                   decoration: const InputDecoration(labelText: 'Receiver URL'),
-                  controller: TextEditingController()
-                    ..text = data.networkReceiverURL,
+                  controller: TextEditingController()..text = data.networkReceiverURL,
                   onSubmitted: (value) {
                     configuration.setNetworkReceiverURL(value);
                   },
