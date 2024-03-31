@@ -107,6 +107,7 @@ class GpsState with ChangeNotifier {
         _gyroscopeLastInterval = interval.inMilliseconds;
       }
       _gyroscopeUpdateTime = now;
+      _record = _buildRecord();
       notifyListeners();
     });
   }
