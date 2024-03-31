@@ -10,8 +10,8 @@ import 'package:talker_flutter/talker_flutter.dart';
 
 class GpsState with ChangeNotifier {
   final LocationSettings locationSettings = const LocationSettings(
-    accuracy: LocationAccuracy.high,
-    distanceFilter: 100,
+    accuracy: LocationAccuracy.best,
+    // distanceFilter: 100,
   );
 
   late bool _serviceEnabled;
@@ -91,13 +91,15 @@ class GpsState with ChangeNotifier {
     }
 
     if (_permission == LocationPermission.deniedForever) {
-      _error = 'Location permissions are permanently denied, we cannot request permissions.';
+      _error =
+          'Location permissions are permanently denied, we cannot request permissions.';
       notifyListeners();
       return;
     }
 
-    _streamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position? position) {
+    _streamSubscription =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position? position) {
       final now = DateTime.now();
       _position = position;
       if (_gyroscopeUpdateTime != null) {

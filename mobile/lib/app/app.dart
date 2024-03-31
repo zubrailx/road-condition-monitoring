@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/app/route.dart';
 import 'package:mobile/app/theme.dart';
-import 'package:mobile/gateway/shared_preferences.dart';
+import 'package:mobile/gateway/configuration_impl.dart';
+import 'package:mobile/gateway/sensors_local_impl.dart';
 import 'package:mobile/pages/logs_page.dart';
 import 'package:mobile/pages/root_page.dart';
+import 'package:mobile/shared/files.dart';
 import 'package:mobile/state/accelerometer_window.dart';
 import 'package:mobile/state/chart.dart';
 import 'package:mobile/state/gps.dart';
@@ -71,7 +73,8 @@ class App extends StatelessWidget {
             windowState.append(state.record);
             return windowState;
           }),
-      ChangeNotifierProxyProvider2<ConfigurationState, GyroscopeState, GyroscopeWindowState>(
+      ChangeNotifierProxyProvider2<ConfigurationState, GyroscopeState,
+              GyroscopeWindowState>(
           create: (_) => GyroscopeWindowState(),
           update: (_, config, state, windowState) {
             windowState ??= GyroscopeWindowState();
@@ -88,10 +91,11 @@ class App extends StatelessWidget {
         },
       ),
       // Sensor Translation
-      ChangeNotifierProxyProvider4<ConfigurationState, AccelerometerState, GyroscopeState, GpsState,
-          SensorTransmitter>(
+      ChangeNotifierProxyProvider4<ConfigurationState, AccelerometerState,
+          GyroscopeState, GpsState, SensorTransmitter>(
         create: (_) => SensorTransmitter(),
-        update: (_, config, accelerometerState, gyroscopeState, gpsState, transmitter) {
+        update: (_, config, accelerometerState, gyroscopeState, gpsState,
+            transmitter) {
           transmitter ??= SensorTransmitter();
           transmitter.updateConfiguration(config.configurationData);
           transmitter.appendAccelerometer(accelerometerState.record);
@@ -106,7 +110,8 @@ class App extends StatelessWidget {
 }
 
 void run() async {
-  FlutterError.onError = (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
+  FlutterError.onError =
+      (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
 
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -114,8 +119,14 @@ void run() async {
     final talker = TalkerFlutter.init();
     GetIt.I.registerSingleton(talker);
 
-    final sharedPrefGateway = await SharedPrefGateway.create();
-    GetIt.I.registerSingleton(sharedPrefGateway);
+    final configurationGateway = await ConfigurationGatewayImpl.create();
+    GetIt.I.registerSingleton(configurationGateway);
+
+    final dataDirectory = await createDirectory('data');
+    talker.debug(dataDirectory.path);
+    final sensorsLocalGateway =
+        SensorsLocalGatewayImpl(directoryPath: dataDirectory.path);
+    GetIt.I.registerSingleton(sensorsLocalGateway);
 
     SystemChrome.setPreferredOrientations(
       [

@@ -15,7 +15,8 @@ class ChartState with ChangeNotifier {
   int get counter => _counter;
 
   _subscribe() {
-    _timer = Timer.periodic(Duration(milliseconds: _refreshTimeMillis), (Timer t) => (_signal()));
+    _timer = Timer.periodic(
+        Duration(milliseconds: _refreshTimeMillis), (Timer t) => (_signal()));
   }
 
   updateConfiguration(ConfigurationData? data) {

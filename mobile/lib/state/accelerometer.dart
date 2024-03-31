@@ -63,7 +63,8 @@ class AccelerometerState with ChangeNotifier {
   }
 
   void _subscribeStream() {
-    _streamSubscription = userAccelerometerEventStream(samplingPeriod: _sensorInterval).listen(
+    _streamSubscription =
+        userAccelerometerEventStream(samplingPeriod: _sensorInterval).listen(
       (UserAccelerometerEvent event) {
         final now = DateTime.now();
         _userAccelerometerEvent = event;
@@ -78,7 +79,8 @@ class AccelerometerState with ChangeNotifier {
         notifyListeners();
       },
       onError: (e) {
-        _error = "It seems that your device doesn't support User Accelerometer Sensor";
+        _error =
+            "It seems that your device doesn't support User Accelerometer Sensor";
         GetIt.I<Talker>().error(_error);
         notifyListeners();
       },

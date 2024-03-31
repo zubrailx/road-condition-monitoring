@@ -3,9 +3,14 @@ import 'package:mobile/entities/accelerometer.dart';
 import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/gps.dart';
 import 'package:mobile/entities/gyroscope.dart';
+import 'package:mobile/features/sensor_transmission.dart';
 
 class SensorTransmitter extends ChangeNotifier {
   late Duration _duration;
+  late bool _networkEnabled;
+  late String _networkReceiverURL;
+  late UserAccountData _accountData;
+
   late List<AccelerometerData> _accelerometerRecords;
   late List<GyroscopeData> _gyroscopeRecords;
   late List<GpsData> _gpsRecords;
@@ -13,7 +18,11 @@ class SensorTransmitter extends ChangeNotifier {
   DateTime? _lastUpdate;
 
   SensorTransmitter() {
-    _duration = Duration(seconds: ConfigurationData.create().networkBufferTimeSeconds);
+    var config = ConfigurationData.create();
+    _duration = Duration(seconds: config.networkBufferTimeSeconds);
+    _networkEnabled = config.networkEnabled;
+    _networkReceiverURL = config.networkReceiverURL;
+    _accountData = config.userAccountData;
     _reset();
   }
 
@@ -23,10 +32,14 @@ class SensorTransmitter extends ChangeNotifier {
     _gpsRecords = [];
   }
 
-  _transmit() {}
+  _transmit() {
+    transmitSensorRecords(_accelerometerRecords, _gyroscopeRecords, _gpsRecords,
+        _networkEnabled, _networkReceiverURL, _accountData);
+  }
 
   void appendAccelerometer(AccelerometerData record) {
-    if (_accelerometerRecords.isNotEmpty && record == _accelerometerRecords.last) {
+    if (_accelerometerRecords.isNotEmpty &&
+        record == _accelerometerRecords.last) {
       return;
     }
     _accelerometerRecords.add(record);
@@ -46,17 +59,33 @@ class SensorTransmitter extends ChangeNotifier {
       return;
     }
     _gpsRecords.add(record);
-    if (_lastUpdate != null && record.time != null) {
-      if (record.time!.difference(_lastUpdate!) > _duration) {
+    if (record.time != null) {
+      if (_lastUpdate == null ||
+          record.time!.difference(_lastUpdate!) > _duration) {
         _transmit();
         _reset();
+        _lastUpdate = record.time;
       }
     }
   }
 
   void updateConfiguration(ConfigurationData? data) {
-    if (data != null && data.networkBufferTimeSeconds != _duration.inSeconds) {
-      _duration = Duration(seconds: data.networkBufferTimeSeconds);
+    if (data != null) {
+      if (_duration.inSeconds != data.networkBufferTimeSeconds) {
+        _duration = Duration(seconds: data.networkBufferTimeSeconds);
+      }
+      if (_networkReceiverURL != data.networkReceiverURL) {
+        _networkReceiverURL = data.networkReceiverURL;
+      }
+      if (_accountData != data.userAccountData) {
+        _accountData = data.userAccountData;
+      }
+      if (_networkEnabled != data.networkEnabled) {
+        _networkEnabled = data.networkEnabled;
+        if (_networkEnabled) {
+          transmitLocalSensorRecords(_networkReceiverURL, _accountData);
+        }
+      }
     }
   }
 }

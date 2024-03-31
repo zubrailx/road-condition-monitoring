@@ -5,7 +5,11 @@ import 'package:mobile/widgets/network_switch.dart';
 import 'package:mobile/widgets/sensor_switch.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({super.key, required this.tabController, required this.titles, required this.icons});
+  const NavBar(
+      {super.key,
+      required this.tabController,
+      required this.titles,
+      required this.icons});
 
   final TabController tabController;
   final List<String> titles;
@@ -24,7 +28,8 @@ class NavBar extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 15.0),
-              child: Text(titles[tabController.index], style: theme.textTheme.titleMedium),
+              child: Text(titles[tabController.index],
+                  style: theme.textTheme.titleMedium),
             ),
             Wrap(
               direction: Axis.horizontal,
@@ -33,8 +38,10 @@ class NavBar extends StatelessWidget {
                 const SensorSwitchWidget(width: iconWidth),
                 const NetworkSwitchWidget(width: iconWidth),
                 IconButton(
-                    icon: SvgPicture.asset("assets/svg/FileSearch.svg", width: iconWidth),
-                    onPressed: () => Navigator.of(context).pushNamed(AppRoutes.logs.v)),
+                    icon: SvgPicture.asset("assets/svg/FileSearch.svg",
+                        width: iconWidth),
+                    onPressed: () =>
+                        Navigator.of(context).pushNamed(AppRoutes.logs.v)),
               ],
             )
           ],

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:mobile/entities/configuration.dart';
+import 'package:mobile/gateway/abstract/configuration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum SharedPrefKeys {
@@ -11,21 +12,23 @@ enum SharedPrefKeys {
   final String k;
 }
 
-class SharedPrefGateway {
-  SharedPrefGateway(this._prefs);
+class ConfigurationGatewayImpl implements ConfigurationGateway {
+  ConfigurationGatewayImpl(this._prefs);
 
-  static Future<SharedPrefGateway> create() async {
+  static Future<ConfigurationGatewayImpl> create() async {
     final prefs = await SharedPreferences.getInstance();
-    return SharedPrefGateway(prefs);
+    return ConfigurationGatewayImpl(prefs);
   }
 
   final SharedPreferences _prefs;
 
+  @override
   Future<ConfigurationData?> getConfiguration() async {
     final data = _prefs.getString(SharedPrefKeys.configuration.k);
     return data != null ? ConfigurationData.fromJson(jsonDecode(data)) : null;
   }
 
+  @override
   Future<bool> setConfiguration(ConfigurationData configuration) async {
     final data = jsonEncode(configuration);
     return _prefs.setString(SharedPrefKeys.configuration.k, data);

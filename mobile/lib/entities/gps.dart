@@ -11,4 +11,24 @@ class GpsData {
   final double? longitude;
   final double? accuracy;
   final int? ms;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'time': time?.toIso8601String(),
+      'latitude': latitude,
+      'longitude': longitude,
+      'accuracy': accuracy,
+      'ms': ms,
+    };
+  }
+
+  factory GpsData.fromJson(Map<String, dynamic> json) {
+    return GpsData(
+      time: json['time'] != null ? DateTime.parse(json['time']) : null,
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      accuracy: json['accuracy'],
+      ms: json['ms'],
+    );
+  }
 }

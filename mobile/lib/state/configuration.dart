@@ -28,14 +28,16 @@ class ConfigurationState with ChangeNotifier {
   }
 
   void _init() async {
-    _configuration = ConfigurationLoaded(configuration: await getConfiguration());
+    _configuration =
+        ConfigurationLoaded(configuration: await getConfiguration());
     GetIt.I<Talker>().debug("Configuration loaded.");
     notifyListeners();
   }
 
   _save() async {
     if (_configuration.runtimeType == ConfigurationLoaded) {
-      _saved = await saveConfiguration((_configuration as ConfigurationLoaded).configuration);
+      _saved = await saveConfiguration(
+          (_configuration as ConfigurationLoaded).configuration);
       if (_saved) {
         GetIt.I<Talker>().debug("Configuration saved.");
       } else {

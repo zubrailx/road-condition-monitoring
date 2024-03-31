@@ -63,7 +63,8 @@ class GyroscopeState with ChangeNotifier {
   }
 
   void _subscribeStream() {
-    _streamSubscription = gyroscopeEventStream(samplingPeriod: _sensorInterval).listen(
+    _streamSubscription =
+        gyroscopeEventStream(samplingPeriod: _sensorInterval).listen(
       (GyroscopeEvent event) {
         final now = DateTime.now();
         _gyroscopeEvent = event;

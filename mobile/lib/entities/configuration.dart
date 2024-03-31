@@ -63,7 +63,7 @@ class ConfigurationData {
         chartGpsEnabled: true,
         chartWindowTimeSeconds: 30,
         chartRefreshTimeMillis: 1000,
-        networkEnabled: true,
+        networkEnabled: false,
         networkApiURL: 'localhost:9000',
         networkReceiverURL: 'localhost:9100',
         networkBufferTimeSeconds: 30,
