@@ -62,17 +62,17 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
     _currentDataFileName =
         '${DateFormat('yyyy-MM-dd-HH:mm:ss').format(DateTime.now())}.json';
 
-    _createContextFile();
-    _createContext();
+    _createIndexContextFile();
+    _createIndexContext();
     _createDataFile();
   }
 
-  void _createContextFile() {
+  void _createIndexContextFile() {
     var path = p.join(_rootPath, 'index.json');
     _indexContextFile = File(path).create(recursive: true);
   }
 
-  Future<bool> _storeContext(_SensorIndexContext context) {
+  Future<bool> _storeIndexContext(_SensorIndexContext context) {
     return _indexContextFile.then((file) {
       file.writeAsStringSync(jsonEncode(context));
       return true;
@@ -82,7 +82,7 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
     });
   }
 
-  void _createContext() {
+  void _createIndexContext() {
     _indexContext = _indexContextFile.then((file) {
       late final _SensorIndexContext context;
       // if can't decode current context -> reset all files, create new context file,
@@ -92,9 +92,9 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
       } catch (e) {
         GetIt.I<Talker>().warning(e);
         Directory(_rootPath).deleteSync(recursive: true);
-        _createContextFile();
+        _createIndexContextFile();
         context = _SensorIndexContext(indexes: []);
-        _storeContext(context);
+        _storeIndexContext(context);
       }
       return context;
     });
@@ -107,7 +107,7 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
       var context = await _indexContext;
       context.indexes
           .add(_SensorIndex(location: _currentDataFileName, position: 0));
-      _storeContext(context);
+      _storeIndexContext(context);
       return file;
     });
   }
@@ -116,7 +116,7 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
   Future<bool> storeToEnd(SensorsLocalData data) {
     GetIt.I<Talker>().debug('Storing data locally: $data.');
     return _currentDataFile.then((file) {
-      file.writeAsString(jsonEncode(data), mode: FileMode.append);
+      file.writeAsString('${jsonEncode(data)}\n', mode: FileMode.append);
       return true;
     });
   }
