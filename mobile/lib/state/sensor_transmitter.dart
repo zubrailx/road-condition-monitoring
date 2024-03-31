@@ -1,9 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mobile/entities/accelerometer.dart';
 import 'package:mobile/entities/gps.dart';
 import 'package:mobile/entities/gyroscope.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 
 class SensorTransmitter extends ChangeNotifier {
   late final Duration _duration;
@@ -23,6 +21,8 @@ class SensorTransmitter extends ChangeNotifier {
     _gyroscopeRecords = [];
     _gpsRecords = [];
   }
+
+  _transmit() {}
 
   void appendAccelerometer(AccelerometerData record) {
     if (_accelerometerRecords.isNotEmpty &&
@@ -48,7 +48,7 @@ class SensorTransmitter extends ChangeNotifier {
     // _gpsRecords.add(record);
     if (_lastUpdate != null && record.time != null) {
       if (record.time!.difference(_lastUpdate!) > _duration) {
-        // send data
+        _transmit();
         _reset();
       }
     }

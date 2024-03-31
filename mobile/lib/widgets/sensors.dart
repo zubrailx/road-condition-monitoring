@@ -14,17 +14,17 @@ class SensorsWidget extends StatelessWidget {
 
     final children = <Widget>[];
 
-    if (data == null || data.accelerometerChartEnabled) {
+    if (data == null || data.chartAccelerometerEnabled) {
       children.add(const AccelerometerWidget());
       children.add(const SizedBox(height: 16));
     }
 
-    if (data == null || data.gyroscopeChartEnabled) {
+    if (data == null || data.chartGyroscopeEnabled) {
       children.add(const GyroscopeWidget());
       children.add(const SizedBox(height: 16));
     }
 
-    if (data == null || data.gpsChartEnabled) {
+    if (data == null || data.chartGpsEnabled) {
       children.add(const GPSWidget());
     }
 

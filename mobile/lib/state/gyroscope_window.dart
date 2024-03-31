@@ -7,15 +7,16 @@ class GyroscopeWindowState with ChangeNotifier {
   late final List<GyroscopeData> _records;
 
   GyroscopeWindowState() {
-    _duration = Duration(seconds: ConfigurationData.create().windowTimeSeconds);
+    _duration =
+        Duration(seconds: ConfigurationData.create().chartWindowTimeSeconds);
     _records = <GyroscopeData>[];
   }
 
   List<GyroscopeData> get records => _records;
 
   updateConfiguration(ConfigurationData? data) {
-    if (data != null && _duration.inSeconds != data.windowTimeSeconds) {
-      _duration = Duration(seconds: data.windowTimeSeconds);
+    if (data != null && _duration.inSeconds != data.chartWindowTimeSeconds) {
+      _duration = Duration(seconds: data.chartWindowTimeSeconds);
     }
   }
 

@@ -1,18 +1,31 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:mobile/entities/configuration.dart';
 
 class ChartState with ChangeNotifier {
-  late final Timer? _timer;
+  late Timer _timer;
   int _counter = 0;
-  final int _tickDuration = 1000;
+  int _refreshTimeMillis = ConfigurationData.create().chartRefreshTimeMillis;
 
   ChartState() {
-    _timer = Timer.periodic(
-        Duration(milliseconds: _tickDuration), (Timer t) => (_signal()));
+    _subscribe();
   }
 
   int get counter => _counter;
+
+  _subscribe() {
+    _timer = Timer.periodic(
+        Duration(milliseconds: _refreshTimeMillis), (Timer t) => (_signal()));
+  }
+
+  updateConfiguration(ConfigurationData? data) {
+    if (data != null && _refreshTimeMillis != data.chartRefreshTimeMillis) {
+      _refreshTimeMillis = data.chartRefreshTimeMillis;
+      _timer.cancel();
+      _subscribe();
+    }
+  }
 
   _signal() {
     ++_counter;
@@ -21,7 +34,7 @@ class ChartState with ChangeNotifier {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _timer.cancel();
     super.dispose();
   }
 }

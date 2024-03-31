@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mobile/state/configuration.dart';
 import 'package:provider/provider.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 
 class NetworkSwitchWidget extends StatelessWidget {
   const NetworkSwitchWidget({super.key, required this.width});

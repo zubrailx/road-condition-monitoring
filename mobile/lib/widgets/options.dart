@@ -32,22 +32,23 @@ class OptionsWidget extends StatelessWidget {
                   Text("Enable accelerometer chart",
                       style: theme.textTheme.bodyLarge),
                   Switch(
-                      value: data.accelerometerChartEnabled,
+                      value: data.chartAccelerometerEnabled,
                       onChanged: (_) {
-                        configuration.setAccelerometerChartEnabled(
-                            !data.accelerometerChartEnabled);
+                        configuration.setChartAccelerometerEnabled(
+                            !data.chartAccelerometerEnabled);
                       }),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Enable gyroscope chart", style: theme.textTheme.bodyLarge),
+                  Text("Enable gyroscope chart",
+                      style: theme.textTheme.bodyLarge),
                   Switch(
-                      value: data.gyroscopeChartEnabled,
+                      value: data.chartGyroscopeEnabled,
                       onChanged: (_) {
-                        configuration
-                            .setGyroscopeChartEnabled(!data.gyroscopeChartEnabled);
+                        configuration.setChartGyroscopeEnabled(
+                            !data.chartGyroscopeEnabled);
                       }),
                 ],
               ),
@@ -56,19 +57,30 @@ class OptionsWidget extends StatelessWidget {
                 children: [
                   Text("Enable GPS chart", style: theme.textTheme.bodyLarge),
                   Switch(
-                      value: data.gpsChartEnabled,
+                      value: data.chartGpsEnabled,
                       onChanged: (_) {
-                        configuration
-                            .setGpsChartEnabled(!data.gpsChartEnabled);
+                        configuration.setChartGpsEnabled(!data.chartGpsEnabled);
                       }),
                 ],
               ),
               const SizedBox(height: 10),
               TextField(
-                decoration: const InputDecoration(labelText: 'Window time seconds'),
-                controller: TextEditingController()..text = data.windowTimeSeconds.toString(),
+                decoration:
+                    const InputDecoration(labelText: 'Window time seconds'),
+                controller: TextEditingController()
+                  ..text = data.chartWindowTimeSeconds.toString(),
                 onSubmitted: (value) {
-                  configuration.setWindowTimeSeconds(int.parse(value));
+                  configuration.setChartWindowTimeSeconds(int.parse(value));
+                },
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                decoration:
+                const InputDecoration(labelText: 'Refresh time milliseconds'),
+                controller: TextEditingController()
+                  ..text = data.chartRefreshTimeMillis.toString(),
+                onSubmitted: (value) {
+                  configuration.setChartRefreshTimeMillis(int.parse(value));
                 },
               ),
               const SizedBox(height: 10),
@@ -82,17 +94,18 @@ class OptionsWidget extends StatelessWidget {
               const SizedBox(height: 20),
               TextField(
                 decoration: const InputDecoration(labelText: 'API URL'),
-                controller: TextEditingController()..text = data.apiURL,
+                controller: TextEditingController()..text = data.networkApiURL,
                 onSubmitted: (value) {
-                  configuration.setApiURL(value);
+                  configuration.setNetworkApiURL(value);
                 },
               ),
               const SizedBox(height: 20),
               TextField(
                 decoration: const InputDecoration(labelText: 'Receiver URL'),
-                controller: TextEditingController()..text = data.receiverURL,
+                controller: TextEditingController()
+                  ..text = data.networkReceiverURL,
                 onSubmitted: (value) {
-                  configuration.setReceiverURL(value);
+                  configuration.setNetworkReceiverURL(value);
                 },
               ),
             ],

@@ -78,33 +78,38 @@ class ConfigurationState with ChangeNotifier {
     _save();
   }
 
-  setAccelerometerChartEnabled(bool value) {
-    configurationData?.accelerometerChartEnabled = value;
+  setChartAccelerometerEnabled(bool value) {
+    configurationData?.chartAccelerometerEnabled = value;
     _save();
   }
 
-  setGyroscopeChartEnabled(bool value) {
-    configurationData?.gyroscopeChartEnabled = value;
+  setChartGyroscopeEnabled(bool value) {
+    configurationData?.chartGyroscopeEnabled = value;
     _save();
   }
 
-  setGpsChartEnabled(bool value) {
-    configurationData?.gpsChartEnabled = value;
+  setChartGpsEnabled(bool value) {
+    configurationData?.chartGpsEnabled = value;
     _save();
   }
 
-  setApiURL(String value) {
-    configurationData?.apiURL = value;
+  setChartWindowTimeSeconds(int value) {
+    configurationData?.chartWindowTimeSeconds = value;
     _save();
   }
 
-  setReceiverURL(String value) {
-    configurationData?.receiverURL = value;
+  setChartRefreshTimeMillis(int value) {
+    configurationData?.chartRefreshTimeMillis = value;
     _save();
   }
 
-  setWindowTimeSeconds(int value) {
-    configurationData?.windowTimeSeconds = value;
+  setNetworkApiURL(String value) {
+    configurationData?.networkApiURL = value;
+    _save();
+  }
+
+  setNetworkReceiverURL(String value) {
+    configurationData?.networkReceiverURL = value;
     _save();
   }
 }

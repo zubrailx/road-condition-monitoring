@@ -1,65 +1,68 @@
-import 'dart:ui';
-
 class ConfigurationData {
-  bool gyroscopeChartEnabled;
-  bool accelerometerChartEnabled;
-  bool gpsChartEnabled;
-  int windowTimeSeconds;
+  bool chartGyroscopeEnabled;
+  bool chartAccelerometerEnabled;
+  bool chartGpsEnabled;
+  int chartWindowTimeSeconds;
+  int chartRefreshTimeMillis;
   bool networkEnabled;
+  String networkApiURL;
+  String networkReceiverURL; // receiver of sensor data
   bool sensorsEnabled;
-  String apiURL;
-  String receiverURL; // receiver of sensor data
   UserAccountData userAccountData;
 
-  ConfigurationData(
-      {required this.gyroscopeChartEnabled,
-      required this.accelerometerChartEnabled,
-      required this.gpsChartEnabled,
-      required this.windowTimeSeconds,
-      required this.networkEnabled,
-      required this.sensorsEnabled,
-      required this.apiURL,
-      required this.receiverURL,
-      required this.userAccountData,
-    });
+  ConfigurationData({
+    required this.chartGyroscopeEnabled,
+    required this.chartAccelerometerEnabled,
+    required this.chartGpsEnabled,
+    required this.chartWindowTimeSeconds,
+    required this.chartRefreshTimeMillis,
+    required this.networkEnabled,
+    required this.networkApiURL,
+    required this.networkReceiverURL,
+    required this.sensorsEnabled,
+    required this.userAccountData,
+  });
 
   Map<String, dynamic> toJson() {
     return {
-      'gyroscope_chart_enabled': gyroscopeChartEnabled,
-      'accelerometer_chart_enabled': accelerometerChartEnabled,
-      'gps_chart_enabled': gpsChartEnabled,
-      'window_time_seconds': windowTimeSeconds,
+      'chart_gyroscope_enabled': chartGyroscopeEnabled,
+      'chart_accelerometer_enabled': chartAccelerometerEnabled,
+      'chart_gps_enabled': chartGpsEnabled,
+      'chart_window_time_seconds': chartWindowTimeSeconds,
+      'chart_refresh_time_millis': chartRefreshTimeMillis,
       'network_enabled': networkEnabled,
+      'network_api_url': networkApiURL,
+      'network_receiver_url': networkReceiverURL,
       'sensors_enabled': sensorsEnabled,
-      'api_url': apiURL,
-      'receiver_url': receiverURL,
       'user_account': userAccountData.toJson()
     };
   }
 
   factory ConfigurationData.fromJson(Map<String, dynamic> json) {
     return ConfigurationData(
-        gyroscopeChartEnabled: json['gyroscope_chart_enabled'],
-        accelerometerChartEnabled: json['accelerometer_chart_enabled'],
-        gpsChartEnabled: json['gps_chart_enabled'],
-        windowTimeSeconds: json['window_time_seconds'],
+        chartGyroscopeEnabled: json['chart_gyroscope_enabled'],
+        chartAccelerometerEnabled: json['chart_accelerometer_enabled'],
+        chartGpsEnabled: json['chart_gps_enabled'],
+        chartWindowTimeSeconds: json['chart_window_time_seconds'],
+        chartRefreshTimeMillis: json['chart_refresh_time_millis'],
         networkEnabled: json['network_enabled'],
+        networkApiURL: json['network_api_url'],
+        networkReceiverURL: json['network_receiver_url'],
         sensorsEnabled: json['sensors_enabled'],
-        apiURL: json['api_url'],
-        receiverURL: json['receiver_url'],
         userAccountData: UserAccountData.fromJson(json['user_account']));
   }
 
   factory ConfigurationData.create() {
     return ConfigurationData(
-        gyroscopeChartEnabled: true,
-        accelerometerChartEnabled: true,
-        gpsChartEnabled: true,
-        windowTimeSeconds: 30,
+        chartGyroscopeEnabled: true,
+        chartAccelerometerEnabled: true,
+        chartGpsEnabled: true,
+        chartWindowTimeSeconds: 30,
+        chartRefreshTimeMillis: 1000,
         networkEnabled: true,
+        networkApiURL: 'localhost:9000',
+        networkReceiverURL: 'localhost:9100',
         sensorsEnabled: true,
-        apiURL: 'localhost:9000',
-        receiverURL: 'localhost:9100',
         userAccountData: UserAccountData.create());
   }
 }
