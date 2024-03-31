@@ -23,7 +23,7 @@ class _MapWidgetState extends State<MapWidget> {
         height: 50,
         width: 50,
         rotate: true,
-        alignment: Alignment.center);
+        alignment: Alignment.topCenter);
   }
 
   @override
