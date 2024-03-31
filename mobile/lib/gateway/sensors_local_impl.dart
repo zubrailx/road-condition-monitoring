@@ -114,25 +114,25 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
 
   @override
   Future<bool> storeToEnd(SensorsLocalData data) {
+    GetIt.I<Talker>().debug('Storing data locally: $data.');
     return _currentDataFile.then((file) {
       file.writeAsString(jsonEncode(data), mode: FileMode.append);
       return true;
     });
   }
 
-  @override
-  Future<SensorsLocalData> loadFromBegin(Duration range) async {
-    return const SensorsLocalData(
-        accelerometerData: [], gyroscopeData: [], gpsData: []);
+  @override // NOTE: while not equals
+  Stream<SensorsLocalData> loadFromBegin({int? maxCount = -1}) async* {
+    GetIt.I<Talker>().debug('Loading from local storage.');
   }
 
   @override
-  Future<bool> ackFromBegin(SensorsLocalData data) async {
+  Future<bool> ackFromBegin(int count) async {
     return true;
   }
 
   @override
-  Future<bool> nackFromBegin(SensorsLocalData data) async {
+  Future<bool> nackFromBegin(int count) async {
     return true;
   }
 }

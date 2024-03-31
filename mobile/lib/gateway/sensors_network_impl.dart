@@ -6,7 +6,7 @@ import 'package:mobile/entities/gyroscope.dart';
 import 'package:mobile/gateway/abstract/sensors_network.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-class DefNetworkGateway implements SensorsNetworkGateway {
+class SensorsNetworkGatewayImpl implements SensorsNetworkGateway {
   @override
   Future<bool> send(
       String receiverURL,

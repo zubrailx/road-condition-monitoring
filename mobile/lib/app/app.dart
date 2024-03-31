@@ -7,6 +7,7 @@ import 'package:mobile/app/route.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/gateway/configuration_impl.dart';
 import 'package:mobile/gateway/sensors_local_impl.dart';
+import 'package:mobile/gateway/sensors_network_impl.dart';
 import 'package:mobile/pages/logs_page.dart';
 import 'package:mobile/pages/root_page.dart';
 import 'package:mobile/shared/files.dart';
@@ -123,10 +124,13 @@ void run() async {
     GetIt.I.registerSingleton(configurationGateway);
 
     final dataDirectory = await createDirectory('data');
-    talker.debug(dataDirectory.path);
+
     final sensorsLocalGateway =
         SensorsLocalGatewayImpl(directoryPath: dataDirectory.path);
     GetIt.I.registerSingleton(sensorsLocalGateway);
+
+    final sensorsNetworkGateway = SensorsNetworkGatewayImpl();
+    GetIt.I.registerSingleton(sensorsNetworkGateway);
 
     SystemChrome.setPreferredOrientations(
       [

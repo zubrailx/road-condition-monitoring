@@ -37,7 +37,7 @@ class SensorsLocalData {
 
 abstract class SensorsLocalGateway {
   Future<bool> storeToEnd(SensorsLocalData data);
-  Future<SensorsLocalData> loadFromBegin(Duration range);
-  Future<bool> ackFromBegin(SensorsLocalData data);
-  Future<bool> nackFromBegin(SensorsLocalData data);
+  Stream<SensorsLocalData> loadFromBegin({int? maxCount = -1});
+  Future<bool> ackFromBegin(int count);
+  Future<bool> nackFromBegin(int count); // first nack
 }
