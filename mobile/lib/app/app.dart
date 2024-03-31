@@ -67,8 +67,8 @@ class App extends StatelessWidget {
           create: (_) => AccelerometerWindowState(),
           update: (_, config, state, windowState) {
             windowState ??= AccelerometerWindowState();
-            windowState.append(state.record);
             windowState.updateConfiguration(config.configurationData);
+            windowState.append(state.record);
             return windowState;
           }),
       ChangeNotifierProxyProvider2<ConfigurationState, GyroscopeState,
@@ -76,8 +76,8 @@ class App extends StatelessWidget {
           create: (_) => GyroscopeWindowState(),
           update: (_, config, state, windowState) {
             windowState ??= GyroscopeWindowState();
-            windowState.append(state.record);
             windowState.updateConfiguration(config.configurationData);
+            windowState.append(state.record);
             return windowState;
           }),
       ChangeNotifierProxyProvider<ConfigurationState, ChartState>(
@@ -89,11 +89,12 @@ class App extends StatelessWidget {
         },
       ),
       // Sensor Translation
-      ChangeNotifierProxyProvider3<AccelerometerState, GyroscopeState, GpsState,
+      ChangeNotifierProxyProvider4<ConfigurationState, AccelerometerState, GyroscopeState, GpsState,
           SensorTransmitter>(
         create: (_) => SensorTransmitter(),
-        update: (_, accelerometerState, gyroscopeState, gpsState, transmitter) {
+        update: (_, config, accelerometerState, gyroscopeState, gpsState, transmitter) {
           transmitter ??= SensorTransmitter();
+          transmitter.updateConfiguration(config.configurationData);
           transmitter.appendAccelerometer(accelerometerState.record);
           transmitter.appendGyroscope(gyroscopeState.record);
           transmitter.appendGps(gpsState.record);

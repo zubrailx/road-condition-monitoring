@@ -7,6 +7,7 @@ class ConfigurationData {
   bool networkEnabled;
   String networkApiURL;
   String networkReceiverURL; // receiver of sensor data
+  int networkBufferTimeSeconds;
   bool sensorsEnabled;
   UserAccountData userAccountData;
 
@@ -19,6 +20,7 @@ class ConfigurationData {
     required this.networkEnabled,
     required this.networkApiURL,
     required this.networkReceiverURL,
+    required this.networkBufferTimeSeconds,
     required this.sensorsEnabled,
     required this.userAccountData,
   });
@@ -33,6 +35,7 @@ class ConfigurationData {
       'network_enabled': networkEnabled,
       'network_api_url': networkApiURL,
       'network_receiver_url': networkReceiverURL,
+      'network_buffer_time_seconds': networkBufferTimeSeconds,
       'sensors_enabled': sensorsEnabled,
       'user_account': userAccountData.toJson()
     };
@@ -48,6 +51,7 @@ class ConfigurationData {
         networkEnabled: json['network_enabled'],
         networkApiURL: json['network_api_url'],
         networkReceiverURL: json['network_receiver_url'],
+        networkBufferTimeSeconds: json['network_buffer_time_seconds'],
         sensorsEnabled: json['sensors_enabled'],
         userAccountData: UserAccountData.fromJson(json['user_account']));
   }
@@ -62,6 +66,7 @@ class ConfigurationData {
         networkEnabled: true,
         networkApiURL: 'localhost:9000',
         networkReceiverURL: 'localhost:9100',
+        networkBufferTimeSeconds: 30,
         sensorsEnabled: true,
         userAccountData: UserAccountData.create());
   }

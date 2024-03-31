@@ -112,4 +112,9 @@ class ConfigurationState with ChangeNotifier {
     configurationData?.networkReceiverURL = value;
     _save();
   }
+
+  setNetworkBufferTimeSeconds(int value) {
+    configurationData?.networkBufferTimeSeconds = value;
+    _save();
+  }
 }

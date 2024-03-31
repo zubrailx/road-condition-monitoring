@@ -30,10 +30,12 @@ class SensorsWidget extends StatelessWidget {
 
     return Container(
         margin: const EdgeInsets.only(top: 16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: children,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
         ));
   }
 }

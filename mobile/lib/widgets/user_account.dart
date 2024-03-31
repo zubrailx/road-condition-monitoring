@@ -48,36 +48,38 @@ class _UserAccountWidgetState extends State<UserAccountWidget> {
       _accountIdController.text = configuration.userAccountData.accountId;
       _accountNameController.text = configuration.userAccountData.name;
 
-      return Container(
-        margin: const EdgeInsets.only(left: 20, right: 20, top: 16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: _accountIdController,
-                decoration: const InputDecoration(labelText: 'Account ID'),
-                validator: _buttonValidator,
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _accountNameController,
-                decoration: const InputDecoration(labelText: 'Account Name'),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                      onPressed: _generateOnPressed,
-                      child: const Text('Generate ID')),
-                  const SizedBox(width: 20),
-                  ElevatedButton(
-                      onPressed: () => _saveButtonOnPressed(context),
-                      child: const Text('Save')),
-                ],
-              ),
-            ],
+      return SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.only(left: 20, right: 20, top: 16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: _accountIdController,
+                  decoration: const InputDecoration(labelText: 'Account ID'),
+                  validator: _buttonValidator,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _accountNameController,
+                  decoration: const InputDecoration(labelText: 'Account Name'),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        onPressed: _generateOnPressed,
+                        child: const Text('Generate ID')),
+                    const SizedBox(width: 20),
+                    ElevatedButton(
+                        onPressed: () => _saveButtonOnPressed(context),
+                        child: const Text('Save')),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       );
