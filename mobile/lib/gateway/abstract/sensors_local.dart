@@ -6,6 +6,7 @@ class SensorsLocalData {
   final List<AccelerometerData> accelerometerData;
   final List<GyroscopeData> gyroscopeData;
   final List<GpsData> gpsData;
+
   const SensorsLocalData(
       {required this.accelerometerData,
       required this.gyroscopeData,
@@ -37,7 +38,10 @@ class SensorsLocalData {
 
 abstract class SensorsLocalGateway {
   Future<bool> storeToEnd(SensorsLocalData data);
+
   Stream<SensorsLocalData> loadFromBegin({int? maxCount = -1});
+
   Future<bool> ackFromBegin(int count);
-  Future<bool> nackFromBegin(int count); // first nack
+
+  Future<bool> nAckFromBegin(int count); // first nack
 }

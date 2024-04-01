@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/state/gps.dart';

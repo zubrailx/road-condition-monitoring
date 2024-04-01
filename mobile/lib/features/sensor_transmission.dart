@@ -4,7 +4,6 @@ import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/gps.dart';
 import 'package:mobile/entities/gyroscope.dart';
 import 'package:mobile/gateway/abstract/sensors_local.dart';
-import 'package:mobile/gateway/abstract/sensors_network.dart';
 import 'package:mobile/gateway/sensors_local_impl.dart';
 import 'package:mobile/gateway/sensors_network_impl.dart';
 import 'package:talker_flutter/talker_flutter.dart';
