@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/gps.dart';
+import 'package:mobile/features/notifications.dart';
 import 'package:mobile/features/stream.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -76,24 +77,7 @@ class GpsState with ChangeNotifier {
     _serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!_serviceEnabled) {
       _error = 'Location services are disabled.';
-      notifyListeners();
-      return;
-    }
-
-    _permission = await Geolocator.checkPermission();
-    if (_permission == LocationPermission.denied) {
-      _permission = await Geolocator.requestPermission();
-      if (_permission == LocationPermission.denied) {
-        _error = 'Location permissions are denied';
-        notifyListeners();
-        return;
-      }
-    }
-
-    if (_permission == LocationPermission.deniedForever) {
-      _error =
-          'Location permissions are permanently denied, we cannot request permissions.';
-      notifyListeners();
+      showNotification(title: "Geolocation", body: _error ?? "");
       return;
     }
 

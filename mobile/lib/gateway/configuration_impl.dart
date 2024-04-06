@@ -13,14 +13,9 @@ enum SharedPrefKeys {
 }
 
 class ConfigurationGatewayImpl implements ConfigurationGateway {
-  ConfigurationGatewayImpl(this._prefs);
-
-  static Future<ConfigurationGatewayImpl> create() async {
-    final prefs = await SharedPreferences.getInstance();
-    return ConfigurationGatewayImpl(prefs);
-  }
-
   final SharedPreferences _prefs;
+
+  ConfigurationGatewayImpl(this._prefs);
 
   @override
   Future<ConfigurationData?> getConfiguration() async {
