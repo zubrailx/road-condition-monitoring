@@ -1,4 +1,12 @@
 services:
+  mqtt-receiver:
+    image: zubrailx/mqtt-receiver:latest
+    build:
+      context: mqtt_receiver
+      dockerfile: dockerfile
+    restart: always
+    command: broker-mosquitto 1883
+
   broker-mosquitto:
     image: eclipse-mosquitto:2.0-openssl
     container_name: broker-mosquitto
