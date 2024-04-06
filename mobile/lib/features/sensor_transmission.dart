@@ -3,6 +3,7 @@ import 'package:mobile/entities/accelerometer.dart';
 import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/gps.dart';
 import 'package:mobile/entities/gyroscope.dart';
+import 'package:mobile/features/notifications.dart';
 import 'package:mobile/gateway/abstract/sensors_local.dart';
 import 'package:mobile/gateway/sensors_local_impl.dart';
 import 'package:mobile/gateway/sensors_network_impl.dart';
@@ -43,19 +44,35 @@ Future<bool> transmitSensorRecords(
 
 transmitLocalSensorRecords(
     String networkReceiverUrl, UserAccountData accountData) async {
+
+  if (networkReceiverUrl == "") {
+    return;
+  }
+
   bool doContinue = true;
+  bool hasError = false;
 
   while (doContinue) {
     int counter = 0;
+
     await for (final data in GetIt.I<SensorsLocalGatewayImpl>()
         .loadFromBegin(maxCount: _maxCount)) {
-      await GetIt.I<SensorsNetworkGatewayImpl>().send(
+      final res = await GetIt.I<SensorsNetworkGatewayImpl>().send(
           networkReceiverUrl, accountData,
           data.accelerometerData, data.gyroscopeData, data.gpsData);
+      if (!res) {
+        hasError = true;
+        break;
+      }
       counter++;
     }
-    GetIt.I<SensorsLocalGatewayImpl>().ackFromBegin(counter);
-    doContinue = (counter != 0);
+    if (hasError) {
+      GetIt.I<SensorsLocalGatewayImpl>().nAckFromBegin(counter);
+      showNotification(title: "Network", body: "Error while sending data to server. Double click network button to retry.");
+    } else {
+      GetIt.I<SensorsLocalGatewayImpl>().ackFromBegin(counter);
+    }
+    doContinue = (counter != 0 && !hasError);
   }
 }
 
