@@ -65,7 +65,7 @@ class ConfigurationData {
         chartRefreshTimeMillis: 1000,
         networkEnabled: false,
         networkApiURL: 'localhost:9000',
-        networkReceiverURL: 'localhost:9100',
+        networkReceiverURL: 'localhost:1883',
         networkBufferTimeSeconds: 30,
         sensorsEnabled: true,
         userAccountData: UserAccountData.create());

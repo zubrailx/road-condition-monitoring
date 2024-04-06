@@ -49,7 +49,8 @@ transmitLocalSensorRecords(
     int counter = 0;
     await for (final data in GetIt.I<SensorsLocalGatewayImpl>()
         .loadFromBegin(maxCount: _maxCount)) {
-      GetIt.I<SensorsNetworkGatewayImpl>().send(networkReceiverUrl, accountData,
+      await GetIt.I<SensorsNetworkGatewayImpl>().send(
+          networkReceiverUrl, accountData,
           data.accelerometerData, data.gyroscopeData, data.gpsData);
       counter++;
     }
