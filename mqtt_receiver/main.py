@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 import sys
 
 from paho.mqtt.enums import CallbackAPIVersion
-
+import common.model.gen.monitoring.monitoring_pb2 as monitoring
 
 if (len(sys.argv) < 3):
     print('host args are not passed')
@@ -19,7 +19,10 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 
 def on_message(client, userdata, msg):
-    print(msg.topic + " " + str(msg.payload))
+    print(msg.topic + "Payload length:" + str(len(msg.payload)))
+    data = monitoring.Monitoring()
+    data.ParseFromString(msg.payload)
+    print(data)
 
 
 mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
