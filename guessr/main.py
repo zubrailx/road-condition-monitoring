@@ -1,4 +1,5 @@
 import sys
+import logging
 from kafka import KafkaConsumer
 from datetime import datetime
 
@@ -8,13 +9,19 @@ TOPIC = "monitoring"
 GROUP_ID = "guessr-group"
 AUTO_OFFSET_RESET = "latest"
 
+logging.basicConfig();
+
+logger = logging.getLogger('main')
+logger.setLevel(logging.DEBUG)
+
 def kafka_to_timestamp(date):
 # .replace(microsecond=date%1000*1000)
     return datetime.utcfromtimestamp(date//1000);
 
 def get_pretty_kafka_log(message, data: monitoring.Monitoring):
-    string = f"NETWORK[{time}]: Topic '{TOPIC}', offset: {message.offset}, size: {len(message.value)} bytes." 
-    string += f"\n\tAccount id: {data.account.accound_id}, name: {data.account.name}."
+    string = f"NETWORK[{time}]: Topic '{TOPIC}'"
+    string += f"\n\toffset: {message.offset}, size: {len(message.value)} bytes" 
+    string += f"\n\tAccount id: {data.account.accound_id}, name: {data.account.name}"
     string += f"\n\tAccelerometer: {len(data.accelerometer_records)} recs"
     string += f"\n\tGyroscope: {len(data.gyroscope_records)} recs"
     string += f"\n\tGps: {len(data.gps_records)} recs"
@@ -39,5 +46,5 @@ for message in consumer:
     time = kafka_to_timestamp(message.timestamp);
     data = monitoring.Monitoring()
     data.ParseFromString(message.value)
-    print(get_pretty_kafka_log(message, data))
+    logger.debug(get_pretty_kafka_log(message, data))
 
