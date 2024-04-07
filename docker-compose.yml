@@ -1,16 +1,67 @@
 services:
-  mqtt-receiver:
-    image: zubrailx/mqtt-receiver:latest
-    build:
-      context: mqtt_receiver
-      dockerfile: dockerfile
-    restart: always
-    command: broker-mosquitto 1883
+  # mqtt-receiver:
+  #   image: zubrailx/mqtt-receiver:latest
+  #   build:
+  #     context: mqtt_receiver
+  #     dockerfile: dockerfile
+  #   restart: always
+  #   command: broker-mosquitto 1883
 
-  broker-mosquitto:
-    image: eclipse-mosquitto:2.0-openssl
-    container_name: broker-mosquitto
+  # broker-mosquitto:
+  #   image: eclipse-mosquitto:2.0-openssl
+  #   container_name: broker-mosquitto
+  #   ports:
+  #     - '1883:1883'
+  #   volumes:
+  #     - '${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf'
+
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - '9092:9094'
+    environment:
+      # kRaft
+      CLUSTER_ID: NzUwOWJmNDYtNTNhMy00N2
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka1:9093
+      # Listeners
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:9092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # Others
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka1
+    ports:
+      - 8080:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:9092
+    volumes:
+      - '${PWD}/kafkaui/dynamic_config.yaml:/etc/kafkaui/dynamic_config.yaml'
+       
+  kafka-mqtt-proxy:
+    image: confluentinc/cp-kafka-mqtt:latest
+    depends_on:
+      - kafka1
     ports:
       - '1883:1883'
-    volumes:
-      - '${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf'
+    environment:
+      KAFKA_MQTT_BOOTSTRAP_SERVERS: PLAINTEXT://kafka1:9092
+      KAFKA_MQTT_TOPIC_REGEX_LIST: monitoring:.*
+      KAFKA_MQTT_LISTENERS: 0.0.0.0:1883
+      KAFKA_MQTT_CONFLUENT_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_MQTT_MQTT_MESSAGE_MAX_BYTES: 1048576
+
+volumes:
+  kafka-data:

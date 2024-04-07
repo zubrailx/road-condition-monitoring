@@ -127,7 +127,7 @@ class SensorsNetworkGatewayImpl implements SensorsNetworkGateway {
 
     client.publishMessage(
         _monitoringTopic, MqttQos.atMostOnce, builder.payload!);
-    GetIt.I<Talker>().debug('NETWORK: sent $payload');
+    GetIt.I<Talker>().debug('NETWORK: sent payload (${dataBuffer.length} bytes)');
     return true;
   }
 

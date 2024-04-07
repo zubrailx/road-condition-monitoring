@@ -19,10 +19,10 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 
 def on_message(client, userdata, msg):
-    print(msg.topic + "Payload length:" + str(len(msg.payload)))
     data = monitoring.Monitoring()
     data.ParseFromString(msg.payload)
-    print(data)
+    print(msg.topic, "Payload length:", str(len(msg.payload)), 'bytes')
+    print()
 
 
 mqttc = mqtt.Client(CallbackAPIVersion.VERSION2)
