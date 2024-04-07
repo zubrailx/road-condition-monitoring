@@ -13,7 +13,7 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../google/protobuf/timestamp.pb.dart' as $0;
+import '../util.pb.dart' as $0;
 
 class UserAccount extends $pb.GeneratedMessage {
   factory UserAccount({

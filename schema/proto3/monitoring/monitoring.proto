@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package monitoring;
 
-import "google/protobuf/timestamp.proto";
+import "util.proto";
 
 message UserAccount {
   string accound_id = 1;
@@ -10,7 +10,7 @@ message UserAccount {
 }
 
 message AccelerometerRecord {
-  google.protobuf.Timestamp time = 1;
+  Timestamp time = 1;
   float x = 11;
   float y = 12;
   float z = 13;
@@ -18,7 +18,7 @@ message AccelerometerRecord {
 }
 
 message GyroscopeRecord {
-  google.protobuf.Timestamp time = 1;
+  Timestamp time = 1;
   float x = 11;
   float y = 12;
   float z = 13;
@@ -26,7 +26,7 @@ message GyroscopeRecord {
 }
 
 message GpsRecord {
-  google.protobuf.Timestamp time = 1;
+  Timestamp time = 1;
   double latitude = 11;
   double longitude = 12;
   double accuracy = 13;

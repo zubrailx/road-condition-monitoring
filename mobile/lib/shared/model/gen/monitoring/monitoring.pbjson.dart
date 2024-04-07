@@ -31,7 +31,7 @@ final $typed_data.Uint8List userAccountDescriptor = $convert.base64Decode(
 const AccelerometerRecord$json = {
   '1': 'AccelerometerRecord',
   '2': [
-    {'1': 'time', '3': 1, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'time'},
+    {'1': 'time', '3': 1, '4': 1, '5': 11, '6': '.Timestamp', '10': 'time'},
     {'1': 'x', '3': 11, '4': 1, '5': 2, '10': 'x'},
     {'1': 'y', '3': 12, '4': 1, '5': 2, '10': 'y'},
     {'1': 'z', '3': 13, '4': 1, '5': 2, '10': 'z'},
@@ -41,15 +41,14 @@ const AccelerometerRecord$json = {
 
 /// Descriptor for `AccelerometerRecord`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List accelerometerRecordDescriptor = $convert.base64Decode(
-    'ChNBY2NlbGVyb21ldGVyUmVjb3JkEi4KBHRpbWUYASABKAsyGi5nb29nbGUucHJvdG9idWYuVG'
-    'ltZXN0YW1wUgR0aW1lEgwKAXgYCyABKAJSAXgSDAoBeRgMIAEoAlIBeRIMCgF6GA0gASgCUgF6'
-    'Eg4KAm1zGBUgASgFUgJtcw==');
+    'ChNBY2NlbGVyb21ldGVyUmVjb3JkEh4KBHRpbWUYASABKAsyCi5UaW1lc3RhbXBSBHRpbWUSDA'
+    'oBeBgLIAEoAlIBeBIMCgF5GAwgASgCUgF5EgwKAXoYDSABKAJSAXoSDgoCbXMYFSABKAVSAm1z');
 
 @$core.Deprecated('Use gyroscopeRecordDescriptor instead')
 const GyroscopeRecord$json = {
   '1': 'GyroscopeRecord',
   '2': [
-    {'1': 'time', '3': 1, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'time'},
+    {'1': 'time', '3': 1, '4': 1, '5': 11, '6': '.Timestamp', '10': 'time'},
     {'1': 'x', '3': 11, '4': 1, '5': 2, '10': 'x'},
     {'1': 'y', '3': 12, '4': 1, '5': 2, '10': 'y'},
     {'1': 'z', '3': 13, '4': 1, '5': 2, '10': 'z'},
@@ -59,15 +58,14 @@ const GyroscopeRecord$json = {
 
 /// Descriptor for `GyroscopeRecord`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List gyroscopeRecordDescriptor = $convert.base64Decode(
-    'Cg9HeXJvc2NvcGVSZWNvcmQSLgoEdGltZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3'
-    'RhbXBSBHRpbWUSDAoBeBgLIAEoAlIBeBIMCgF5GAwgASgCUgF5EgwKAXoYDSABKAJSAXoSDgoC'
-    'bXMYFSABKAVSAm1z');
+    'Cg9HeXJvc2NvcGVSZWNvcmQSHgoEdGltZRgBIAEoCzIKLlRpbWVzdGFtcFIEdGltZRIMCgF4GA'
+    'sgASgCUgF4EgwKAXkYDCABKAJSAXkSDAoBehgNIAEoAlIBehIOCgJtcxgVIAEoBVICbXM=');
 
 @$core.Deprecated('Use gpsRecordDescriptor instead')
 const GpsRecord$json = {
   '1': 'GpsRecord',
   '2': [
-    {'1': 'time', '3': 1, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'time'},
+    {'1': 'time', '3': 1, '4': 1, '5': 11, '6': '.Timestamp', '10': 'time'},
     {'1': 'latitude', '3': 11, '4': 1, '5': 1, '10': 'latitude'},
     {'1': 'longitude', '3': 12, '4': 1, '5': 1, '10': 'longitude'},
     {'1': 'accuracy', '3': 13, '4': 1, '5': 1, '10': 'accuracy'},
@@ -77,9 +75,9 @@ const GpsRecord$json = {
 
 /// Descriptor for `GpsRecord`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List gpsRecordDescriptor = $convert.base64Decode(
-    'CglHcHNSZWNvcmQSLgoEdGltZRgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSBH'
-    'RpbWUSGgoIbGF0aXR1ZGUYCyABKAFSCGxhdGl0dWRlEhwKCWxvbmdpdHVkZRgMIAEoAVIJbG9u'
-    'Z2l0dWRlEhoKCGFjY3VyYWN5GA0gASgBUghhY2N1cmFjeRIOCgJtcxgVIAEoBVICbXM=');
+    'CglHcHNSZWNvcmQSHgoEdGltZRgBIAEoCzIKLlRpbWVzdGFtcFIEdGltZRIaCghsYXRpdHVkZR'
+    'gLIAEoAVIIbGF0aXR1ZGUSHAoJbG9uZ2l0dWRlGAwgASgBUglsb25naXR1ZGUSGgoIYWNjdXJh'
+    'Y3kYDSABKAFSCGFjY3VyYWN5Eg4KAm1zGBUgASgFUgJtcw==');
 
 @$core.Deprecated('Use monitoringDescriptor instead')
 const Monitoring$json = {
