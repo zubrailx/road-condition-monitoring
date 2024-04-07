@@ -37,6 +37,9 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
     volumes:
       - kafka-data:/var/lib/kafka/data
+      - '${PWD}/kafka/init-topics.sh:/init-topics.sh'
+    command:
+      - /init-topics.sh
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
