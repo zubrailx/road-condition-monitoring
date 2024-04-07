@@ -1,14 +1,16 @@
-import json
+from kafka import KafkaConsumer
 
-if __name__ == "__main__":
-    fileName = input('Enter json list file: ')
-    file = open(fileName, 'r')
+import common.model.gen.monitoring.monitoring_pb2 as monitoring
 
-    data = []
+consumer = KafkaConsumer(
+    "monitoring",
+    bootstrap_servers=["localhost:9092"],
+    auto_offset_reset="latest",
+    enable_auto_commit=True,
+    group_id="test-consumer-group",
+)
 
-    for line in file.readlines():
-        js = json.loads(line)
-        data.append(js)
-
+for message in consumer:
+    data = monitoring.Monitoring()
+    data.ParseFromString(message.value)
     print(data)
-

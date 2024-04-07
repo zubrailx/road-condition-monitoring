@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package monitoring;
+
+import "util.proto";
+
+message UserAccount {
+  string accound_id = 1;
+  string name = 2;
+}
+
+message AccelerometerRecord {
+  Timestamp time = 1;
+  float x = 11;
+  float y = 12;
+  float z = 13;
+  int32 ms = 21;
+}
+
+message GyroscopeRecord {
+  Timestamp time = 1;
+  float x = 11;
+  float y = 12;
+  float z = 13;
+  int32 ms = 21;
+}
+
+message GpsRecord {
+  Timestamp time = 1;
+  double latitude = 11;
+  double longitude = 12;
+  double accuracy = 13;
+  int32 ms = 21;
+}
+
+message Monitoring {
+  repeated AccelerometerRecord accelerometer_records = 1;
+  repeated GyroscopeRecord gyroscope_records = 2;
+  repeated GpsRecord gps_records = 3;
+  UserAccount account = 11;
+}
