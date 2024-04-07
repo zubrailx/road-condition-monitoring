@@ -1,0 +1,5 @@
+#!/bin/bash
+
+PROTO_FILES=$(find lib/shared/model/schema/proto3 -iname "*.proto")
+
+protoc --proto_path=lib/shared/model/schema/proto3 --dart_out=lib/shared/model/gen/ $PROTO_FILES
