@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:mobile/entities/accelerometer.dart';
 import 'package:mobile/entities/configuration.dart';
@@ -65,6 +67,7 @@ class SensorTransmitter extends ChangeNotifier {
         _transmit();
         _reset();
         _lastUpdate = record.time;
+        _gpsRecords.add(record); // append last record as a first entry to new list
       }
     }
   }
