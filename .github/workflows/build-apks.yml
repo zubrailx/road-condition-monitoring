@@ -33,3 +33,4 @@ jobs:
           name: apk-release
           path: ./mobile/build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
+          compression-level: 0
