@@ -11,8 +11,8 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin' # See 'Supported distributions' for available options
-          java-version: '21'
+          distribution: 'zulu'
+          java-version: '17.x'
 
       - name: Setup flutter
         uses: subosito/flutter-action@v2
@@ -20,9 +20,12 @@ jobs:
           channel: stable
           flutter-version: 3.19.0
 
+      - run: flutter pub get
+        working-directory: mobile
+
       - name: Build apk
+        working-directory: mobile
         run: |-
-          cd ./mobile
           flutter build apk --release
 
       - uses: actions/upload-artifact@v4
