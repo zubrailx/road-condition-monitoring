@@ -1,0 +1,26 @@
+name: SSH redeploy
+
+on: workflow_dispatch
+
+jobs:
+  ssh-redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run SSH commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script_stop: true
+          script: |-
+            cd /opt/road-condition-monitoring
+            git checkout ${{ github.ref_name }}
+            git branch -f backup-main
+            git fetch --all
+            git reset --hard origin/${{ github.ref_name }}
+            git pull
+            docker compose pull || true
+            docker compose build
+            docker compose up -d

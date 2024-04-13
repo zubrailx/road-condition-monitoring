@@ -14,6 +14,7 @@ services:
   #     - '1883:1883'
   #   volumes:
   #     - '${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf'
+  
   guessr:
     image: zubrailx/guessr:latest
     build:
