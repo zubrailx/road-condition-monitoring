@@ -18,8 +18,8 @@ class _RootPageState extends State<RootPage>
   static const double iconWidth = 32;
 
   final icons = <Widget>[
-    SvgPicture.asset("assets/svg/RadioFill.svg", width: iconWidth),
     SvgPicture.asset("assets/svg/Map.svg", width: iconWidth * 0.9),
+    SvgPicture.asset("assets/svg/RadioFill.svg", width: iconWidth),
     SvgPicture.asset("assets/svg/UserCard.svg", width: iconWidth),
     SvgPicture.asset("assets/svg/Options.svg", width: iconWidth * 0.8)
   ];
@@ -60,8 +60,8 @@ class _RootPageState extends State<RootPage>
           child: TabBarView(
         controller: _tabController,
         children: const <Widget>[
-          SensorsWidget(),
           MapWidget(),
+          SensorsWidget(),
           UserAccountWidget(),
           OptionsWidget()
         ],

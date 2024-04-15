@@ -9,7 +9,6 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class AccelerometerState with ChangeNotifier {
-  final Duration _ignoreDuration = const Duration(milliseconds: 20);
   UserAccelerometerEvent? _userAccelerometerEvent;
   DateTime? _userAccelerometerUpdateTime;
   int? _userAccelerometerLastInterval;
@@ -17,7 +16,7 @@ class AccelerometerState with ChangeNotifier {
   late AccelerometerData _record;
 
   StreamSubscription<UserAccelerometerEvent>? _streamSubscription;
-  final Duration _sensorInterval = SensorInterval.uiInterval;
+  final Duration _sensorInterval = const Duration(milliseconds: 50);
 
   AccelerometerState() {
     _record = _buildRecord();
@@ -70,9 +69,7 @@ class AccelerometerState with ChangeNotifier {
         _userAccelerometerEvent = event;
         if (_userAccelerometerUpdateTime != null) {
           final interval = now.difference(_userAccelerometerUpdateTime!);
-          if (interval > _ignoreDuration) {
-            _userAccelerometerLastInterval = interval.inMilliseconds;
-          }
+          _userAccelerometerLastInterval = interval.inMilliseconds;
         }
         _userAccelerometerUpdateTime = now;
         _record = _buildRecord();

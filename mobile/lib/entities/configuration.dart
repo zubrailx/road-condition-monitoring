@@ -58,9 +58,9 @@ class ConfigurationData {
 
   factory ConfigurationData.create() {
     return ConfigurationData(
-        chartGyroscopeEnabled: true,
-        chartAccelerometerEnabled: true,
-        chartGpsEnabled: true,
+        chartGyroscopeEnabled: false,
+        chartAccelerometerEnabled: false,
+        chartGpsEnabled: false,
         chartWindowTimeSeconds: 30,
         chartRefreshTimeMillis: 1000,
         networkEnabled: false,

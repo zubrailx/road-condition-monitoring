@@ -9,7 +9,6 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class GyroscopeState with ChangeNotifier {
-  final Duration _ignoreDuration = const Duration(milliseconds: 20);
   GyroscopeEvent? _gyroscopeEvent;
   DateTime? _gyroscopeUpdateTime;
   int? _gyroscopeLastInterval;
@@ -17,7 +16,7 @@ class GyroscopeState with ChangeNotifier {
   late GyroscopeData _record;
 
   StreamSubscription<GyroscopeEvent>? _streamSubscription;
-  final Duration _sensorInterval = SensorInterval.uiInterval;
+    final Duration _sensorInterval = const Duration(milliseconds: 50);
 
   GyroscopeState() {
     _record = _buildRecord();
@@ -70,9 +69,7 @@ class GyroscopeState with ChangeNotifier {
         _gyroscopeEvent = event;
         if (_gyroscopeUpdateTime != null) {
           final interval = now.difference(_gyroscopeUpdateTime!);
-          if (interval > _ignoreDuration) {
-            _gyroscopeLastInterval = interval.inMilliseconds;
-          }
+          _gyroscopeLastInterval = interval.inMilliseconds;
         }
         _gyroscopeUpdateTime = now;
         _record = _buildRecord();

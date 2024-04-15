@@ -3,6 +3,8 @@ import 'package:mobile/state/configuration.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
+import '../app/theme.dart';
+
 class OptionsWidget extends StatelessWidget {
   const OptionsWidget({super.key});
 
@@ -26,7 +28,11 @@ class OptionsWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("CHARTS", style: theme.textTheme.titleLarge),
-                const SizedBox(height: 5),
+                const SizedBox(height: 10),
+                Container(
+                    color: Colors.white24,
+                    child: Text('Reminder: disable for more accurate sensor data', style: theme.textTheme.bodyLarge),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
