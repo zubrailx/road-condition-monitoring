@@ -3,8 +3,6 @@ import 'package:mobile/state/configuration.dart';
 import 'package:mobile/widgets/loading.dart';
 import 'package:provider/provider.dart';
 
-import '../app/theme.dart';
-
 class OptionsWidget extends StatelessWidget {
   const OptionsWidget({super.key});
 

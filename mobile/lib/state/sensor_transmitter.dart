@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:mobile/entities/accelerometer.dart';
 import 'package:mobile/entities/configuration.dart';
@@ -44,11 +42,17 @@ class SensorTransmitter extends ChangeNotifier {
         record == _accelerometerRecords.last) {
       return;
     }
+    if (record.time == null || record.x == null) {
+      return;
+    }
     _accelerometerRecords.add(record);
   }
 
   void appendGyroscope(GyroscopeData record) {
     if (_gyroscopeRecords.isNotEmpty && record == _gyroscopeRecords.last) {
+      return;
+    }
+    if (record.time == null || record.x == null) {
       return;
     }
     _gyroscopeRecords.add(record);
@@ -58,6 +62,9 @@ class SensorTransmitter extends ChangeNotifier {
   // if not enabled -> no data input -> no translation
   void appendGps(GpsData record) {
     if (_gpsRecords.isNotEmpty && record == _gpsRecords.last) {
+      return;
+    }
+    if (record.time == null || record.latitude == null) {
       return;
     }
     _gpsRecords.add(record);
