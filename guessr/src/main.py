@@ -4,6 +4,7 @@ import pandas
 import logging
 from datetime import datetime, timezone
 from message_consumer import MsgConsumerCfg, MsgConsumer
+import processing
 
 import common.model.gen.monitoring.monitoring_pb2 as monitoring
 from common.model.gen.monitoring.monitoring_pb2 import (
@@ -54,7 +55,7 @@ def proto_gps_to_dict(record: GpsRecord):
 
 
 # 1) convert protobuf objects to inputs
-# 2) filter inappropriate entries
+# 2) filter inappropriate entries (NOTE: fixed on producers)
 def get_raw_filtered_inputs(message: Monitoring):
     acDf = pandas.DataFrame.from_records(
         map(proto_accelerometer_to_dict, message.accelerometer_records),
@@ -69,24 +70,22 @@ def get_raw_filtered_inputs(message: Monitoring):
         columns=["time", "latitude", "longitude"],
     )
 
-    # filtering
-    acDfc = acDf[acDf.ms.notna()]
-    gyDfc = gyDf[gyDf.ms.notna()]
-    gpsDfc = gpsDf[gpsDf.ms.notna()]
-
-    return (acDfc, gyDfc, gpsDfc)
+    return (acDf, gyDf, gpsDf)
 
 
 def consumer_func(msg):
     try:
         time = kafka_to_timestamp(msg.timestamp)
+
         proto = Monitoring()
         proto.ParseFromString(msg.value)
-        print('here')
-        print(proto)
-        (acDfc, gyDfc, gpsDfc) = get_raw_filtered_inputs(proto)
-        print(acDfc, gyDfc, gpsDfc, sep="\n")
         logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
+
+        (acDfc, gyDfc, gpsDfc) = get_raw_filtered_inputs(proto)
+        (acDfci, gyDfci, gpsDfci) = processing.interpolate(acDfc, gyDfc, gpsDfc)
+        print(acDfci, gyDfci, gpsDfci, sep="\n")
+        print('\n\n')
+
     except Exception as e:
         print(e)
 
