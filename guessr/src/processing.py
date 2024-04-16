@@ -6,8 +6,10 @@ tick = 25000
 window = 128
 slide = 0.5
 fs = 1000000 / tick
+
+# TODO: compute based on traning data
 filter_N = 2
-filter_freq = 3
+filter_freq = 10
 
 def get_df_time_range(df: pandas.DataFrame):
     l = len(df.index)
@@ -97,3 +99,8 @@ def reduce_noice(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
     # acil = (acXil**2 + acYil**2 + acZil**2) ** 0.5
     # gyil = (gyXil**2 + gyYil**2 + gyZil**2) ** 0.5
 
+
+# compute magnitude on all axis, apply fast fft transformation, 
+# get 32 elements of each (accelerometer, gyroscope), max acceleromet, max gyroscope
+def extract_features(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
+    pass
