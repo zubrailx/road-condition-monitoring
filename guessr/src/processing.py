@@ -1,10 +1,13 @@
 import pandas
 import numpy
+from scipy.signal import lfilter, iirfilter
 
 tick = 25000
 window = 128
 slide = 0.5
-
+fs = 1000000 / tick
+filter_N = 2
+filter_freq = 3
 
 def get_df_time_range(df: pandas.DataFrame):
     l = len(df.index)
@@ -74,3 +77,23 @@ def interpolate(
     )
 
     return (acDf1, gyDf1, gpsDf1)
+
+
+def reduce_noice(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
+    b, a = iirfilter(filter_N, Wn=filter_freq, fs=fs, btype="low", ftype="butter")
+
+    acX = lfilter(b, a, acDf.x)
+    acY = lfilter(b, a, acDf.y)
+    acZ = lfilter(b, a, acDf.z)
+
+    gyX = lfilter(b, a, gyDf.x)
+    gyY = lfilter(b, a, gyDf.y)
+    gyZ = lfilter(b, a, gyDf.z)
+
+    acDf1 = pandas.DataFrame({"time": acDf.time, "x": acX, "y": acY, "z": acZ})
+    gyDf1 = pandas.DataFrame({"time": gyDf.time, "x": gyX, "y": gyY, "z": gyZ})
+
+    return (acDf1, gyDf1)
+    # acil = (acXil**2 + acYil**2 + acZil**2) ** 0.5
+    # gyil = (gyXil**2 + gyYil**2 + gyZil**2) ** 0.5
+

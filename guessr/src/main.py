@@ -81,9 +81,11 @@ def consumer_func(msg):
         proto.ParseFromString(msg.value)
         logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
 
-        (acDfc, gyDfc, gpsDfc) = get_raw_filtered_inputs(proto)
-        (acDfci, gyDfci, gpsDfci) = processing.interpolate(acDfc, gyDfc, gpsDfc)
-        print(acDfci, gyDfci, gpsDfci, sep="\n")
+        (acDf, gyDf, gpsDf) = get_raw_filtered_inputs(proto)
+        (acDfn, gyDfn) = processing.reduce_noice(acDf, gyDf)
+        (acDfi, gyDfi, gpsDfi) = processing.interpolate(acDfn, gyDfn, gpsDf)
+
+        print(acDfi, gyDfi, gpsDfi, sep="\n")
         print('\n\n')
 
     except Exception as e:
