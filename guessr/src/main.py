@@ -3,17 +3,17 @@ import socket
 import pandas
 import logging
 from datetime import datetime, timezone
-from message_consumer import MsgConsumerCfg, MsgConsumer
+from lib.message_consumer import MsgConsumerCfg, MsgConsumer
 import processing
 
-import proto.monitoring.monitoring_pb2 as monitoring
-from proto.monitoring.monitoring_pb2 import (
+import lib.proto.monitoring.monitoring_pb2 as monitoring
+from lib.proto.monitoring.monitoring_pb2 import (
     Monitoring,
     AccelerometerRecord,
     GyroscopeRecord,
     GpsRecord,
 )
-from proto.util_pb2 import Timestamp
+from lib.proto.util_pb2 import Timestamp
 
 logging.basicConfig()
 logger = logging.getLogger("main")
