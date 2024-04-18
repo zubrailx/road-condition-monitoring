@@ -28,8 +28,9 @@ class OptionsWidget extends StatelessWidget {
                 Text("CHARTS", style: theme.textTheme.titleLarge),
                 const SizedBox(height: 10),
                 Container(
-                    color: Colors.white24,
-                    child: Text('Reminder: disable for more accurate sensor data', style: theme.textTheme.bodyLarge),
+                  color: Colors.white24,
+                  child: Text('Reminder: disable for more accurate sensor data',
+                      style: theme.textTheme.bodyLarge),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

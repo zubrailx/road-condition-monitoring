@@ -152,7 +152,8 @@ void run() async {
     final sensorsNetworkGateway = SensorsNetworkGatewayImpl();
     GetIt.I.registerSingleton(sensorsNetworkGateway);
 
-    final notificationsGateway = NotificationsGatewayImpl(plugin: flutterLocalNotificationsPlugin);
+    final notificationsGateway =
+        NotificationsGatewayImpl(plugin: flutterLocalNotificationsPlugin);
     GetIt.I.registerSingleton(notificationsGateway);
 
     // permissions
@@ -165,33 +166,35 @@ void run() async {
   });
 }
 
-Future<bool?> initializeNotifications(FlutterLocalNotificationsPlugin notificationsPlugin) async {
-  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-  const DarwinInitializationSettings iOSInitialize = DarwinInitializationSettings();
+Future<bool?> initializeNotifications(
+    FlutterLocalNotificationsPlugin notificationsPlugin) async {
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const DarwinInitializationSettings iOSInitialize =
+      DarwinInitializationSettings();
 
   const InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: iOSInitialize
-  );
+      android: initializationSettingsAndroid, iOS: iOSInitialize);
   return notificationsPlugin.initialize(initializationSettings);
 }
 
-Future<void> grantNotificationPermissions(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
+Future<void> grantNotificationPermissions(
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async {
   bool granted = false;
 
   if (Platform.isAndroid) {
     granted = await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.areNotificationsEnabled() ??
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.areNotificationsEnabled() ??
         false;
   }
 
   if (!granted) {
     if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
       await androidImplementation?.requestNotificationsPermission();
     }
@@ -210,7 +213,8 @@ Future<void> grantGeolocationPermission() async {
   }
 
   if (permission == LocationPermission.deniedForever) {
-    const error = 'Location permissions are permanently denied, we cannot request permissions.';
+    const error =
+        'Location permissions are permanently denied, we cannot request permissions.';
     showNotification(title: 'Geolocation', body: error);
     return;
   }

@@ -44,7 +44,6 @@ Future<bool> transmitSensorRecords(
 
 transmitLocalSensorRecords(
     String networkReceiverUrl, UserAccountData accountData) async {
-
   if (networkReceiverUrl == "") {
     return;
   }
@@ -58,8 +57,11 @@ transmitLocalSensorRecords(
     await for (final data in GetIt.I<SensorsLocalGatewayImpl>()
         .loadFromBegin(maxCount: _maxCount)) {
       final res = await GetIt.I<SensorsNetworkGatewayImpl>().send(
-          networkReceiverUrl, accountData,
-          data.accelerometerData, data.gyroscopeData, data.gpsData);
+          networkReceiverUrl,
+          accountData,
+          data.accelerometerData,
+          data.gyroscopeData,
+          data.gpsData);
       if (!res) {
         hasError = true;
         break;
@@ -68,7 +70,10 @@ transmitLocalSensorRecords(
     }
     if (hasError) {
       GetIt.I<SensorsLocalGatewayImpl>().nAckFromBegin(counter);
-      showNotification(title: "Network", body: "Error while sending data to server. Double click network button to retry.");
+      showNotification(
+          title: "Network",
+          body:
+              "Error while sending data to server. Double click network button to retry.");
     } else {
       GetIt.I<SensorsLocalGatewayImpl>().ackFromBegin(counter);
     }

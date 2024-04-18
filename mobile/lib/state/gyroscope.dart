@@ -16,7 +16,7 @@ class GyroscopeState with ChangeNotifier {
   late GyroscopeData _record;
 
   StreamSubscription<GyroscopeEvent>? _streamSubscription;
-    final Duration _sensorInterval = const Duration(milliseconds: 50);
+  final Duration _sensorInterval = const Duration(milliseconds: 50);
 
   GyroscopeState() {
     _record = _buildRecord();

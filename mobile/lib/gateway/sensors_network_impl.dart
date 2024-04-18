@@ -67,8 +67,8 @@ class SensorsNetworkGatewayImpl implements SensorsNetworkGateway {
     _clientURL = null;
   }
 
-  Future<MqttClient?> _getConnectedClient(String receiverURL,
-      UserAccountData account) async {
+  Future<MqttClient?> _getConnectedClient(
+      String receiverURL, UserAccountData account) async {
     if (_client != null &&
         (_client?.clientIdentifier != account.accountId ||
             _clientURL != receiverURL)) {
@@ -93,8 +93,7 @@ class SensorsNetworkGatewayImpl implements SensorsNetworkGateway {
 
     if (_client!.connectionStatus!.state != MqttConnectionState.connected) {
       GetIt.I<Talker>().warning(
-          'NETWORK: Mosquitto client connection failed - disconnecting, status is ${_client!
-              .connectionStatus}');
+          'NETWORK: Mosquitto client connection failed - disconnecting, status is ${_client!.connectionStatus}');
       _disconnect();
       return null;
     }
@@ -103,7 +102,8 @@ class SensorsNetworkGatewayImpl implements SensorsNetworkGateway {
   }
 
   @override
-  Future<bool> send(String receiverURL,
+  Future<bool> send(
+      String receiverURL,
       UserAccountData account,
       List<AccelerometerData> accelerometerData,
       List<GyroscopeData> gyroscopeData,
@@ -118,7 +118,8 @@ class SensorsNetworkGatewayImpl implements SensorsNetworkGateway {
       client.subscribe(_monitoringTopic, MqttQos.atMostOnce);
     }
 
-    final payload = _toMonitoring(account, accelerometerData, gyroscopeData, gpsData);
+    final payload =
+        _toMonitoring(account, accelerometerData, gyroscopeData, gpsData);
 
     final builder = MqttClientPayloadBuilder();
     Uint8Buffer dataBuffer = Uint8Buffer();
@@ -127,50 +128,50 @@ class SensorsNetworkGatewayImpl implements SensorsNetworkGateway {
 
     client.publishMessage(
         _monitoringTopic, MqttQos.atMostOnce, builder.payload!);
-    GetIt.I<Talker>().debug('NETWORK: sent payload (${dataBuffer.length} bytes)');
+    GetIt.I<Talker>()
+        .debug('NETWORK: sent payload (${dataBuffer.length} bytes)');
     return true;
   }
 
-  Monitoring _toMonitoring(UserAccountData accountData,
-      List<AccelerometerData> accelerometerData,
-      List<GyroscopeData> gyroscopeData, List<GpsData> gpsData,) {
-
+  Monitoring _toMonitoring(
+    UserAccountData accountData,
+    List<AccelerometerData> accelerometerData,
+    List<GyroscopeData> gyroscopeData,
+    List<GpsData> gpsData,
+  ) {
     final res = Monitoring(
-        account: UserAccount(accoundId: accountData.accountId, name: accountData.name),
+      account:
+          UserAccount(accoundId: accountData.accountId, name: accountData.name),
     );
 
-    res.accelerometerRecords.addAll(accelerometerData.map((data) => AccelerometerRecord(
-      time: data.time == null ? null : _dateTimeToTimestamp(data.time!),
-      x: data.x,
-      y: data.y,
-      z: data.z,
-      ms: data.ms
-    )));
+    res.accelerometerRecords.addAll(accelerometerData.map((data) =>
+        AccelerometerRecord(
+            time: data.time == null ? null : _dateTimeToTimestamp(data.time!),
+            x: data.x,
+            y: data.y,
+            z: data.z,
+            ms: data.ms)));
 
     res.gyroscopeRecords.addAll(gyroscopeData.map((data) => GyroscopeRecord(
-      time: data.time == null ? null : _dateTimeToTimestamp(data.time!),
-      x: data.x,
-      y: data.y,
-      z: data.z,
-      ms: data.ms
-    )));
+        time: data.time == null ? null : _dateTimeToTimestamp(data.time!),
+        x: data.x,
+        y: data.y,
+        z: data.z,
+        ms: data.ms)));
 
     res.gpsRecords.addAll(gpsData.map((data) => GpsRecord(
-      time: data.time == null ? null : _dateTimeToTimestamp(data.time!),
-      latitude: data.latitude,
-      longitude: data.longitude,
-      accuracy: data.accuracy,
-      ms: data.ms
-    )));
+        time: data.time == null ? null : _dateTimeToTimestamp(data.time!),
+        latitude: data.latitude,
+        longitude: data.longitude,
+        accuracy: data.accuracy,
+        ms: data.ms)));
 
     return res;
   }
 
   Timestamp _dateTimeToTimestamp(DateTime dateTime) {
     return Timestamp()
-    ..seconds = Int64(dateTime.millisecondsSinceEpoch) ~/ 1000
-    ..nanos = (dateTime.microsecond % 1000000) * 1000;
-}
-
-
+      ..seconds = Int64(dateTime.millisecondsSinceEpoch) ~/ 1000
+      ..nanos = (dateTime.microsecond % 1000000) * 1000;
+  }
 }

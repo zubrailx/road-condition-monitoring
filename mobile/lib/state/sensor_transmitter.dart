@@ -74,7 +74,8 @@ class SensorTransmitter extends ChangeNotifier {
         _transmit();
         _reset();
         _lastUpdate = record.time;
-        _gpsRecords.add(record); // append last record as a first entry to new list
+        _gpsRecords
+            .add(record); // append last record as a first entry to new list
       }
     }
   }
