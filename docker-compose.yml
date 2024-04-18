@@ -75,6 +75,13 @@ services:
       ME_CONFIG_BASICAUTH_USERNAME: admin
       ME_CONFIG_BASICAUTH_PASSWORD: 1357924680
 
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    restart: unless-stopped
+    volumes:
+      - ${PWD}/clickhouse:/docker-entrypoint-initdb.d/
+
+
   guessr:
     # image: zubrailx/guessr:latest
     build:
