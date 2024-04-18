@@ -30,10 +30,15 @@ services:
     depends_on:
       - kafka1
     ports:
-      - '127.0.0.1:9080:8080'
+      # - '127.0.0.1:9080:8080'
+      - '8080:8080'
+    restart: unless-stopped
     environment:
       DYNAMIC_CONFIG_ENABLED: true
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:9092
+      AUTH_TYPE: "LOGIN_FORM"
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: 1357924680
     volumes:
       - '${PWD}/kafkaui/dynamic_config.yaml:/etc/kafkaui/dynamic_config.yaml'
        
@@ -53,8 +58,6 @@ services:
   mongo:
     image: mongo:7
     restart: unless-stopped
-    ports:
-      - '27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: 1357924680
