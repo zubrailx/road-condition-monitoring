@@ -1,7 +1,7 @@
 #!/bin/bash
 
-PROTO_FILES=$(find common/model/schema/proto3 -iname "*.proto")
+PROTO_FILES=$(find src/common/model/schema/proto3 -iname "*.proto")
 
-mkdir -p common/model/gen
+mkdir -p src/common/model/gen
 
-protoc --proto_path=common/model/schema/proto3 --python_out=common/model/gen --pyi_out=common/model/gen $PROTO_FILES
+protoc --proto_path=src/common/model/schema/proto3 --python_out=src/common/model/gen --pyi_out=src/common/model/gen $PROTO_FILES

@@ -2,9 +2,9 @@ FROM python:3.11.9-alpine3.19
 
 WORKDIR /app
 
-COPY common ./common
-COPY main.py requirements.txt .
+COPY src ./src
+COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "-u", "main.py"]
+ENTRYPOINT ["python", "-u", "src/main.py"]
