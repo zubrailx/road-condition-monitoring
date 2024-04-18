@@ -1,12 +1,4 @@
 services:
-  guessr:
-    image: zubrailx/guessr:latest
-    build:
-      context: guessr
-      dockerfile: dockerfile
-    restart: always
-    command: kafka1:9092
-
   kafka1:
     image: confluentinc/cp-kafka:latest
     ports:
@@ -57,6 +49,47 @@ services:
       KAFKA_MQTT_LISTENERS: 0.0.0.0:1883
       KAFKA_MQTT_CONFLUENT_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_MQTT_MQTT_MESSAGE_MAX_BYTES: 1048576
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1357924680
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_SERVER: 'mongo'
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 1357924680
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: 1357924680
+
+  guessr:
+    # image: zubrailx/guessr:latest
+    build:
+      context: .
+      dockerfile: guessr.dockerfile
+    restart: unless-stopped
+    command: kafka1:9092
+
+  monitoring-keeper:
+    # image: zubrailx/monitoring-keeper:latest
+    build:
+      context: .
+      dockerfile: monitoring_keeper.dockerfile
+    restart: unless-stopped
+    command:  kafka1:9092 mongo:27017
+    environment:
+      MK_MONGO_USERNAME: admin
+      MK_MONGO_PASSWORD: 1357924680
 
 volumes:
   kafka-data:

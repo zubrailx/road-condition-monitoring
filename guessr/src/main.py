@@ -92,7 +92,7 @@ def consumer_func(msg):
         print("\n\n")
 
     except Exception as e:
-        print(e)
+        logger.error(e)
 
 
 def process_arguments() -> InputArgs:
@@ -103,7 +103,11 @@ def process_arguments() -> InputArgs:
     return InputArgs(bootstrap_servers=sys.argv[1])
 
 
-def main():
+if __name__ == "__main__":
+    logging.basicConfig()
+    logger = logging.getLogger("main")
+    logger.setLevel(logging.DEBUG)
+
     args = process_arguments()
 
     cfg = MsgConsumerCfg(
@@ -118,10 +122,3 @@ def main():
     consumer = MsgConsumer(consumer_func, cfg)
     consumer.main_loop()
 
-
-if __name__ == "__main__":
-    logging.basicConfig()
-    logger = logging.getLogger("main")
-    logger.setLevel(logging.DEBUG)
-
-    main()
