@@ -16,11 +16,10 @@ from lib.proto.monitoring.monitoring_pb2 import (
 )
 from lib.proto.util_pb2 import Timestamp
 
+
 InputArgs = namedtuple("InputArgs", ["bootstrap_servers"])
 
-logging.basicConfig()
-logger = logging.getLogger("main")
-logger.setLevel(logging.DEBUG)
+logger: logging.Logger
 
 
 def kafka_to_timestamp(date):
@@ -121,4 +120,8 @@ def main():
 
 
 if __name__ == "__main__":
+    logging.basicConfig()
+    logger = logging.getLogger("main")
+    logger.setLevel(logging.DEBUG)
+
     main()
