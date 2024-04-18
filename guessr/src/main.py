@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, timezone
 from lib.message_consumer import MsgConsumerCfg, MsgConsumer
 import processing
+from collections import namedtuple
 
 import lib.proto.monitoring.monitoring_pb2 as monitoring
 from lib.proto.monitoring.monitoring_pb2 import (
@@ -14,6 +15,8 @@ from lib.proto.monitoring.monitoring_pb2 import (
     GpsRecord,
 )
 from lib.proto.util_pb2 import Timestamp
+
+InputArgs = namedtuple("InputArgs", ["bootstrap_servers"])
 
 logging.basicConfig()
 logger = logging.getLogger("main")
@@ -37,6 +40,7 @@ def get_pretty_kafka_log(message, data: monitoring.Monitoring, time, topic):
 
 def string_to_timestamp_int(time):
     return int(datetime.fromisoformat(time).timestamp() * 1000000)
+
 
 def proto_to_timestamp_int(time: Timestamp):
     return int(time.seconds * 1000000 + time.nanos)
@@ -86,25 +90,31 @@ def consumer_func(msg):
         (acDfi, gyDfi, gpsDfi) = processing.interpolate(acDfn, gyDfn, gpsDf)
 
         print(acDfi, gyDfi, gpsDfi, sep="\n")
-        print('\n\n')
+        print("\n\n")
 
     except Exception as e:
         print(e)
 
-def main():
+
+def process_arguments() -> InputArgs:
     if len(sys.argv) < 2:
         print("bootstrap servers are not passed")
         exit(-1)
 
+    return InputArgs(bootstrap_servers=sys.argv[1])
+
+
+def main():
+    args = process_arguments()
+
     cfg = MsgConsumerCfg(
         topic="monitoring",
-        servers=sys.argv[1],
+        servers=args.bootstrap_servers,
         group_id="guessr-group",
         client_id=socket.gethostname(),
         pool_size=2,
         shutdown_timeout=10,
     )
-
 
     consumer = MsgConsumer(consumer_func, cfg)
     consumer.main_loop()
