@@ -4,6 +4,8 @@ package monitoring;
 
 import "util.proto";
 
+option go_package = "./monitoring";
+
 message UserAccount {
   string accound_id = 1;
   string name = 2;

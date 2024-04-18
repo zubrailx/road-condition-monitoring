@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package points;
+
+import "util.proto";
+
+option go_package = "./points";
+
+message PointRecord {
+  Timestamp time = 1;
+  double latitude = 11;
+  double longitude = 12;
+  float prediction = 21;
+}
+
+message Points {
+  repeated PointRecord point_records = 1;
+}
