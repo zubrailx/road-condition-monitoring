@@ -14,7 +14,9 @@ from lib.message_consumer import MsgConsumer, MsgConsumerCfg
 from lib.proto.monitoring.monitoring_pb2 import Monitoring
 
 Socket = namedtuple("Socket", "address port")
-InputArgs = namedtuple("InputArgs", ["bootstrap_servers", "mongo_socket", "username", "password"])
+InputArgs = namedtuple(
+    "InputArgs", ["bootstrap_servers", "mongo_socket", "username", "password"]
+)
 
 mongo_client: pymongo.MongoClient
 database: Any
@@ -25,8 +27,8 @@ logger: logging.Logger
 
 def process_arguments() -> InputArgs:
     try:
-        username = os.environ.get('MK_MONGO_USERNAME', 'admin')
-        password = os.environ.get('MK_MONGO_PASSWORD', 'pass')
+        username = os.environ.get("MK_MONGO_USERNAME", "admin")
+        password = os.environ.get("MK_MONGO_PASSWORD", "pass")
         bootstrap_servers = sys.argv[1]
         mongo_address, mongo_port = sys.argv[2].split(":")
     except ValueError:
@@ -36,13 +38,15 @@ def process_arguments() -> InputArgs:
         bootstrap_servers=bootstrap_servers,
         mongo_socket=Socket(address=mongo_address, port=int(mongo_port)),
         username=username,
-        password=password
+        password=password,
     )
 
 
 def mongo_get_client(address, port, username, password):
     mongo_connection_str = f"mongodb://{address}:{port}/"
-    mongo_client = pymongo.MongoClient(mongo_connection_str, username=username, password=password)
+    mongo_client = pymongo.MongoClient(
+        mongo_connection_str, username=username, password=password
+    )
     return mongo_client
 
 
@@ -60,8 +64,9 @@ def consumer_func(msg):
         proto.ParseFromString(msg.value)
 
         data = {
-            "time": time,
             "body": MessageToDict(proto),
+            "time_insert": time,
+            "time_access": None,
         }
 
         collection.insert_one(data)
@@ -77,10 +82,24 @@ if __name__ == "__main__":
 
     args = process_arguments()
 
-    mongo_client = mongo_get_client(args.mongo_socket.address, args.mongo_socket.port, args.username, args.password)
+    mongo_client = mongo_get_client(
+        args.mongo_socket.address, args.mongo_socket.port, args.username, args.password
+    )
+
     database = mongo_client["data"]
     collection = database["monitoring"]
-    collection.create_index({"time": -1})
+
+    collection.create_index(
+        {
+            "time_insert": 1,  # time of insertion
+        }
+    )
+    collection.create_index(
+        {
+            "time_access": 1,  # time of last access
+            "time_insert": 1
+        }
+    )
 
     cfg = MsgConsumerCfg(
         topic="monitoring",
