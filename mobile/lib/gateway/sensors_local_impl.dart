@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:mobile/gateway/abstract/sensors_local.dart';
+import 'package:synchronized/synchronized.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 // TODO: rewrite to typeAdapter
@@ -67,6 +69,7 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
   late final File _currentDataFile;
   late final _SensorIndexContext _indexContext;
   late final File _indexContextFile;
+  final Lock _indexLock = Lock();
 
   SensorsLocalGatewayImpl({required String directoryPath}) {
     _rootPath = directoryPath;
@@ -130,34 +133,41 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
 
   @override
   Stream<SensorsLocalData> loadFromBegin({int? maxCount = -1}) async* {
-    var totalLinesRead = 0;
+    var controller = StreamController<SensorsLocalData>();
 
-    for (final index in _indexContext.indexes) {
-      final file = File(p.join(_rootPath, index.location));
-      var terminated = false;
-      var linesRead = 0;
+    _indexLock.synchronized(() async {
+      var totalLinesRead = 0;
 
-      yield* file
-          .openRead()
-          .map(utf8.decode)
-          .transform(const LineSplitter())
-          .skip(index.position)
-          .takeWhile((_) {
-        terminated = totalLinesRead == maxCount;
-        if (!terminated) {
-          ++totalLinesRead;
-          ++linesRead;
+      for (final index in _indexContext.indexes) {
+        final file = File(p.join(_rootPath, index.location));
+        var terminated = false;
+        var linesRead = 0;
+
+        await controller.addStream(file
+            .openRead()
+            .map(utf8.decode)
+            .transform(const LineSplitter())
+            .skip(index.position)
+            .takeWhile((_) {
+          terminated = totalLinesRead == maxCount;
+          if (!terminated) {
+            ++totalLinesRead;
+            ++linesRead;
+          }
+          return !terminated;
+        }).map((l) => SensorsLocalData.fromJson(jsonDecode(l))));
+
+        index.pending += linesRead;
+        if (!terminated && index != _indexContext.indexes.last) {
+          index.isEnd = true;
         }
-        return !terminated;
-      }).map((l) => SensorsLocalData.fromJson(jsonDecode(l)));
-
-      index.pending += linesRead;
-      if (!terminated && index != _indexContext.indexes.last) {
-        index.isEnd = true;
+        GetIt.I<Talker>().debug(
+            'LOAD: count: $totalLinesRead, position: ${index.position}, pending: ${index.pending}, ended: ${index.isEnd}, location: ${index.location}');
       }
-      GetIt.I<Talker>().debug(
-          'LOAD: count: ${totalLinesRead}, position: ${index.position}, pending: ${index.pending}, ended: ${index.isEnd}, location: ${index.location}');
-    }
+      controller.close();
+    });
+
+    yield* controller.stream;
   }
 
   _deleteAckedDataFiles() {
@@ -188,8 +198,10 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
   @override
   Future<bool> ackFromBegin(int count) async {
     GetIt.I<Talker>().debug('ACK: count: $count');
-    _ackFromBegin(count);
-    _deleteAckedDataFiles();
+    await _indexLock.synchronized(() {
+      _ackFromBegin(count);
+      _deleteAckedDataFiles();
+    });
     return true;
   }
 
@@ -197,13 +209,17 @@ class SensorsLocalGatewayImpl implements SensorsLocalGateway {
   Future<bool> nAckFromBegin(int count) async {
     GetIt.I<Talker>().debug('NACK: count: $count');
     _ackFromBegin(count);
-    for (final index in _indexContext.indexes) {
-      if (index.position != index.pending) {
-        index.pending = index.position;
-        index.isEnd = false;
+
+    await _indexLock.synchronized(() {
+      for (final index in _indexContext.indexes) {
+        if (index.position != index.pending) {
+          index.pending = index.position;
+          index.isEnd = false;
+        }
       }
-    }
-    _deleteAckedDataFiles();
+      _deleteAckedDataFiles();
+    });
+
     return true;
   }
 }
