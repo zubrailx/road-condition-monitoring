@@ -6,14 +6,14 @@ from datetime import datetime, timezone
 from message_consumer import MsgConsumerCfg, MsgConsumer
 import processing
 
-import common.model.gen.monitoring.monitoring_pb2 as monitoring
-from common.model.gen.monitoring.monitoring_pb2 import (
+import proto.monitoring.monitoring_pb2 as monitoring
+from proto.monitoring.monitoring_pb2 import (
     Monitoring,
     AccelerometerRecord,
     GyroscopeRecord,
     GpsRecord,
 )
-from common.model.gen.util_pb2 import Timestamp
+from proto.util_pb2 import Timestamp
 
 logging.basicConfig()
 logger = logging.getLogger("main")

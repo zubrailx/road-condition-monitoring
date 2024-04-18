@@ -1,0 +1,15 @@
+#!/bin/bash
+
+PROTO_PATH=proto/
+PROTO_FILES=$(find $PROTO_PATH -iname "*.proto")
+OUTPUT_DIR=python/generated/proto
+
+mkdir -p $OUTPUT_DIR
+
+protoc --proto_path=$PROTO_PATH --python_out=$OUTPUT_DIR --pyi_out=$OUTPUT_DIR $PROTO_FILES
+
+echo 'import sys
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+' > $OUTPUT_DIR/__init__.py
