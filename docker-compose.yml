@@ -1,20 +1,4 @@
 services:
-  # mqtt-receiver:
-  #   image: zubrailx/mqtt-receiver:latest
-  #   build:
-  #     context: mqtt_receiver
-  #     dockerfile: dockerfile
-  #   restart: always
-  #   command: broker-mosquitto 1883
-
-  # broker-mosquitto:
-  #   image: eclipse-mosquitto:2.0-openssl
-  #   container_name: broker-mosquitto
-  #   ports:
-  #     - '1883:1883'
-  #   volumes:
-  #     - '${PWD}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf'
-  
   guessr:
     image: zubrailx/guessr:latest
     build:
