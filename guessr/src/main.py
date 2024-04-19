@@ -80,11 +80,11 @@ def get_raw_filtered_inputs(message: Monitoring):
 
 def consumer_func(msg):
     try:
-        time = kafka_to_timestamp(msg.timestamp)
-
         proto = Monitoring()
         proto.ParseFromString(msg.value)
-        logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
+
+        # time = kafka_to_timestamp(msg.timestamp)
+        # logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
 
         (acDf, gyDf, gpsDf) = get_raw_filtered_inputs(proto)
         (acDfn, gyDfn) = processing.reduce_noice(acDf, gyDf)

@@ -7,7 +7,7 @@ import multiprocessing as mp
 import signal
 import logging
 
-log = logging.getLogger("kafka_producer")
+log = logging.getLogger("kafka_consumer")
 
 @dataclass
 class KafkaConsumerCfg:
