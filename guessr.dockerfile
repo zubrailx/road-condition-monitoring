@@ -1,4 +1,6 @@
-FROM python:3.11.9-alpine3.19
+FROM python:3.11.9
+
+RUN apt install gcc
 
 WORKDIR /app
 

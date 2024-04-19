@@ -57,22 +57,24 @@ def kafka_to_timestamp(date):
 
 
 def consumer_func(msg):
-    try:
-        time = kafka_to_timestamp(msg.timestamp)
+    print(msg)
+    print(msg.timestamp())
+    # try:
+        # time = kafka_to_timestamp(msg.timestamp)
 
-        proto = Monitoring()
-        proto.ParseFromString(msg.value)
+        # proto = Monitoring()
+        # proto.ParseFromString(msg.value)
 
-        data = {
-            "body": MessageToDict(proto),
-            "time_insert": time,
-            "time_access": None,
-        }
+        # data = {
+        #     "body": MessageToDict(proto),
+        #     "time_insert": time,
+        #     "time_access": None,
+        # }
 
-        collection.insert_one(data)
+        # collection.insert_one(data)
 
-    except Exception as e:
-        logger.error(e)
+    # except Exception as e:
+    #     logger.error(e)
 
 
 if __name__ == "__main__":

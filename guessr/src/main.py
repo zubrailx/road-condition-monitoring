@@ -4,6 +4,7 @@ import pandas
 import logging
 from datetime import datetime, timezone
 from lib.kafka_consumer import KafkaConsumer, KafkaConsumerCfg
+from lib.kafka_producer import KafkaProducer, KafkaProducerCfg
 import processing
 from collections import namedtuple
 
@@ -15,11 +16,13 @@ from lib.proto.monitoring.monitoring_pb2 import (
     GpsRecord,
 )
 from lib.proto.util_pb2 import Timestamp
+from lib.proto.points.points_pb2 import Points, PointRecord
 
 
 InputArgs = namedtuple("InputArgs", ["bootstrap_servers"])
 
 logger: logging.Logger
+producer: KafkaProducer
 
 
 def kafka_to_timestamp(date):
@@ -82,17 +85,37 @@ def consumer_func(msg):
 
         proto = Monitoring()
         proto.ParseFromString(msg.value)
-        logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
+        # logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
 
         (acDf, gyDf, gpsDf) = get_raw_filtered_inputs(proto)
         (acDfn, gyDfn) = processing.reduce_noice(acDf, gyDf)
         (acDfi, gyDfi, gpsDfi) = processing.interpolate(acDfn, gyDfn, gpsDf)
 
-        print(acDfi, gyDfi, gpsDfi, sep="\n")
-        print("\n\n")
+        # print(acDfi, gyDfi, gpsDfi, sep="\n")
+        # print("\n\n")
+
+        pointArray = gpsDf.to_dict("records")
+        points = Points()
+        points.point_records.extend(map(dict_to_point_record, pointArray))
+        produce(points)
 
     except Exception as e:
         logger.error(e)
+
+
+def dict_to_point_record(d):
+    point = PointRecord()
+    point.latitude = d["latitude"]
+    point.longitude = d["longitude"]
+    point.prediction = 0.2
+    point.time.seconds = d["time"] // 1000000
+    point.time.nanos = d["time"] % 1000000
+    return point
+
+
+def produce(points: Points):
+    producer.send(points.SerializeToString())
+    producer.flush()
 
 
 def process_arguments() -> InputArgs:
@@ -115,10 +138,17 @@ if __name__ == "__main__":
         servers=args.bootstrap_servers,
         group_id="guessr-group",
         client_id=socket.gethostname(),
-        pool_size=2,
+        pool_size=1,
         shutdown_timeout=10,
     )
 
-    consumer = KafkaConsumer(consumer_func, cfg)
-    consumer.main_loop()
+    producer_cfg = KafkaProducerCfg(
+        topic="points",
+        servers=args.bootstrap_servers.split(","),
+    )
 
+    producer = KafkaProducer(producer_cfg)
+    produce(Points())
+    consumer = KafkaConsumer(consumer_func, cfg)
+
+    consumer.main_loop()
