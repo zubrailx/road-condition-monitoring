@@ -4,9 +4,10 @@ import time
 from dataclasses import dataclass
 from kafka import errors as kafka_errors
 import multiprocessing as mp
-import multiprocessing.pool as mp_pool
 import signal
+import logging
 
+log = logging.getLogger("kafka_producer")
 
 @dataclass
 class KafkaConsumerCfg:
@@ -48,8 +49,9 @@ class KafkaConsumer:
                 if self.stop_processing:
                     break
 
+                log.debug("data read from topic 'msg.topic'")
                 # only works with top-level functions
-                self.pool.submit(self.consumer_func, (msg,))
+                self.pool.submit(self.consumer_func, msg)
 
                 try:
                     self.consumer.commit()

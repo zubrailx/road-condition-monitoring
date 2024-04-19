@@ -1,5 +1,8 @@
 from dataclasses import dataclass
+import logging
 import kafka
+
+log = logging.getLogger("kafka_producer")
 
 
 @dataclass
@@ -9,13 +12,14 @@ class KafkaProducerCfg:
 
 
 def on_send_success(record_metadata):
-    print(record_metadata.topic)
-    print(record_metadata.partition)
-    print(record_metadata.offset)
+    log.debug(
+        f"Send SUCCESS: "
+        f"topic {record_metadata.topic}, partition {record_metadata.partition}, offset {record_metadata.offset}"
+    )
 
 
 def on_send_error(excp):
-    print("I am an errback", excp)
+    log.debug("Send ERROR: I am an errback", excp)
 
 
 class KafkaProducer:

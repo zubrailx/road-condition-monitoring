@@ -55,7 +55,6 @@ def kafka_to_timestamp(date):
 
 
 def consumer_func(msg):
-    print(msg.timestamp)
     try:
         time = kafka_to_timestamp(msg.timestamp)
 
