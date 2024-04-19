@@ -1,10 +1,11 @@
+import kafka
+import concurrent.futures
 import time
 from dataclasses import dataclass
+from kafka import errors as kafka_errors
 import multiprocessing as mp
 import multiprocessing.pool as mp_pool
 import signal
-
-import confluent_kafka
 
 
 @dataclass
@@ -12,12 +13,11 @@ class KafkaConsumerCfg:
     topic: str
     servers: str
     group_id: str
-    client_id: str
     pool_size: int
     shutdown_timeout: int
 
 
-class LimitedMultiprocessingPool(mp_pool.Pool):
+class LimitedThreadPool(concurrent.futures.ThreadPoolExecutor):
     pass
 
 
@@ -25,42 +25,41 @@ class KafkaConsumer:
     def __init__(self, consumer_func, cfg: KafkaConsumerCfg):
         self.consumer_func = consumer_func
 
-        self.consumer = confluent_kafka.Consumer(
-            {
-                "bootstrap.servers": cfg.servers,
-                "group.id": cfg.group_id,
-                "auto.offset.reset": "earliest",
-            }
+        self.consumer = kafka.KafkaConsumer(
+            cfg.topic,
+            auto_offset_reset="latest",
+            enable_auto_commit=False,
+            bootstrap_servers=cfg.servers,
+            group_id=cfg.group_id,
         )
 
         self.stop_processing = False
-        self.pool = LimitedMultiprocessingPool(processes=cfg.pool_size)
+        self.pool = LimitedThreadPool(max_workers=cfg.pool_size)
         self.shutdown_timeout = cfg.shutdown_timeout
 
         signal.signal(signal.SIGTERM, self.set_stop_processing)
-
-        self.consumer.subscribe([cfg.topic])
 
     def set_stop_processing(self, *args, **kwargs):
         self.stop_processing = True
 
     def main_loop(self):
         while not self.stop_processing:
-            msg = self.consumer.poll(1.0)
+            for msg in self.consumer:
+                if self.stop_processing:
+                    break
 
-            if msg is None:
-                continue
+                # only works with top-level functions
+                self.pool.submit(self.consumer_func, (msg,))
 
-            if msg.error():
-                print("consumer error", msg.error)
-
-            print('msg', msg)
-            self.pool.apply_async(self.consumer_func, (msg,))
+                try:
+                    self.consumer.commit()
+                # on rebalance
+                except kafka_errors.CommitFailedError:
+                    continue
 
     def graceful_shutdown(self):
         try:
             self.consumer.close()
-            self.pool.close()
             graceful_shutdown_end = time.time() + self.shutdown_timeout
             while graceful_shutdown_end > time.time():
                 active_child_proc_num = len(mp.active_children())
@@ -70,8 +69,7 @@ class KafkaConsumer:
             else:
                 raise
         except Exception as ex:
-            self.pool.terminate()
             raise ex
         finally:
-            self.pool.join()
+            self.pool.shutdown(wait=True)
             self.set_stop_processing()

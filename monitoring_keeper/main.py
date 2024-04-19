@@ -1,7 +1,5 @@
 import sys
 import os
-import socket
-import json
 import logging
 from typing import Any
 
@@ -57,24 +55,23 @@ def kafka_to_timestamp(date):
 
 
 def consumer_func(msg):
-    print(msg)
-    print(msg.timestamp())
-    # try:
-        # time = kafka_to_timestamp(msg.timestamp)
+    print(msg.timestamp)
+    try:
+        time = kafka_to_timestamp(msg.timestamp)
 
-        # proto = Monitoring()
-        # proto.ParseFromString(msg.value)
+        proto = Monitoring()
+        proto.ParseFromString(msg.value)
 
-        # data = {
-        #     "body": MessageToDict(proto),
-        #     "time_insert": time,
-        #     "time_access": None,
-        # }
+        data = {
+            "body": MessageToDict(proto),
+            "time_insert": time,
+            "time_access": None,
+        }
 
-        # collection.insert_one(data)
+        collection.insert_one(data)
 
-    # except Exception as e:
-    #     logger.error(e)
+    except Exception as e:
+        logger.error(e)
 
 
 if __name__ == "__main__":
@@ -96,18 +93,12 @@ if __name__ == "__main__":
             "time_insert": 1,  # time of insertion
         }
     )
-    collection.create_index(
-        {
-            "time_access": 1,  # time of last access
-            "time_insert": 1
-        }
-    )
+    collection.create_index({"time_access": 1, "time_insert": 1})  # time of last access
 
     cfg = KafkaConsumerCfg(
         topic="monitoring",
         servers=args.bootstrap_servers,
         group_id="keeper-group",
-        client_id=socket.gethostname(),
         pool_size=2,
         shutdown_timeout=10,
     )

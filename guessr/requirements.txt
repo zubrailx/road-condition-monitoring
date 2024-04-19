@@ -1,8 +1,8 @@
 c45-decision-tree==1.0.2
-confluent-kafka==2.3.0
 contourpy==1.2.1
 cycler==0.12.1
 fonttools==4.51.0
+kafka-python==2.0.2
 kiwisolver==1.4.5
 matplotlib==3.8.4
 numpy==1.26.4

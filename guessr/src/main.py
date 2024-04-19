@@ -1,5 +1,4 @@
 import sys
-import socket
 import pandas
 import logging
 from datetime import datetime, timezone
@@ -115,7 +114,6 @@ def dict_to_point_record(d):
 
 def produce(points: Points):
     producer.send(points.SerializeToString())
-    producer.flush()
 
 
 def process_arguments() -> InputArgs:
@@ -137,7 +135,6 @@ if __name__ == "__main__":
         topic="monitoring",
         servers=args.bootstrap_servers,
         group_id="guessr-group",
-        client_id=socket.gethostname(),
         pool_size=1,
         shutdown_timeout=10,
     )
@@ -148,7 +145,6 @@ if __name__ == "__main__":
     )
 
     producer = KafkaProducer(producer_cfg)
-    produce(Points())
     consumer = KafkaConsumer(consumer_func, cfg)
 
     consumer.main_loop()
