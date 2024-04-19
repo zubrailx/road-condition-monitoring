@@ -3,7 +3,7 @@ import socket
 import pandas
 import logging
 from datetime import datetime, timezone
-from lib.message_consumer import MsgConsumerCfg, MsgConsumer
+from lib.kafka_consumer import KafkaConsumer, KafkaConsumerCfg
 import processing
 from collections import namedtuple
 
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 
     args = process_arguments()
 
-    cfg = MsgConsumerCfg(
+    cfg = KafkaConsumerCfg(
         topic="monitoring",
         servers=args.bootstrap_servers,
         group_id="guessr-group",
@@ -119,6 +119,6 @@ if __name__ == "__main__":
         shutdown_timeout=10,
     )
 
-    consumer = MsgConsumer(consumer_func, cfg)
+    consumer = KafkaConsumer(consumer_func, cfg)
     consumer.main_loop()
 

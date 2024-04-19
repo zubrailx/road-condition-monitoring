@@ -8,7 +8,7 @@ import signal
 
 
 @dataclass
-class MsgConsumerCfg:
+class KafkaConsumerCfg:
     topic: str
     servers: str
     group_id: str
@@ -21,8 +21,8 @@ class LimitedMultiprocessingPool(mp_pool.Pool):
     pass
 
 
-class MsgConsumer:
-    def __init__(self, consumer_func, cfg: MsgConsumerCfg):
+class KafkaConsumer:
+    def __init__(self, consumer_func, cfg: KafkaConsumerCfg):
         self.consumer_func = consumer_func
 
         self.consumer = kafka.KafkaConsumer(

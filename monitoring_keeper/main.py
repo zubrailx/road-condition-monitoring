@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from collections import namedtuple
 from google.protobuf.json_format import MessageToDict
 
-from lib.message_consumer import MsgConsumer, MsgConsumerCfg
+from lib.kafka_consumer import KafkaConsumer, KafkaConsumerCfg
 from lib.proto.monitoring.monitoring_pb2 import Monitoring
 
 Socket = namedtuple("Socket", "address port")
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         }
     )
 
-    cfg = MsgConsumerCfg(
+    cfg = KafkaConsumerCfg(
         topic="monitoring",
         servers=args.bootstrap_servers,
         group_id="keeper-group",
@@ -110,5 +110,5 @@ if __name__ == "__main__":
         shutdown_timeout=10,
     )
 
-    consumer = MsgConsumer(consumer_func, cfg)
+    consumer = KafkaConsumer(consumer_func, cfg)
     consumer.main_loop()
