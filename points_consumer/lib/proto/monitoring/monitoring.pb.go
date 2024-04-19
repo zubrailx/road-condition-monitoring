@@ -7,9 +7,9 @@
 package monitoring
 
 import (
-	__ "./"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	proto "points-consumer/lib/proto"
 	reflect "reflect"
 	sync "sync"
 )
@@ -81,11 +81,11 @@ type AccelerometerRecord struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Time *__.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
-	X    float32       `protobuf:"fixed32,11,opt,name=x,proto3" json:"x,omitempty"`
-	Y    float32       `protobuf:"fixed32,12,opt,name=y,proto3" json:"y,omitempty"`
-	Z    float32       `protobuf:"fixed32,13,opt,name=z,proto3" json:"z,omitempty"`
-	Ms   int32         `protobuf:"varint,21,opt,name=ms,proto3" json:"ms,omitempty"`
+	Time *proto.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
+	X    float32          `protobuf:"fixed32,11,opt,name=x,proto3" json:"x,omitempty"`
+	Y    float32          `protobuf:"fixed32,12,opt,name=y,proto3" json:"y,omitempty"`
+	Z    float32          `protobuf:"fixed32,13,opt,name=z,proto3" json:"z,omitempty"`
+	Ms   int32            `protobuf:"varint,21,opt,name=ms,proto3" json:"ms,omitempty"`
 }
 
 func (x *AccelerometerRecord) Reset() {
@@ -120,7 +120,7 @@ func (*AccelerometerRecord) Descriptor() ([]byte, []int) {
 	return file_monitoring_monitoring_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AccelerometerRecord) GetTime() *__.Timestamp {
+func (x *AccelerometerRecord) GetTime() *proto.Timestamp {
 	if x != nil {
 		return x.Time
 	}
@@ -160,11 +160,11 @@ type GyroscopeRecord struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Time *__.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
-	X    float32       `protobuf:"fixed32,11,opt,name=x,proto3" json:"x,omitempty"`
-	Y    float32       `protobuf:"fixed32,12,opt,name=y,proto3" json:"y,omitempty"`
-	Z    float32       `protobuf:"fixed32,13,opt,name=z,proto3" json:"z,omitempty"`
-	Ms   int32         `protobuf:"varint,21,opt,name=ms,proto3" json:"ms,omitempty"`
+	Time *proto.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
+	X    float32          `protobuf:"fixed32,11,opt,name=x,proto3" json:"x,omitempty"`
+	Y    float32          `protobuf:"fixed32,12,opt,name=y,proto3" json:"y,omitempty"`
+	Z    float32          `protobuf:"fixed32,13,opt,name=z,proto3" json:"z,omitempty"`
+	Ms   int32            `protobuf:"varint,21,opt,name=ms,proto3" json:"ms,omitempty"`
 }
 
 func (x *GyroscopeRecord) Reset() {
@@ -199,7 +199,7 @@ func (*GyroscopeRecord) Descriptor() ([]byte, []int) {
 	return file_monitoring_monitoring_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GyroscopeRecord) GetTime() *__.Timestamp {
+func (x *GyroscopeRecord) GetTime() *proto.Timestamp {
 	if x != nil {
 		return x.Time
 	}
@@ -239,11 +239,11 @@ type GpsRecord struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Time      *__.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
-	Latitude  float64       `protobuf:"fixed64,11,opt,name=latitude,proto3" json:"latitude,omitempty"`
-	Longitude float64       `protobuf:"fixed64,12,opt,name=longitude,proto3" json:"longitude,omitempty"`
-	Accuracy  float64       `protobuf:"fixed64,13,opt,name=accuracy,proto3" json:"accuracy,omitempty"`
-	Ms        int32         `protobuf:"varint,21,opt,name=ms,proto3" json:"ms,omitempty"`
+	Time      *proto.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
+	Latitude  float64          `protobuf:"fixed64,11,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude float64          `protobuf:"fixed64,12,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	Accuracy  float64          `protobuf:"fixed64,13,opt,name=accuracy,proto3" json:"accuracy,omitempty"`
+	Ms        int32            `protobuf:"varint,21,opt,name=ms,proto3" json:"ms,omitempty"`
 }
 
 func (x *GpsRecord) Reset() {
@@ -278,7 +278,7 @@ func (*GpsRecord) Descriptor() ([]byte, []int) {
 	return file_monitoring_monitoring_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GpsRecord) GetTime() *__.Timestamp {
+func (x *GpsRecord) GetTime() *proto.Timestamp {
 	if x != nil {
 		return x.Time
 	}
@@ -435,8 +435,7 @@ var file_monitoring_monitoring_proto_rawDesc = []byte{
 	0x12, 0x31, 0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x0b, 0x20, 0x01, 0x28,
 	0x0b, 0x32, 0x17, 0x2e, 0x6d, 0x6f, 0x6e, 0x69, 0x74, 0x6f, 0x72, 0x69, 0x6e, 0x67, 0x2e, 0x55,
 	0x73, 0x65, 0x72, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f,
-	0x75, 0x6e, 0x74, 0x42, 0x0e, 0x5a, 0x0c, 0x2e, 0x2f, 0x6d, 0x6f, 0x6e, 0x69, 0x74, 0x6f, 0x72,
-	0x69, 0x6e, 0x67, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x75, 0x6e, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -458,7 +457,7 @@ var file_monitoring_monitoring_proto_goTypes = []interface{}{
 	(*GyroscopeRecord)(nil),     // 2: monitoring.GyroscopeRecord
 	(*GpsRecord)(nil),           // 3: monitoring.GpsRecord
 	(*Monitoring)(nil),          // 4: monitoring.Monitoring
-	(*__.Timestamp)(nil),        // 5: Timestamp
+	(*proto.Timestamp)(nil),     // 5: Timestamp
 }
 var file_monitoring_monitoring_proto_depIdxs = []int32{
 	5, // 0: monitoring.AccelerometerRecord.time:type_name -> Timestamp

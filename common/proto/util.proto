@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-option go_package = "./";
-
 message Timestamp {
   int64 seconds = 1;
   int32 nanos = 2;

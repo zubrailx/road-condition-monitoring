@@ -1,9 +1,0 @@
-#!/bin/bash
-
-PROTO_PATH=proto/
-PROTO_FILES=$(find $PROTO_PATH -iname "*.proto")
-OUTPUT_DIR=go/generated/proto/
-
-mkdir -p $OUTPUT_DIR
-
-protoc --proto_path=$PROTO_PATH --go_opt=paths=source_relative --go_out=$OUTPUT_DIR $PROTO_FILES

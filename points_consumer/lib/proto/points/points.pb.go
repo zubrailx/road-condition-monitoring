@@ -7,9 +7,9 @@
 package points
 
 import (
-	__ "./"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	proto "points-consumer/lib/proto"
 	reflect "reflect"
 	sync "sync"
 )
@@ -26,10 +26,10 @@ type PointRecord struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Time       *__.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
-	Latitude   float64       `protobuf:"fixed64,11,opt,name=latitude,proto3" json:"latitude,omitempty"`
-	Longitude  float64       `protobuf:"fixed64,12,opt,name=longitude,proto3" json:"longitude,omitempty"`
-	Prediction float32       `protobuf:"fixed32,21,opt,name=prediction,proto3" json:"prediction,omitempty"`
+	Time       *proto.Timestamp `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
+	Latitude   float64          `protobuf:"fixed64,11,opt,name=latitude,proto3" json:"latitude,omitempty"`
+	Longitude  float64          `protobuf:"fixed64,12,opt,name=longitude,proto3" json:"longitude,omitempty"`
+	Prediction float32          `protobuf:"fixed32,21,opt,name=prediction,proto3" json:"prediction,omitempty"`
 }
 
 func (x *PointRecord) Reset() {
@@ -64,7 +64,7 @@ func (*PointRecord) Descriptor() ([]byte, []int) {
 	return file_points_points_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PointRecord) GetTime() *__.Timestamp {
+func (x *PointRecord) GetTime() *proto.Timestamp {
 	if x != nil {
 		return x.Time
 	}
@@ -157,8 +157,7 @@ var file_points_points_proto_rawDesc = []byte{
 	0x0d, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x5f, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x01,
 	0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x2e, 0x50, 0x6f,
 	0x69, 0x6e, 0x74, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52, 0x0c, 0x70, 0x6f, 0x69, 0x6e, 0x74,
-	0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x42, 0x0a, 0x5a, 0x08, 0x2e, 0x2f, 0x70, 0x6f, 0x69,
-	0x6e, 0x74, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -175,9 +174,9 @@ func file_points_points_proto_rawDescGZIP() []byte {
 
 var file_points_points_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_points_points_proto_goTypes = []interface{}{
-	(*PointRecord)(nil),  // 0: points.PointRecord
-	(*Points)(nil),       // 1: points.Points
-	(*__.Timestamp)(nil), // 2: Timestamp
+	(*PointRecord)(nil),     // 0: points.PointRecord
+	(*Points)(nil),          // 1: points.Points
+	(*proto.Timestamp)(nil), // 2: Timestamp
 }
 var file_points_points_proto_depIdxs = []int32{
 	2, // 0: points.PointRecord.time:type_name -> Timestamp
