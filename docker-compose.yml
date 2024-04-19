@@ -101,5 +101,12 @@ services:
       MK_MONGO_USERNAME: admin
       MK_MONGO_PASSWORD: 1357924680
 
+  points-consumer:
+    build:
+      context: points_consumer
+      dockerfile: dockerfile
+    restart: unless-stopped
+    command: kafka1:9092
+
 volumes:
   kafka-data:

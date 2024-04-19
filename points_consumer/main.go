@@ -12,8 +12,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
-  "google.golang.org/protobuf/proto"
-	monitoring "points-consumer/lib/proto/monitoring"
+	"google.golang.org/protobuf/proto"
+	points "points-consumer/lib/proto/points"
 )
 
 type Args struct {
@@ -71,23 +71,27 @@ func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.D
 	log.Println("reader reading messages")
 
 	for {
-		msg, err := reader.ReadMessage(ctx)
-		if err != nil {
-			log.Println("error in reader:", err.Error())
-			break
+		select {
+    case <-ctx.Done():
+			log.Println("ctx in reader is done")
+			return
+		default:
+			msg, err := reader.ReadMessage(ctx)
+			if err != nil {
+				log.Println("error in reader:", err.Error())
+        continue
+			}
+
+			var data points.Points
+			err = proto.Unmarshal(msg.Value, &data)
+			if err != nil {
+				log.Println("error when unmarshalling:", err.Error())
+        continue
+			}
+
+			log.Println(data.String())
 		}
-
-		var data monitoring.Monitoring
-
-		err = proto.Unmarshal(msg.Value, &data)
-    if err != nil {
-      log.Println("error when unmarshalling:", err.Error())
-      break
-    }
-
-		log.Println(data.String())
 	}
-
 }
 
 func main() {
