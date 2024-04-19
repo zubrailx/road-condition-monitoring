@@ -10,6 +10,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ClickHouse/clickhouse-go/v2"
+	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/protobuf/proto"
@@ -18,6 +20,7 @@ import (
 
 type Args struct {
 	bootstrapServers string
+	clickhouseServers string
 }
 
 var wg sync.WaitGroup
@@ -31,12 +34,13 @@ func getEnvDefault(k string, fallback string) string {
 }
 
 func processEnvironment() (Args, error) {
-	if len(os.Args) < 2 {
-		return Args{}, fmt.Errorf("arg len should be equal 2")
+	if len(os.Args) < 3 {
+		return Args{}, fmt.Errorf("arg len should be equal 3")
 	}
 
 	return Args{
 		bootstrapServers: os.Args[1],
+    clickhouseServers: os.Args[2],
 	}, nil
 }
 
@@ -61,37 +65,94 @@ func getKafkaReader(args Args, groupID, topic string, dialer *kafka.Dialer) *kaf
 	})
 }
 
-func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer) {
+func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer, clickCon driver.Conn) {
 	wg.Add(1)
 	defer wg.Done()
 
 	reader := getKafkaReader(args, groupID, topic, dialer)
 	defer reader.Close()
 
-	log.Println("reader reading messages")
+	log.Println("reader ready to read messages")
 
 	for {
 		select {
-    case <-ctx.Done():
+		case <-ctx.Done():
 			log.Println("ctx in reader is done")
 			return
 		default:
 			msg, err := reader.ReadMessage(ctx)
 			if err != nil {
 				log.Println("error in reader:", err.Error())
-        continue
+				continue
 			}
 
-			var data points.Points
-			err = proto.Unmarshal(msg.Value, &data)
+			var points points.Points
+			err = proto.Unmarshal(msg.Value, &points)
 			if err != nil {
 				log.Println("error when unmarshalling:", err.Error())
-        continue
+				continue
 			}
 
-			log.Println(data.String())
+      err = insertPoints(ctx, clickCon, &points)
+      if err != nil {
+        log.Println("error when inserting data:", err.Error())
+        continue
+      }
 		}
 	}
+}
+
+func newClickhouseCon(ctx context.Context, args Args) (driver.Conn, error) {
+	conn, err := clickhouse.Open(&clickhouse.Options{
+		Addr: []string{args.clickhouseServers},
+		ClientInfo: clickhouse.ClientInfo{
+			Products: []struct {
+				Name    string
+				Version string
+			}{
+				{Name: "points-consumer-go", Version: "0.1"},
+			},
+		},
+		Debugf: func(format string, v ...interface{}) {
+			fmt.Printf(format, v)
+		},
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if err := conn.Ping(ctx); err != nil {
+		if exception, ok := err.(*clickhouse.Exception); ok {
+			log.Printf("Exception [%d] %s \n%s\n", exception.Code, exception.Message, exception.StackTrace)
+		}
+		return nil, err
+	}
+
+  log.Println("clickhouse connection established")
+
+	return conn, nil
+}
+
+func insertPoints(ctx context.Context, conn driver.Conn , points *points.Points) error {
+  batch, err := conn.PrepareBatch(ctx, "INSERT INTO points")
+  if err != nil {
+    return err
+  }
+
+  for _, point := range points.PointRecords {
+    err := batch.Append(
+      point.Time.Seconds,
+      point.Latitude,
+      point.Longitude,
+      point.Prediction,
+    )
+
+    if err != nil {
+      return err
+    }
+  }
+  return batch.Send()
 }
 
 func main() {
@@ -107,7 +168,14 @@ func main() {
 	}
 
 	dialer := newDialer()
-	go read(ctx, args, groupID, topic, dialer)
+
+  clickCon, err := newClickhouseCon(ctx, args)
+  if err != nil {
+    log.Fatal("error when creating connection:", err)
+
+  }
+
+	go read(ctx, args, groupID, topic, dialer, clickCon)
 
 	<-ctx.Done()
 	log.Println("interrupt signal received. graceful shutdown")

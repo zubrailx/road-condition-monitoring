@@ -106,7 +106,7 @@ services:
       context: points_consumer
       dockerfile: dockerfile
     restart: unless-stopped
-    command: kafka1:9092
+    command: kafka1:9092 clickhouse:9000
 
 volumes:
   kafka-data:
