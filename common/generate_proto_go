@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+APP_NAME=$1
+GEN_PREFIX=$2
+
+PROTO_PATH=../common/proto/
+PROTO_FILES=$(find $PROTO_PATH -iname "*.proto")
+
+GO_OPTS=
+
+for item in $PROTO_FILES
+do
+  path=$(realpath -s --relative-to=$PROTO_PATH $item)
+  GO_OPTS="$GO_OPTS --go_opt=M$path=$(dirname $APP_NAME/$GEN_PREFIX/$path)"
+done
+
+mkdir -p $GEN_PREFIX
+
+protoc --proto_path=$PROTO_PATH $GO_OPTS --go_opt=paths=source_relative --go_out=$GEN_PREFIX $PROTO_FILES
