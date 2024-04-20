@@ -48,7 +48,8 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     final zoom = _calculateZoom(camera);
 
     // print(camera.center);
-    // print("z: $zoom, $xLow - $xHigh, $yLow - $yHigh");
+    print("z: $zoom, $xLow - $xHigh, $yLow - $yHigh");
+    print(camera.center);
 
     List<Marker> markers = [
       _predictionToMarker(PredictionPoint(latitude: 60.004, longitude: 30.364, prediction: 0.5)),
@@ -102,9 +103,9 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     final zoom = _calculateZoom(camera);
 
     final (topXTile, topYTile) =
-        _calculateTile(topLeft.latitude, topLeft.longitude, zoom);
+        _calculateTile(topLeft.longitude, topLeft.latitude, zoom);
     final (bottomXTile, bottomYTile) =
-        _calculateTile(bottomRight.latitude, bottomRight.longitude, zoom);
+        _calculateTile(bottomRight.longitude, bottomRight.latitude, zoom);
 
     final topXInt = topXTile.floor();
     final topYInt = topYTile.ceil();
@@ -114,7 +115,7 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     return ((topXInt, bottomXInt), (bottomYInt, topYInt));
   }
 
-  (double, double) _calculateTile(double latitude, double longitude, int zoom) {
+  (double, double) _calculateTile(double longitude, double latitude, int zoom) {
     final tiles = pow(2, zoom.floor());
 
     final xTile = (((longitude + 180) / 360) * tiles);
