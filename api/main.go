@@ -111,7 +111,6 @@ func handlePingGet(w http.ResponseWriter, r *http.Request) {
 
 func fromPointTile(x, y, z int) (float64, float64) {
 	n := math.Pow(2, float64(z))
-	fmt.Println(n)
 
 	longitude := float64(x)/n*360.0 - 180.0
 	latitudeRad := math.Atan(math.Sinh(math.Pi * (1.0 - 2.0*float64(y)/n)))

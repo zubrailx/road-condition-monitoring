@@ -172,7 +172,6 @@ func main() {
   clickCon, err := newClickhouseConn(ctx, args)
   if err != nil {
     log.Fatal("error when creating connection:", err)
-
   }
 
 	go read(ctx, args, groupID, topic, dialer, clickCon)
