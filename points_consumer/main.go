@@ -102,7 +102,7 @@ func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.D
 	}
 }
 
-func newClickhouseCon(ctx context.Context, args Args) (driver.Conn, error) {
+func newClickhouseConn(ctx context.Context, args Args) (driver.Conn, error) {
 	conn, err := clickhouse.Open(&clickhouse.Options{
 		Addr: []string{args.clickhouseServers},
 		ClientInfo: clickhouse.ClientInfo{
@@ -169,7 +169,7 @@ func main() {
 
 	dialer := newDialer()
 
-  clickCon, err := newClickhouseCon(ctx, args)
+  clickCon, err := newClickhouseConn(ctx, args)
   if err != nil {
     log.Fatal("error when creating connection:", err)
 
