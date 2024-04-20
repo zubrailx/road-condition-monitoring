@@ -12,7 +12,7 @@ import 'package:talker_flutter/talker_flutter.dart';
 class GpsState with ChangeNotifier {
   final LocationSettings locationSettings = const LocationSettings(
     accuracy: LocationAccuracy.best,
-    // distanceFilter: 100,
+    distanceFilter: 50,
   );
 
   late bool _serviceEnabled;
