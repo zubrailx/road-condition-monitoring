@@ -11,6 +11,7 @@ import 'package:mobile/app/theme.dart';
 import 'package:mobile/features/notifications.dart';
 import 'package:mobile/gateway/configuration_impl.dart';
 import 'package:mobile/gateway/notifications.dart';
+import 'package:mobile/gateway/points_api.dart';
 import 'package:mobile/gateway/sensors_local_impl.dart';
 import 'package:mobile/gateway/sensors_network_impl.dart';
 import 'package:mobile/pages/logs_page.dart';
@@ -155,6 +156,9 @@ void run() async {
     final notificationsGateway =
         NotificationsGatewayImpl(plugin: flutterLocalNotificationsPlugin);
     GetIt.I.registerSingleton(notificationsGateway);
+
+    final pointsApiGateway = PointsApi();
+    GetIt.I.registerSingleton(pointsApiGateway);
 
     // permissions
     await grantNotificationPermissions(flutterLocalNotificationsPlugin);

@@ -1,28 +1,17 @@
+import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
-
-class PredictionPoint {
-  final double latitude;
-  final double longitude;
-  final double prediction;
-
-  PredictionPoint(
-      {required this.latitude,
-      required this.longitude,
-      required this.prediction});
-
-  LatLng get latLng => LatLng(latitude, longitude);
-
-  @override
-  String toString() => 'LocationMarkerPosition('
-      'latitude: $latitude, '
-      'longitude: $longitude, '
-      'prediction: $prediction)';
-}
+import 'package:mobile/entities/point_response.dart';
+import 'package:mobile/features/points.dart';
+import 'package:mobile/shared/util.dart';
+import 'package:mobile/state/configuration.dart';
+import 'package:provider/provider.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class MapPointsLayer extends StatefulWidget {
   const MapPointsLayer({super.key});
@@ -32,36 +21,93 @@ class MapPointsLayer extends StatefulWidget {
 }
 
 class _MapPointsLayerState extends State<MapPointsLayer> {
-  Map<int, Map<(int, int), List<PredictionPoint>>> cachedPoints = {};
+  final Map<int, Map<Pair<int, int>, List<Marker>>> cachedPoints = HashMap();
+  bool loading = false;
+  final List<Marker> visibleMarkers = [];
+  int previousZoom = -1;
 
   _MapPointsLayerState();
 
   @override
   Widget build(BuildContext context) {
     final camera = MapCamera.maybeOf(context);
+    final config = context.watch<ConfigurationState>();
 
     if (camera == null) {
       return const SizedBox.shrink();
     }
 
+    _loadPoints(camera, config).then((markers) {
+      bool updated = _updateVisibleMarkers(camera, markers);
+      if (updated) {
+        setState(() {
+          // _logVisibleMarkers();
+        });
+      }
+    });
+
+    // _logVisibleMarkers();
+
+    return MarkerLayer(markers: visibleMarkers);
+  }
+
+  _logVisibleMarkers() {
+    GetIt.I<Talker>().debug(
+        'MAP POINTS: updated markers, visible: ${visibleMarkers.length}');
+  }
+
+  Future<List<Marker>> _loadPoints(
+      MapCamera camera, ConfigurationState config) async {
     final ((xLow, xHigh), (yLow, yHigh)) = _calculateTileRange(camera);
     final zoom = _calculateZoom(camera);
 
     // print(camera.center);
-    print("z: $zoom, $xLow - $xHigh, $yLow - $yHigh");
-    print(camera.center);
+    cachedPoints.putIfAbsent(
+        zoom, () => HashMap<Pair<int, int>, List<Marker>>());
 
-    List<Marker> markers = [
-      _predictionToMarker(PredictionPoint(latitude: 60.004, longitude: 30.364, prediction: 0.5)),
-      _predictionToMarker(PredictionPoint(latitude: 60.004, longitude: 30.365, prediction: 0.3)),
-      _predictionToMarker(PredictionPoint(latitude: 60.004, longitude: 30.366, prediction: 1)),
-      _predictionToMarker(PredictionPoint(latitude: 60.004, longitude: 30.367, prediction: 0)),
-    ];
+    List<Marker> inserted = [];
 
-    return MarkerLayer(markers: markers);
+    if (!loading) {
+      loading = true;
+
+      for (int x = xLow; x <= xHigh; ++x) {
+        for (int y = yLow; y <= yHigh; ++y) {
+          final key = Pair(first: x, second: y);
+          if (!cachedPoints[zoom]!.containsKey(key)) {
+            final result = await getPoints(
+                config.configurationData?.networkApiURL, zoom, x, y);
+            final points = result.map((e) => _pointToMarker(e)).toList();
+            inserted.addAll(cachedPoints[zoom]!.putIfAbsent(key, () => points));
+          }
+        }
+      }
+
+      loading = false;
+    }
+
+    return inserted;
   }
 
-  Color _getMarkerColor(PredictionPoint point) {
+  bool _updateVisibleMarkers(MapCamera camera, List<Marker> inserted) {
+    bool updated = false;
+    final zoom = _calculateZoom(camera);
+
+    if (previousZoom != zoom) {
+      visibleMarkers.clear();
+      previousZoom = zoom;
+      for (var lst in cachedPoints[zoom]!.values) {
+        visibleMarkers.addAll(lst);
+      }
+      updated = true;
+    } else if (inserted.isNotEmpty) {
+      visibleMarkers.addAll(inserted);
+      updated = true;
+    }
+
+    return updated;
+  }
+
+  Color _getMarkerColor(PointResponse point) {
     final p = point.prediction;
     final r = min(255, 510 - 510 * p).floor();
     final g = min(255, 510 * p).floor();
@@ -69,18 +115,20 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     return Color.fromRGBO(r, g, b, 1);
   }
 
-  _predictionToMarker(PredictionPoint point) {
+  Marker _pointToMarker(PointResponse point) {
     final color = _getMarkerColor(point);
     return Marker(
         point: LatLng(point.latitude, point.longitude),
+        // child: SvgPicture.asset("assets/svg/Point.svg",
+        //     width: 9,
+        //     colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
         child: Stack(
           alignment: AlignmentDirectional.center,
           children: [
             SvgPicture.asset("assets/svg/Point.svg", width: 10),
             SvgPicture.asset("assets/svg/Point.svg",
                 width: 9,
-                colorFilter:
-                    ColorFilter.mode(color, BlendMode.srcIn)),
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
           ],
         ),
         height: 10,
@@ -89,7 +137,7 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
         alignment: Alignment.topCenter);
   }
 
-  _calculateZoom(MapCamera camera) {
+  int _calculateZoom(MapCamera camera) {
     return camera.zoom.floor();
   }
 
@@ -136,7 +184,6 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
 
   @override
   void didUpdateWidget(MapPointsLayer oldWidget) {
-    // print('updated');
     super.didUpdateWidget(oldWidget);
   }
 }

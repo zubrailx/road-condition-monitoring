@@ -3,6 +3,14 @@ class Pair<K, V> {
   final V second;
 
   const Pair({required this.first, required this.second});
+
+  @override
+  bool operator ==(other) {
+    return other is Pair && other.first == first && other.second == second;
+  }
+
+  @override
+  int get hashCode => first.hashCode ^ second.hashCode;
 }
 
 class Triple<K, V, A> {

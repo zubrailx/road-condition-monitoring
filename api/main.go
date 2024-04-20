@@ -125,18 +125,21 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 
 	z, err := strconv.Atoi(chi.URLParam(r, "z"))
 	if err != nil {
+    w.WriteHeader(http.StatusBadRequest);
 		w.Write([]byte("z should be integer"))
 		return
 	}
 
 	x, err := strconv.Atoi(chi.URLParam(r, "x"))
 	if err != nil {
+    w.WriteHeader(http.StatusBadRequest);
 		w.Write([]byte("x should be integer"))
 		return
 	}
 
 	y, err := strconv.Atoi(chi.URLParam(r, "y"))
 	if err != nil {
+    w.WriteHeader(http.StatusBadRequest);
 		w.Write([]byte("y should be integer"))
 		return
 	}
@@ -149,6 +152,7 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 		latitudeMin, latitudeMax, longitudeMin, longitudeMax,
 	)
 	if err != nil {
+    w.WriteHeader(http.StatusInternalServerError);
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -159,6 +163,7 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		point := PredictionPoint{}
 		if err := rows.Scan(&point.Time, &point.Latitude, &point.Longitude, &point.Prediction); err != nil {
+      w.WriteHeader(http.StatusInternalServerError);
 			log.Println(err.Error())
 			return
 		}
@@ -167,8 +172,10 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 
 	res, err := json.Marshal(points)
 	if err != nil {
+    w.WriteHeader(http.StatusInternalServerError);
 		log.Println(err.Error())
 		return
 	}
+  w.WriteHeader(http.StatusOK);
 	w.Write(res)
 }

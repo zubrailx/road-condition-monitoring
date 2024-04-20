@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/state/gps.dart';
@@ -17,16 +16,6 @@ class MapWidget extends StatefulWidget {
 
 class _MapWidgetState extends State<MapWidget> {
   late final MapController _mapController;
-
-  // Marker _getUserMarker(LatLng mapPoint) {
-  //   return Marker(
-  //       point: mapPoint,
-  //       child: Image.asset("assets/svg/UserMap.png", width: 32),
-  //       height: 50,
-  //       width: 50,
-  //       rotate: true,
-  //       alignment: Alignment.topCenter);
-  // }
 
   @override
   void initState() {
@@ -59,7 +48,7 @@ class _MapWidgetState extends State<MapWidget> {
             userAgentPackageName: 'com.example.flutter_map_example',
           ),
           CurrentLocationLayer(),
-          MapPointsLayer(),
+          const MapPointsLayer(),
           // const MarkerLayer(markers: []),
         ],
       );

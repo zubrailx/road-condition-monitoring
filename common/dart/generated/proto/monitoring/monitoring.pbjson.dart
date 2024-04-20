@@ -83,10 +83,38 @@ final $typed_data.Uint8List gpsRecordDescriptor = $convert.base64Decode(
 const Monitoring$json = {
   '1': 'Monitoring',
   '2': [
-    {'1': 'accelerometer_records', '3': 1, '4': 3, '5': 11, '6': '.monitoring.AccelerometerRecord', '10': 'accelerometerRecords'},
-    {'1': 'gyroscope_records', '3': 2, '4': 3, '5': 11, '6': '.monitoring.GyroscopeRecord', '10': 'gyroscopeRecords'},
-    {'1': 'gps_records', '3': 3, '4': 3, '5': 11, '6': '.monitoring.GpsRecord', '10': 'gpsRecords'},
-    {'1': 'account', '3': 11, '4': 1, '5': 11, '6': '.monitoring.UserAccount', '10': 'account'},
+    {
+      '1': 'accelerometer_records',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.monitoring.AccelerometerRecord',
+      '10': 'accelerometerRecords'
+    },
+    {
+      '1': 'gyroscope_records',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.monitoring.GyroscopeRecord',
+      '10': 'gyroscopeRecords'
+    },
+    {
+      '1': 'gps_records',
+      '3': 3,
+      '4': 3,
+      '5': 11,
+      '6': '.monitoring.GpsRecord',
+      '10': 'gpsRecords'
+    },
+    {
+      '1': 'account',
+      '3': 11,
+      '4': 1,
+      '5': 11,
+      '6': '.monitoring.UserAccount',
+      '10': 'account'
+    },
   ],
 };
 
@@ -98,4 +126,3 @@ final $typed_data.Uint8List monitoringDescriptor = $convert.base64Decode(
     'Vjb3JkcxI2CgtncHNfcmVjb3JkcxgDIAMoCzIVLm1vbml0b3JpbmcuR3BzUmVjb3JkUgpncHNS'
     'ZWNvcmRzEjEKB2FjY291bnQYCyABKAsyFy5tb25pdG9yaW5nLlVzZXJBY2NvdW50UgdhY2NvdW'
     '50');
-
