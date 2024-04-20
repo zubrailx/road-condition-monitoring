@@ -15,7 +15,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
 	"google.golang.org/protobuf/proto"
-	points "points-consumer/lib/proto/points"
+	points "points-consumer/internal/proto/points"
 )
 
 type Args struct {

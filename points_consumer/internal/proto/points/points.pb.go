@@ -9,7 +9,7 @@ package points
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	proto "points-consumer/lib/proto"
+	proto "points-consumer/internal/proto"
 	reflect "reflect"
 	sync "sync"
 )

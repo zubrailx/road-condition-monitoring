@@ -10,6 +10,6 @@ RUN go mod download
 
 COPY . .
 
-RUN go build
+RUN go build -o build/points-consumer
 
-ENTRYPOINT ["./points-consumer"]
+ENTRYPOINT ["./build/points-consumer"]
