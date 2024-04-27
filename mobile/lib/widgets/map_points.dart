@@ -34,27 +34,53 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
   _MapPointsLayerState();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(MapPointsLayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
     final config = context.watch<ConfigurationState>();
     _updateConfiguration(config);
 
     final camera = MapCamera.maybeOf(context);
+
     if (camera == null) {
-      return const SizedBox.shrink();
+      return;
     }
 
-    _loadPoints(camera).then((markers) {
-      bool updated = _updateVisibleMarkers(camera, markers);
-      if (updated) {
-        setState(() {
-          // _logVisibleMarkers();
-        });
+    () async {
+      if (!loading) {
+        loading = true;
+
+        final newMarkers = await _loadPoints(camera);
+        bool updated  = _updateVisibleMarkers(camera, newMarkers);
+
+        if (updated) {
+          setState(() {});
+        }
+
+        loading = false;
       }
-    });
+    }();
+  }
 
-    // _logVisibleMarkers();
-
+  @override
+  Widget build(BuildContext context) {
+    _logVisibleMarkers();
     return MarkerLayer(markers: visibleMarkers);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   _updateConfiguration(ConfigurationState config) {
@@ -81,21 +107,15 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
 
     List<Marker> inserted = [];
 
-    if (!loading) {
-      loading = true;
-
-      for (int x = xLow; x <= xHigh; ++x) {
-        for (int y = yLow; y <= yHigh; ++y) {
-          final key = Pair(first: x, second: y);
-          if (!cachedPoints[zoom]!.containsKey(key)) {
-            final result = await getPoints(networkApiUrl, zoom, x, y);
-            final points = result.map((e) => _pointToMarker(e)).toList();
-            inserted.addAll(cachedPoints[zoom]!.putIfAbsent(key, () => points));
-          }
+    for (int x = xLow; x <= xHigh; ++x) {
+      for (int y = yLow; y <= yHigh; ++y) {
+        final key = Pair(first: x, second: y);
+        if (!cachedPoints[zoom]!.containsKey(key)) {
+          final result = await getPoints(networkApiUrl, zoom, x, y);
+          final points = result.map((e) => _pointToMarker(e)).toList();
+          inserted.addAll(cachedPoints[zoom]!.putIfAbsent(key, () => points));
         }
       }
-
-      loading = false;
     }
 
     return inserted;
@@ -167,9 +187,9 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     final zoom = _calculateZoom(camera);
 
     final (topXTile, topYTile) =
-        _calculateTile(topLeft.longitude, topLeft.latitude, zoom);
+    _calculateTile(topLeft.longitude, topLeft.latitude, zoom);
     final (bottomXTile, bottomYTile) =
-        _calculateTile(bottomRight.longitude, bottomRight.latitude, zoom);
+    _calculateTile(bottomRight.longitude, bottomRight.latitude, zoom);
 
     final topXInt = topXTile.floor();
     final topYInt = topYTile.ceil();
@@ -188,18 +208,4 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     return (xTile, yTile);
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(MapPointsLayer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
 }
