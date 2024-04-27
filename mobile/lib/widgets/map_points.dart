@@ -48,6 +48,10 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
   @override
   void didUpdateWidget(MapPointsLayer oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.loadFunction != widget.loadFunction) {
+      cachedPoints.clear();
+      visibleMarkers.clear();
+    }
   }
 
   @override
@@ -81,7 +85,7 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
 
   @override
   Widget build(BuildContext context) {
-    _logVisibleMarkers();
+    // _logVisibleMarkers();
     return MarkerLayer(markers: visibleMarkers);
   }
 
