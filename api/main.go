@@ -124,34 +124,37 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 
 	z, err := strconv.Atoi(chi.URLParam(r, "z"))
 	if err != nil {
-    w.WriteHeader(http.StatusBadRequest);
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("z should be integer"))
 		return
 	}
 
 	x, err := strconv.Atoi(chi.URLParam(r, "x"))
 	if err != nil {
-    w.WriteHeader(http.StatusBadRequest);
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("x should be integer"))
 		return
 	}
 
 	y, err := strconv.Atoi(chi.URLParam(r, "y"))
 	if err != nil {
-    w.WriteHeader(http.StatusBadRequest);
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("y should be integer"))
 		return
 	}
 
+	q := r.URL.Query()
+
+	start, _ := time.Parse(time.RFC3339, q.Get("start"))
+	end, _ := time.Parse(time.RFC3339, q.Get("end"))
+
 	longitudeMin, latitudeMax := fromPointTile(x, y, z)
 	longitudeMax, latitudeMin := fromPointTile(x+1, y+1, z)
 
-	rows, err := (*conn).Query(ctx,
-		"SELECT time, latitude, longitude, prediction FROM points WHERE (latitude > ?) AND (latitude < ?) AND (longitude > ?) AND (longitude < ?)",
-		latitudeMin, latitudeMax, longitudeMin, longitudeMax,
-	)
+	rows, err := queryPoints(ctx, latitudeMin, latitudeMax, longitudeMin, longitudeMax, start, end)
+
 	if err != nil {
-    w.WriteHeader(http.StatusInternalServerError);
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -162,7 +165,7 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		point := PredictionPoint{}
 		if err := rows.Scan(&point.Time, &point.Latitude, &point.Longitude, &point.Prediction); err != nil {
-      w.WriteHeader(http.StatusInternalServerError);
+			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err.Error())
 			return
 		}
@@ -171,10 +174,28 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 
 	res, err := json.Marshal(points)
 	if err != nil {
-    w.WriteHeader(http.StatusInternalServerError);
+		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err.Error())
 		return
 	}
-  w.WriteHeader(http.StatusOK);
+	w.WriteHeader(http.StatusOK)
 	w.Write(res)
+}
+
+func queryPoints(ctx context.Context, latMin, latMax, lonMin, lonMax float64, start, end time.Time) (driver.Rows, error) {
+	if start.IsZero() || end.IsZero() {
+		return queryPointsDefault(ctx, latMin, latMax, lonMin, lonMax)
+	} else {
+		return queryPointsStartEnd(ctx, latMin, latMax, lonMin, lonMax, start, end)
+	}
+}
+
+func queryPointsDefault(ctx context.Context, latMin, latMax, lonMin, lonMax float64) (driver.Rows, error) {
+	return (*conn).Query(ctx, "SELECT time, latitude, longitude, prediction FROM points WHERE (latitude > ?) AND (latitude < ?) AND (longitude > ?) AND (longitude < ?)",
+		latMin, latMax, lonMin, lonMax)
+}
+
+func queryPointsStartEnd(ctx context.Context, latMin, latMax, lonMin, lonMax float64, start, end time.Time) (driver.Rows, error) {
+	return (*conn).Query(ctx, "SELECT time, latitude, longitude, prediction FROM points WHERE (time > ?) AND (time < ?) AND (latitude > ?) AND (latitude < ?) AND (longitude > ?) AND (longitude < ?)",
+		start, end, latMin, latMax, lonMin, lonMax)
 }
