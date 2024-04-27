@@ -106,7 +106,7 @@ class _MapWidgetState extends State<MapWidget> {
             getPointsBeginEnd(apiUrl, z, x, y, rawBegin, rawEnd);
       case "Aggregated":
       default:
-        return getPoints;
+        return (apiUrl, z, x, y) => Future.value([]);
     }
   }
 
