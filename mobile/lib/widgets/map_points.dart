@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/point_response.dart';
 import 'package:mobile/features/points.dart';
 import 'package:mobile/shared/util.dart';
@@ -21,6 +22,10 @@ class MapPointsLayer extends StatefulWidget {
 }
 
 class _MapPointsLayerState extends State<MapPointsLayer> {
+  double pointSize = ConfigurationData.create().mapPointsSize;
+  bool pointBorderEnabled = ConfigurationData.create().mapPointsBorderEnabled;
+  String networkApiUrl = ConfigurationData.create().networkApiURL;
+
   final Map<int, Map<Pair<int, int>, List<Marker>>> cachedPoints = HashMap();
   bool loading = false;
   final List<Marker> visibleMarkers = [];
@@ -30,14 +35,15 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
 
   @override
   Widget build(BuildContext context) {
-    final camera = MapCamera.maybeOf(context);
     final config = context.watch<ConfigurationState>();
+    _updateConfiguration(config);
 
+    final camera = MapCamera.maybeOf(context);
     if (camera == null) {
       return const SizedBox.shrink();
     }
 
-    _loadPoints(camera, config).then((markers) {
+    _loadPoints(camera).then((markers) {
       bool updated = _updateVisibleMarkers(camera, markers);
       if (updated) {
         setState(() {
@@ -51,13 +57,21 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     return MarkerLayer(markers: visibleMarkers);
   }
 
+  _updateConfiguration(ConfigurationState config) {
+    final data = config.configurationData;
+    if (data != null) {
+      pointBorderEnabled = data.mapPointsBorderEnabled;
+      pointSize = data.mapPointsSize;
+      networkApiUrl = data.networkApiURL;
+    }
+  }
+
   _logVisibleMarkers() {
     GetIt.I<Talker>().debug(
         'MAP POINTS: updated markers, visible: ${visibleMarkers.length}');
   }
 
-  Future<List<Marker>> _loadPoints(
-      MapCamera camera, ConfigurationState config) async {
+  Future<List<Marker>> _loadPoints(MapCamera camera) async {
     final ((xLow, xHigh), (yLow, yHigh)) = _calculateTileRange(camera);
     final zoom = _calculateZoom(camera);
 
@@ -74,8 +88,7 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
         for (int y = yLow; y <= yHigh; ++y) {
           final key = Pair(first: x, second: y);
           if (!cachedPoints[zoom]!.containsKey(key)) {
-            final result = await getPoints(
-                config.configurationData?.networkApiURL, zoom, x, y);
+            final result = await getPoints(networkApiUrl, zoom, x, y);
             final points = result.map((e) => _pointToMarker(e)).toList();
             inserted.addAll(cachedPoints[zoom]!.putIfAbsent(key, () => points));
           }
@@ -117,22 +130,25 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
 
   Marker _pointToMarker(PointResponse point) {
     final color = _getMarkerColor(point);
+
+    final children = <Widget>[];
+
+    if (pointBorderEnabled) {
+      children.add(SvgPicture.asset("assets/svg/Point.svg", width: pointSize));
+    }
+
+    children.add(SvgPicture.asset("assets/svg/Point.svg",
+        width: pointSize * 0.9,
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn)));
+
     return Marker(
         point: LatLng(point.latitude, point.longitude),
-        // child: SvgPicture.asset("assets/svg/Point.svg",
-        //     width: 9,
-        //     colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
         child: Stack(
           alignment: AlignmentDirectional.center,
-          children: [
-            SvgPicture.asset("assets/svg/Point.svg", width: 10),
-            SvgPicture.asset("assets/svg/Point.svg",
-                width: 9,
-                colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
-          ],
+          children: children,
         ),
-        height: 10,
-        width: 10,
+        height: pointSize,
+        width: pointSize,
         rotate: false,
         alignment: Alignment.topCenter);
   }

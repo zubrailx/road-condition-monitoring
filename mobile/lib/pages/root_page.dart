@@ -23,7 +23,7 @@ class _RootPageState extends State<RootPage>
     SvgPicture.asset("assets/svg/UserCard.svg", width: iconWidth),
     SvgPicture.asset("assets/svg/Options.svg", width: iconWidth * 0.8)
   ];
-  final titles = <String>["Sensors", "Map", "User Account", "Options"];
+  final titles = <String>["Map", "Sensors", "User Account", "Options"];
 
   late final TabController _tabController;
   int tabIndex = 0;

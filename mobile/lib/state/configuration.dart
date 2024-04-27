@@ -117,4 +117,14 @@ class ConfigurationState with ChangeNotifier {
     configurationData?.networkBufferTimeSeconds = value;
     _save();
   }
+
+  setMapPointsBorderEnabled(bool value) {
+    configurationData?.mapPointsBorderEnabled = value;
+    _save();
+  }
+
+  setMapPointsSize(double value) {
+    configurationData?.mapPointsSize = value;
+    _save();
+  }
 }

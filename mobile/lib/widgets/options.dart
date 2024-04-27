@@ -97,6 +97,36 @@ class OptionsWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text("MAP", style: theme.textTheme.titleLarge),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Enable points border",
+                        style: theme.textTheme.bodyLarge),
+                    Switch(
+                        value: data.mapPointsBorderEnabled,
+                        onChanged: (_) {
+                          configuration.setMapPointsBorderEnabled(
+                              !data.mapPointsBorderEnabled);
+                        }),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Points radius'),
+                  controller: TextEditingController()
+                    ..text = data.mapPointsSize.toString(),
+                  onSubmitted: (value) {
+                    configuration.setMapPointsSize(double.parse(value));
+                  },
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+            const Divider(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text("NETWORK", style: theme.textTheme.titleLarge),
                 const SizedBox(height: 20),
                 TextField(

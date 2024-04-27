@@ -10,20 +10,23 @@ class ConfigurationData {
   int networkBufferTimeSeconds;
   bool sensorsEnabled;
   UserAccountData userAccountData;
+  bool mapPointsBorderEnabled;
+  double mapPointsSize;
 
-  ConfigurationData({
-    required this.chartGyroscopeEnabled,
-    required this.chartAccelerometerEnabled,
-    required this.chartGpsEnabled,
-    required this.chartWindowTimeSeconds,
-    required this.chartRefreshTimeMillis,
-    required this.networkEnabled,
-    required this.networkApiURL,
-    required this.networkReceiverURL,
-    required this.networkBufferTimeSeconds,
-    required this.sensorsEnabled,
-    required this.userAccountData,
-  });
+  ConfigurationData(
+      {required this.chartGyroscopeEnabled,
+      required this.chartAccelerometerEnabled,
+      required this.chartGpsEnabled,
+      required this.chartWindowTimeSeconds,
+      required this.chartRefreshTimeMillis,
+      required this.networkEnabled,
+      required this.networkApiURL,
+      required this.networkReceiverURL,
+      required this.networkBufferTimeSeconds,
+      required this.sensorsEnabled,
+      required this.userAccountData,
+      required this.mapPointsBorderEnabled,
+      required this.mapPointsSize});
 
   Map<String, dynamic> toJson() {
     return {
@@ -37,7 +40,9 @@ class ConfigurationData {
       'network_receiver_url': networkReceiverURL,
       'network_buffer_time_seconds': networkBufferTimeSeconds,
       'sensors_enabled': sensorsEnabled,
-      'user_account': userAccountData.toJson()
+      'user_account': userAccountData.toJson(),
+      'map_points_border_enabled': mapPointsBorderEnabled,
+      'map_points_size': mapPointsSize,
     };
   }
 
@@ -53,7 +58,9 @@ class ConfigurationData {
         networkReceiverURL: json['network_receiver_url'],
         networkBufferTimeSeconds: json['network_buffer_time_seconds'],
         sensorsEnabled: json['sensors_enabled'],
-        userAccountData: UserAccountData.fromJson(json['user_account']));
+        userAccountData: UserAccountData.fromJson(json['user_account']),
+        mapPointsBorderEnabled: json['map_points_border_enabled'],
+        mapPointsSize: json['map_points_size']);
   }
 
   factory ConfigurationData.create() {
@@ -68,7 +75,9 @@ class ConfigurationData {
         networkReceiverURL: 'localhost:1883',
         networkBufferTimeSeconds: 30,
         sensorsEnabled: true,
-        userAccountData: UserAccountData.create());
+        userAccountData: UserAccountData.create(),
+        mapPointsBorderEnabled: true,
+        mapPointsSize: 10);
   }
 }
 
