@@ -19,7 +19,7 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   late final MapController _mapController;
 
-  DateTime rawBegin = DateTime(2000);
+  DateTime rawBegin = DateTime.now().subtract(const Duration(days: 1));
   DateTime rawEnd = DateTime.now();
 
   @override
