@@ -10,18 +10,14 @@ import 'package:mobile/features/stream.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 class GpsState with ChangeNotifier {
-  final LocationSettings locationSettings = const LocationSettings(
-    accuracy: LocationAccuracy.best,
-    distanceFilter: 50,
-  );
-
-  late bool _serviceEnabled;
-  late LocationPermission _permission;
+  int _distanceFilter = ConfigurationData.create().gpsDistanceFilter;
   StreamSubscription<Position>? _streamSubscription;
   String? _error;
   Position? _position;
   DateTime? _gyroscopeUpdateTime;
   int? _gyroscopeLastInterval;
+
+  late bool _serviceEnabled;
   late GpsData _record;
 
   GpsState() {
@@ -36,8 +32,6 @@ class GpsState with ChangeNotifier {
 
   bool get serviceEnabled => _serviceEnabled;
 
-  LocationPermission get permission => _permission;
-
   Position? get position => _position;
 
   bool get hasError => error != null;
@@ -49,6 +43,12 @@ class GpsState with ChangeNotifier {
   int? get lastInterval => _gyroscopeLastInterval;
 
   GpsData get record => _record;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _streamSubscription?.cancel();
+  }
 
   _buildRecord() {
     return GpsData(
@@ -65,12 +65,17 @@ class GpsState with ChangeNotifier {
     } else {
       pause(_streamSubscription);
     }
+    if (configurationData != null &&
+        configurationData.gpsDistanceFilter != _distanceFilter) {
+      _distanceFilter = configurationData.gpsDistanceFilter;
+      _repeatSubscribe();
+    }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _streamSubscription?.cancel();
+  void _repeatSubscribe() async {
+    await _streamSubscription?.cancel();
+    await _trySubscribeGeolocation();
+    GetIt.I<Talker>().debug("GPS: resubscribed");
   }
 
   _trySubscribeGeolocation() async {
@@ -80,6 +85,11 @@ class GpsState with ChangeNotifier {
       showNotification(title: "Geolocation", body: _error ?? "");
       return;
     }
+
+    final locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.best,
+      distanceFilter: _distanceFilter,
+    );
 
     _streamSubscription =
         Geolocator.getPositionStream(locationSettings: locationSettings)

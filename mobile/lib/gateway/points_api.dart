@@ -6,13 +6,11 @@ import 'package:mobile/entities/point_response.dart';
 import 'package:http/http.dart' as http;
 import 'package:talker_flutter/talker_flutter.dart';
 
-
 class PointsApi {
   final _formatter = DateFormat('yyyy-MM-dd HH:mm:ss');
 
-  Future<List<PointResponse>> getPoints(
-      String apiUrl, int z, int x, int y, DateTime? begin, DateTime? end) async {
-
+  Future<List<PointResponse>> getPoints(String apiUrl, int z, int x, int y,
+      DateTime? begin, DateTime? end) async {
     final queryParams = <String, String>{};
 
     if (begin != null) {
@@ -23,7 +21,8 @@ class PointsApi {
       queryParams['end'] = _formatter.format(end);
     }
 
-    final uri = Uri.parse("$apiUrl/points/$z/$x/$y").replace(queryParameters: queryParams);
+    final uri = Uri.parse("$apiUrl/points/$z/$x/$y")
+        .replace(queryParameters: queryParams);
     final response = await http.get(uri);
 
     GetIt.I<Talker>().debug('API: $uri');

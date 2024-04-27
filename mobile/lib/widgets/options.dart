@@ -124,6 +124,21 @@ class OptionsWidget extends StatelessWidget {
               ],
             ),
             const Divider(),
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text("SENSORS", style: theme.textTheme.titleLarge),
+              const SizedBox(height: 20),
+              TextField(
+                decoration: const InputDecoration(
+                    labelText: 'GPS Distance filter (0 to disable)'),
+                controller: TextEditingController()
+                  ..text = data.gpsDistanceFilter.toString(),
+                onSubmitted: (value) {
+                  configuration.setGpsDistanceFilter(int.parse(value));
+                },
+              ),
+              const SizedBox(height: 10),
+            ]),
+            const Divider(),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

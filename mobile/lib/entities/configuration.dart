@@ -9,6 +9,7 @@ class ConfigurationData {
   String networkReceiverURL; // receiver of sensor data
   int networkBufferTimeSeconds;
   bool sensorsEnabled;
+  int gpsDistanceFilter;
   UserAccountData userAccountData;
   bool mapPointsBorderEnabled;
   double mapPointsSize;
@@ -24,6 +25,7 @@ class ConfigurationData {
       required this.networkReceiverURL,
       required this.networkBufferTimeSeconds,
       required this.sensorsEnabled,
+      required this.gpsDistanceFilter,
       required this.userAccountData,
       required this.mapPointsBorderEnabled,
       required this.mapPointsSize});
@@ -40,6 +42,7 @@ class ConfigurationData {
       'network_receiver_url': networkReceiverURL,
       'network_buffer_time_seconds': networkBufferTimeSeconds,
       'sensors_enabled': sensorsEnabled,
+      'gps_distance_filter': gpsDistanceFilter,
       'user_account': userAccountData.toJson(),
       'map_points_border_enabled': mapPointsBorderEnabled,
       'map_points_size': mapPointsSize,
@@ -58,6 +61,7 @@ class ConfigurationData {
         networkReceiverURL: json['network_receiver_url'],
         networkBufferTimeSeconds: json['network_buffer_time_seconds'],
         sensorsEnabled: json['sensors_enabled'],
+        gpsDistanceFilter: json['gps_distance_filter'],
         userAccountData: UserAccountData.fromJson(json['user_account']),
         mapPointsBorderEnabled: json['map_points_border_enabled'],
         mapPointsSize: json['map_points_size']);
@@ -75,6 +79,7 @@ class ConfigurationData {
         networkReceiverURL: 'localhost:1883',
         networkBufferTimeSeconds: 30,
         sensorsEnabled: true,
+        gpsDistanceFilter: 50,
         userAccountData: UserAccountData.create(),
         mapPointsBorderEnabled: true,
         mapPointsSize: 10);

@@ -127,4 +127,9 @@ class ConfigurationState with ChangeNotifier {
     configurationData?.mapPointsSize = value;
     _save();
   }
+
+  setGpsDistanceFilter(int value) {
+    configurationData?.gpsDistanceFilter = value;
+    _save();
+  }
 }
