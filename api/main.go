@@ -145,8 +145,8 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	begin, _ := time.Parse(time.RFC3339, q.Get("begin"))
-	end, _ := time.Parse(time.RFC3339, q.Get("end"))
+	begin, _ := time.Parse(time.DateTime, q.Get("begin"))
+	end, _ := time.Parse(time.DateTime, q.Get("end"))
 
 	longitudeMin, latitudeMax := fromPointTile(x, y, z)
 	longitudeMax, latitudeMin := fromPointTile(x+1, y+1, z)
