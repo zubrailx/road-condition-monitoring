@@ -61,6 +61,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: 1357924680
+    volumes:
+      - 'mongo-data:/data/db'
 
   mongo-express:
     image: mongo-express:latest
@@ -80,7 +82,7 @@ services:
     restart: unless-stopped
     volumes:
       - ${PWD}/clickhouse:/docker-entrypoint-initdb.d/
-
+      - 'clickhouse-data:/var/lib/clickhouse'
 
   guessr:
     # image: zubrailx/guessr:latest
@@ -119,3 +121,5 @@ services:
 
 volumes:
   kafka-data:
+  mongo-data:
+  clickhouse-data:
