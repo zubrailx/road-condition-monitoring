@@ -145,13 +145,13 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 
 	q := r.URL.Query()
 
-	start, _ := time.Parse(time.RFC3339, q.Get("start"))
+	begin, _ := time.Parse(time.RFC3339, q.Get("begin"))
 	end, _ := time.Parse(time.RFC3339, q.Get("end"))
 
 	longitudeMin, latitudeMax := fromPointTile(x, y, z)
 	longitudeMax, latitudeMin := fromPointTile(x+1, y+1, z)
 
-	rows, err := queryPoints(ctx, latitudeMin, latitudeMax, longitudeMin, longitudeMax, start, end)
+	rows, err := queryPoints(ctx, latitudeMin, latitudeMax, longitudeMin, longitudeMax, begin, end)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -182,11 +182,11 @@ func handlePointsGet(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func queryPoints(ctx context.Context, latMin, latMax, lonMin, lonMax float64, start, end time.Time) (driver.Rows, error) {
-	if start.IsZero() || end.IsZero() {
+func queryPoints(ctx context.Context, latMin, latMax, lonMin, lonMax float64, begin, end time.Time) (driver.Rows, error) {
+	if begin.IsZero() || end.IsZero() {
 		return queryPointsDefault(ctx, latMin, latMax, lonMin, lonMax)
 	} else {
-		return queryPointsStartEnd(ctx, latMin, latMax, lonMin, lonMax, start, end)
+		return queryPointsBeginEnd(ctx, latMin, latMax, lonMin, lonMax, begin, end)
 	}
 }
 
@@ -195,7 +195,7 @@ func queryPointsDefault(ctx context.Context, latMin, latMax, lonMin, lonMax floa
 		latMin, latMax, lonMin, lonMax)
 }
 
-func queryPointsStartEnd(ctx context.Context, latMin, latMax, lonMin, lonMax float64, start, end time.Time) (driver.Rows, error) {
+func queryPointsBeginEnd(ctx context.Context, latMin, latMax, lonMin, lonMax float64, begin, end time.Time) (driver.Rows, error) {
 	return (*conn).Query(ctx, "SELECT time, latitude, longitude, prediction FROM points WHERE (time > ?) AND (time < ?) AND (latitude > ?) AND (latitude < ?) AND (longitude > ?) AND (longitude < ?)",
-		start, end, latMin, latMax, lonMin, lonMax)
+		begin, end, latMin, latMax, lonMin, lonMax)
 }
