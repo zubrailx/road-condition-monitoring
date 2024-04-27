@@ -102,7 +102,7 @@ class _MapWidgetState extends State<MapWidget> {
   LoadFunctionT _getLoadFunction() {
     switch (selectedType) {
       case "Raw":
-        return getPoints;
+        return (apiUrl, z, x, y) => getPointsBeginEnd(apiUrl, z, x, y, rawBegin, rawEnd);
       case "Aggregated":
       default:
         return getPoints;

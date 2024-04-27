@@ -7,11 +7,22 @@ import 'package:talker_flutter/talker_flutter.dart';
 
 class PointsApi {
   Future<List<PointResponse>> getPoints(
-      String apiUrl, int z, int x, int y) async {
-    final requestUrl = "$apiUrl/points/$z/$x/$y";
-    final response = await http.get(Uri.parse(requestUrl));
+      String apiUrl, int z, int x, int y, DateTime? begin, DateTime? end) async {
 
-    GetIt.I<Talker>().debug('API: $requestUrl');
+    final queryParams = <String, String>{};
+
+    if (begin != null) {
+      queryParams['begin'] = begin.toIso8601String();
+    }
+
+    if (end != null) {
+      queryParams['end'] = end.toIso8601String();
+    }
+
+    final uri = Uri.parse("$apiUrl/points/$z/$x/$y").replace(queryParameters: queryParams);
+    final response = await http.get(uri);
+
+    GetIt.I<Talker>().debug('API: $uri');
 
     if (response.statusCode == 200) {
       // Assuming jsonString is the JSON string received from the internet
