@@ -100,6 +100,7 @@ if __name__ == "__main__":
         group_id="keeper-group",
         pool_size=2,
         shutdown_timeout=10,
+        auto_offset_reset="latest"
     )
 
     consumer = KafkaConsumer(consumer_func, cfg)

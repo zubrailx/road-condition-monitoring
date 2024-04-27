@@ -137,6 +137,7 @@ if __name__ == "__main__":
         group_id="guessr-group",
         pool_size=1,
         shutdown_timeout=10,
+        auto_offset_reset="latest"
     )
 
     producer_cfg = KafkaProducerCfg(

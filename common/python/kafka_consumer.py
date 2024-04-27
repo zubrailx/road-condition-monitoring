@@ -11,6 +11,7 @@ log = logging.getLogger("kafka_consumer")
 
 @dataclass
 class KafkaConsumerCfg:
+    auto_offset_reset: str
     topic: str
     servers: str
     group_id: str
@@ -28,7 +29,7 @@ class KafkaConsumer:
 
         self.consumer = kafka.KafkaConsumer(
             cfg.topic,
-            auto_offset_reset="latest",
+            auto_offset_reset=cfg.auto_offset_reset,
             enable_auto_commit=False,
             bootstrap_servers=cfg.servers,
             group_id=cfg.group_id,
