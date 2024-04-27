@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/app/theme.dart';
 import 'package:mobile/state/gps.dart';
+import 'package:mobile/widgets/map_controls.dart';
 import 'package:mobile/widgets/map_points.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +18,9 @@ class MapWidget extends StatefulWidget {
 
 class _MapWidgetState extends State<MapWidget> {
   late final MapController _mapController;
+
+  DateTime rawBegin = DateTime(2000);
+  DateTime rawEnd = DateTime.now();
 
   @override
   void initState() {
@@ -31,13 +36,26 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
+    const List<String> sourcesTypes = ["Raw", "Aggregated"];
+    List<Widget> sourcesValues = <Widget>[
+      MapControlRawWidget(
+        begin: rawBegin,
+        end: rawEnd,
+        onBeginChange: _onRawBeginChange,
+        onEndChange: _onRawEndChange,
+      ),
+      const MapControlAggregatedWidget()
+    ];
+
     final gpsState = context.watch<GpsState>();
 
     final record = gpsState.record;
     final hasRecord = record.latitude != null;
 
+    final children = <Widget>[];
+
     if (hasRecord) {
-      return FlutterMap(
+      children.add(FlutterMap(
         mapController: _mapController,
         options: MapOptions(
           initialCenter: LatLng(record.latitude!, record.longitude!),
@@ -51,12 +69,37 @@ class _MapWidgetState extends State<MapWidget> {
           const MapPointsLayer(),
           // const MarkerLayer(markers: []),
         ],
-      );
+      ));
+    } else {
+      children.add(Container(
+          decoration: BoxDecoration(
+        color: UsedColors.gray.value,
+      )));
     }
 
-    return Container(
-        decoration: BoxDecoration(
-      color: UsedColors.gray.value,
-    ));
+    children.add(Positioned(
+        bottom: 0,
+        left: 0,
+        right: 0,
+        child: MapControlsWidget(
+            onSelected: _onTypeSelected,
+            sourcesTypes: sourcesTypes,
+            sourcesValues: sourcesValues)));
+
+    return Stack(
+      children: children,
+    );
+  }
+
+  void _onTypeSelected(String? value) {
+    print(value);
+  }
+
+  void _onRawBeginChange(DateTime? begin) {
+    print("begin: $begin");
+  }
+
+  void _onRawEndChange(DateTime? end) {
+    print("end: $end");
   }
 }

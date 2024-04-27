@@ -61,7 +61,7 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
         loading = true;
 
         final newMarkers = await _loadPoints(camera);
-        bool updated  = _updateVisibleMarkers(camera, newMarkers);
+        bool updated = _updateVisibleMarkers(camera, newMarkers);
 
         if (updated) {
           setState(() {});
@@ -187,9 +187,9 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     final zoom = _calculateZoom(camera);
 
     final (topXTile, topYTile) =
-    _calculateTile(topLeft.longitude, topLeft.latitude, zoom);
+        _calculateTile(topLeft.longitude, topLeft.latitude, zoom);
     final (bottomXTile, bottomYTile) =
-    _calculateTile(bottomRight.longitude, bottomRight.latitude, zoom);
+        _calculateTile(bottomRight.longitude, bottomRight.latitude, zoom);
 
     final topXInt = topXTile.floor();
     final topYInt = topYTile.ceil();
@@ -207,5 +207,4 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     final yTile = ((1 - (log(tan(latRad) + 1 / cos(latRad)) / pi)) * tiles / 2);
     return (xTile, yTile);
   }
-
 }
