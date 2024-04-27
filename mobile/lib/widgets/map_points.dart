@@ -8,14 +8,21 @@ import 'package:get_it/get_it.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/entities/configuration.dart';
 import 'package:mobile/entities/point_response.dart';
-import 'package:mobile/features/points.dart';
 import 'package:mobile/shared/util.dart';
 import 'package:mobile/state/configuration.dart';
 import 'package:provider/provider.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
+typedef LoadFunctionT = Future<List<PointResponse>> Function(
+  String? apiUrl,
+  int z,
+  int x,
+  int y,
+);
+
 class MapPointsLayer extends StatefulWidget {
-  const MapPointsLayer({super.key});
+  final LoadFunctionT loadFunction;
+  const MapPointsLayer({super.key, required this.loadFunction});
 
   @override
   State<StatefulWidget> createState() => _MapPointsLayerState();
@@ -111,7 +118,7 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
       for (int y = yLow; y <= yHigh; ++y) {
         final key = Pair(first: x, second: y);
         if (!cachedPoints[zoom]!.containsKey(key)) {
-          final result = await getPoints(networkApiUrl, zoom, x, y);
+          final result = await widget.loadFunction(networkApiUrl, zoom, x, y);
           final points = result.map((e) => _pointToMarker(e)).toList();
           inserted.addAll(cachedPoints[zoom]!.putIfAbsent(key, () => points));
         }

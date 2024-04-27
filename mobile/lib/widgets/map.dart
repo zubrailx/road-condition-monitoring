@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mobile/app/theme.dart';
+import 'package:mobile/features/points.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:mobile/widgets/map_controls.dart';
 import 'package:mobile/widgets/map_points.dart';
@@ -18,6 +19,11 @@ class MapWidget extends StatefulWidget {
 
 class _MapWidgetState extends State<MapWidget> {
   late final MapController _mapController;
+  late final List<String> sourcesTypes;
+  late final List<Widget> sourcesValues;
+
+  late String selectedType;
+  late LoadFunctionT loadFunction;
 
   DateTime rawBegin = DateTime.now().subtract(const Duration(days: 1));
   DateTime rawEnd = DateTime.now();
@@ -25,6 +31,18 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   void initState() {
     _mapController = MapController();
+    sourcesTypes = ["Raw", "Aggregated"];
+    selectedType = "Raw";
+    sourcesValues = <Widget>[
+      MapControlRawWidget(
+        begin: rawBegin,
+        end: rawEnd,
+        onBeginChange: _onRawBeginChange,
+        onEndChange: _onRawEndChange,
+      ),
+      const MapControlAggregatedWidget()
+    ];
+    loadFunction = _getLoadFunction();
     super.initState();
   }
 
@@ -36,17 +54,6 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> sourcesTypes = ["Raw", "Aggregated"];
-    List<Widget> sourcesValues = <Widget>[
-      MapControlRawWidget(
-        begin: rawBegin,
-        end: rawEnd,
-        onBeginChange: _onRawBeginChange,
-        onEndChange: _onRawEndChange,
-      ),
-      const MapControlAggregatedWidget()
-    ];
-
     final gpsState = context.watch<GpsState>();
 
     final record = gpsState.record;
@@ -66,7 +73,7 @@ class _MapWidgetState extends State<MapWidget> {
             userAgentPackageName: 'com.example.flutter_map_example',
           ),
           CurrentLocationLayer(),
-          const MapPointsLayer(),
+          MapPointsLayer(loadFunction: loadFunction),
           // const MarkerLayer(markers: []),
         ],
       ));
@@ -82,6 +89,7 @@ class _MapWidgetState extends State<MapWidget> {
         left: 0,
         right: 0,
         child: MapControlsWidget(
+            initialIndex: sourcesTypes.indexOf(selectedType),
             onSelected: _onTypeSelected,
             sourcesTypes: sourcesTypes,
             sourcesValues: sourcesValues)));
@@ -91,15 +99,40 @@ class _MapWidgetState extends State<MapWidget> {
     );
   }
 
+  LoadFunctionT _getLoadFunction() {
+    switch (selectedType) {
+      case "Raw":
+        return getPoints;
+      case "Aggregated":
+      default:
+        return getPoints;
+    }
+  }
+
   void _onTypeSelected(String? value) {
-    print(value);
+    if (value != null) {
+      setState(() {
+        selectedType = value;
+        loadFunction = _getLoadFunction();
+      });
+    }
   }
 
   void _onRawBeginChange(DateTime? begin) {
-    print("begin: $begin");
+    if (begin != null) {
+      setState(() {
+        rawBegin = begin;
+        loadFunction = _getLoadFunction();
+      });
+    }
   }
 
   void _onRawEndChange(DateTime? end) {
-    print("end: $end");
+    if (end != null) {
+      setState(() {
+        rawEnd = end;
+        loadFunction = _getLoadFunction();
+      });
+    }
   }
 }

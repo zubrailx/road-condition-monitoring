@@ -8,12 +8,14 @@ const String _dateFormatString = "yyyy-MM-dd HH:mm:ss";
 DateFormat _dateFormat = DateFormat(_dateFormatString);
 
 class MapControlsWidget extends StatefulWidget {
+  final int initialIndex;
   final void Function(String?) onSelected;
   final List<String> sourcesTypes;
   final List<Widget> sourcesValues;
 
   const MapControlsWidget(
       {super.key,
+      required this.initialIndex,
       required this.onSelected,
       required this.sourcesTypes,
       required this.sourcesValues});
@@ -25,7 +27,13 @@ class MapControlsWidget extends StatefulWidget {
 }
 
 class _MapControlsWidgetState extends State<MapControlsWidget> {
-  int index = 0;
+  late int index;
+
+  @override
+  void initState() {
+    super.initState();
+    index = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
