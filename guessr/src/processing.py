@@ -104,3 +104,5 @@ def reduce_noice(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
 # get 32 elements of each (accelerometer, gyroscope), max acceleromet, max gyroscope
 def extract_features(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
     pass
+
+def predict()
