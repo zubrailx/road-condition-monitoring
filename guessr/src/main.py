@@ -4,7 +4,7 @@ import logging
 from datetime import datetime, timezone
 from lib.kafka_consumer import KafkaConsumer, KafkaConsumerCfg
 from lib.kafka_producer import KafkaProducer, KafkaProducerCfg
-import processing
+import processing, interpolation, prediction, constants
 from collections import namedtuple
 
 import lib.proto.monitoring.monitoring_pb2 as monitoring
@@ -23,6 +23,11 @@ InputArgs = namedtuple("InputArgs", ["bootstrap_servers"])
 logger: logging.Logger
 producer: KafkaProducer
 
+predictor: prediction.Predictor
+selector: processing.FeatureSelector
+
+MODEL_PATH = "../model/tree-cart-features-24.pickle"
+FEATURE_SELECTION_PATH = "../model/selected-features-24.json"
 
 def kafka_to_timestamp(date):
     # .replace(microsecond=date%1000*1000)
@@ -40,11 +45,11 @@ def get_pretty_kafka_log(message, data: monitoring.Monitoring, time, topic):
 
 
 def string_to_timestamp_int(time):
-    return int(datetime.fromisoformat(time).timestamp() * 1000000)
+    return int(datetime.fromisoformat(time).timestamp() * constants.second)
 
 
 def proto_to_timestamp_int(time: Timestamp):
-    return int(time.seconds * 1000000 + time.nanos)
+    return int(time.seconds * constants.second + time.nanos)
 
 
 def proto_accelerometer_to_dict(record: AccelerometerRecord):
@@ -87,28 +92,35 @@ def consumer_func(msg):
         # logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
 
         (acDf, gyDf, gpsDf) = get_raw_filtered_inputs(proto)
-        (acDfi, gyDfi, gpsDfi) = processing.interpolate(acDfn, gyDfn, gpsDf)
-        (acDfn, gyDfn) = processing.reduce_noice(acDfi, gyDfi) # first interpolate and then reduce noice because filters think that input data is 40 HZ 
 
-        # print(acDfi, gyDfi, gpsDfi, sep="\n")
-        # print("\n\n")
+        (acDfi, gyDfi, gpsDfi) = interpolation.interpolate(acDf, gyDf, gpsDf)
+        entries = interpolation.get_point_raw_inputs(acDfi, gyDfi, gpsDfi)
 
-        pointArray = gpsDf.to_dict("records")
+        point_results = []
+
+        for (acDfe, gyDfe, gpsDfe) in entries:
+            acDfn, gyDfn = processing.reduce_noice(acDfe, gyDfe)
+            features = processing.extract_features(acDfn, gyDfn)
+            selected_features = selector.select_features(features)
+            prediction = predictor.predict_one(selected_features)
+            point_results.append((prediction, gpsDfe))
+
         points = Points()
-        points.point_records.extend(map(dict_to_point_record, pointArray))
+        points.point_records.extend(map(point_result_to_record, point_results))
+
         produce(points)
 
     except Exception as e:
         logger.error(e)
 
 
-def dict_to_point_record(d):
+def point_result_to_record(d):
     point = PointRecord()
-    point.latitude = d["latitude"]
-    point.longitude = d["longitude"]
-    point.prediction = 0.2
-    point.time.seconds = d["time"] // 1000000
-    point.time.nanos = d["time"] % 1000000
+    point.latitude = d[1]["latitude"]
+    point.longitude = d[1]["longitude"]
+    point.prediction = d[0]
+    point.time.seconds = d["time"] // constants.second
+    point.time.nanos = d["time"] % constants.second
     return point
 
 
@@ -130,6 +142,9 @@ if __name__ == "__main__":
     logger.setLevel(logging.DEBUG)
 
     args = process_arguments()
+
+    predictor = prediction.Predictor(MODEL_PATH)
+    selector = processing.FeatureSelector(FEATURE_SELECTION_PATH)
 
     cfg = KafkaConsumerCfg(
         topic="monitoring",
