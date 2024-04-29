@@ -20,9 +20,9 @@ class PointResponse {
   factory PointResponse.fromJson(Map<String, dynamic> json) {
     return PointResponse(
       time: DateTime.parse(json['time']),
-      latitude: json['latitude'],
-      longitude: json['longitude'],
-      prediction: json['prediction'],
+      latitude: double.parse(json['latitude'].toString()),
+      longitude: double.parse(json['longitude'].toString()),
+      prediction: double.parse(json['prediction'].toString()),
     );
   }
 }
