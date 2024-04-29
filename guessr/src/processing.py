@@ -53,8 +53,8 @@ def extract_features(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
 
 class FeatureSelector:
     def __init__(self, feature_selector_fpath: str):
-        self.selected = json.load(feature_selector_fpath)
-        print(self.selected)
+        with open(feature_selector_fpath, "r") as file:
+            self.selected = json.load(file)
 
     def select_features(self, features: np.array) -> pandas.DataFrame:
         return np.take(features, self.selected)

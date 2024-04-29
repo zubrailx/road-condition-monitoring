@@ -83,6 +83,6 @@ def get_point_raw_inputs(acDf, gyDf, gpsDf):
     
     acE = acDf[start_i: end_i]
     gyE = gyDf[start_i: end_i]
-    gpsE = gpsDf.iloc[i]
+    gpsE = gpsDf.iloc[[i]].to_dict('records')[0] # not using Series because of type casts
     entries.append((acE, gyE, gpsE, ))
   return entries

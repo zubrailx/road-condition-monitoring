@@ -8,6 +8,7 @@ COPY guessr/requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY common ./common
+COPY guessr/model ./guessr/model
 COPY guessr/src ./guessr/src
 
 ENTRYPOINT ["python", "-u", "guessr/src/main.py"]

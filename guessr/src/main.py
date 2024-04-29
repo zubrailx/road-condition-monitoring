@@ -1,6 +1,8 @@
 import sys
+import os
 import pandas
 import logging
+import traceback
 from datetime import datetime, timezone
 from lib.kafka_consumer import KafkaConsumer, KafkaConsumerCfg
 from lib.kafka_producer import KafkaProducer, KafkaProducerCfg
@@ -18,7 +20,7 @@ from lib.proto.util_pb2 import Timestamp
 from lib.proto.points.points_pb2 import Points, PointRecord
 
 
-InputArgs = namedtuple("InputArgs", ["bootstrap_servers"])
+InputArgs = namedtuple("InputArgs", ["bootstrap_servers", "model_path", "features_path"])
 
 logger: logging.Logger
 producer: KafkaProducer
@@ -26,8 +28,8 @@ producer: KafkaProducer
 predictor: prediction.Predictor
 selector: processing.FeatureSelector
 
-MODEL_PATH = "../model/tree-cart-features-24.pickle"
-FEATURE_SELECTION_PATH = "../model/selected-features-24.json"
+MODEL_PATH = "model/tree-cart-features-24.pickle"
+FEATURE_SELECTION_PATH = "model/selected-features-24.json"
 
 def kafka_to_timestamp(date):
     # .replace(microsecond=date%1000*1000)
@@ -112,15 +114,16 @@ def consumer_func(msg):
 
     except Exception as e:
         logger.error(e)
+        traceback.format_exc()
 
 
 def point_result_to_record(d):
     point = PointRecord()
+    point.prediction = d[0]
     point.latitude = d[1]["latitude"]
     point.longitude = d[1]["longitude"]
-    point.prediction = d[0]
-    point.time.seconds = d["time"] // constants.second
-    point.time.nanos = d["time"] % constants.second
+    point.time.seconds = d[1]["time"] // constants.second
+    point.time.nanos = d[1]["time"] % constants.second
     return point
 
 
@@ -128,12 +131,21 @@ def produce(points: Points):
     producer.send(points.SerializeToString())
 
 
+def getenv_or_default(key, default):
+    value = os.getenv(key)
+    if value is None:
+        return default
+    return value
+
 def process_arguments() -> InputArgs:
     if len(sys.argv) < 2:
         print("bootstrap servers are not passed")
         exit(-1)
 
-    return InputArgs(bootstrap_servers=sys.argv[1])
+    model_path = getenv_or_default("GUESSR_MODEL_PATH", MODEL_PATH)
+    features_path = getenv_or_default("GUESSR_FEATURE_SELECTION_PATH", FEATURE_SELECTION_PATH)
+
+    return InputArgs(bootstrap_servers=sys.argv[1], model_path=model_path, features_path=features_path)
 
 
 if __name__ == "__main__":
@@ -143,8 +155,8 @@ if __name__ == "__main__":
 
     args = process_arguments()
 
-    predictor = prediction.Predictor(MODEL_PATH)
-    selector = processing.FeatureSelector(FEATURE_SELECTION_PATH)
+    predictor = prediction.Predictor(args.model_path)
+    selector = processing.FeatureSelector(args.features_path)
 
     cfg = KafkaConsumerCfg(
         topic="monitoring",
