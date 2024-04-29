@@ -87,8 +87,8 @@ def consumer_func(msg):
         # logger.debug(get_pretty_kafka_log(msg, proto, time, "monitoring"))
 
         (acDf, gyDf, gpsDf) = get_raw_filtered_inputs(proto)
-        (acDfn, gyDfn) = processing.reduce_noice(acDf, gyDf)
         (acDfi, gyDfi, gpsDfi) = processing.interpolate(acDfn, gyDfn, gpsDf)
+        (acDfn, gyDfn) = processing.reduce_noice(acDfi, gyDfi) # first interpolate and then reduce noice because filters think that input data is 40 HZ 
 
         # print(acDfi, gyDfi, gpsDfi, sep="\n")
         # print("\n\n")

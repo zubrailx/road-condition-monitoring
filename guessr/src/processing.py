@@ -105,4 +105,5 @@ def reduce_noice(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
 def extract_features(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
     pass
 
-def predict()
+def predict():
+    pass
