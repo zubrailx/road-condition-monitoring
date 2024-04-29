@@ -106,6 +106,17 @@ services:
       MK_MONGO_USERNAME: admin
       MK_MONGO_PASSWORD: 1357924680
 
+  monitoring-loader:
+    profiles:
+      - monitoring-loader
+    build:
+      context: .
+      dockerfile: monitoring_loader.dockerfile
+    command: kafka1:9092 mongo:27017
+    environment:
+      MK_MONGO_USERNAME: admin
+      MK_MONGO_PASSWORD: 1357924680
+
   points-consumer:
     build:
       context: points_consumer

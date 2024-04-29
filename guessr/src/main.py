@@ -159,7 +159,7 @@ if __name__ == "__main__":
     selector = processing.FeatureSelector(args.features_path)
 
     cfg = KafkaConsumerCfg(
-        topic="monitoring",
+        topics=["monitoring", "monitoring-loader"],
         servers=args.bootstrap_servers,
         group_id="guessr-group",
         pool_size=1,

@@ -12,7 +12,7 @@ log = logging.getLogger("kafka_consumer")
 @dataclass
 class KafkaConsumerCfg:
     auto_offset_reset: str
-    topic: str
+    topics: list[str]
     servers: str
     group_id: str
     pool_size: int
@@ -28,7 +28,7 @@ class KafkaConsumer:
         self.consumer_func = consumer_func
 
         self.consumer = kafka.KafkaConsumer(
-            cfg.topic,
+            *cfg.topics,
             auto_offset_reset=cfg.auto_offset_reset,
             enable_auto_commit=False,
             bootstrap_servers=cfg.servers,

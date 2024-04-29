@@ -4,11 +4,11 @@ import logging
 from typing import Any
 
 import pymongo
-from datetime import datetime, timezone
+from datetime import datetime
 from collections import namedtuple
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import ParseDict
 
-from lib.kafka_consumer import KafkaConsumer, KafkaConsumerCfg
+from lib.kafka_producer import KafkaProducer, KafkaProducerCfg
 from lib.proto.monitoring.monitoring_pb2 import Monitoring
 
 Socket = namedtuple("Socket", "address port")
@@ -16,7 +16,7 @@ InputArgs = namedtuple(
     "InputArgs", ["bootstrap_servers", "mongo_socket", "username", "password"]
 )
 
-mongo_client: pymongo.MongoClient
+producer: KafkaProducer
 database: Any
 collection: Any
 
@@ -48,29 +48,8 @@ def mongo_get_client(address, port, username, password):
     return mongo_client
 
 
-def kafka_to_timestamp(date):
-    return datetime.fromtimestamp(date // 1000, tz=timezone.utc).replace(
-        microsecond=date % 1000 * 1000
-    )
-
-
-def consumer_func(msg):
-    try:
-        time = kafka_to_timestamp(msg.timestamp)
-
-        proto = Monitoring()
-        proto.ParseFromString(msg.value)
-
-        data = {
-            "body": MessageToDict(proto),
-            "time_insert": time,
-            "time_access": None,
-        }
-
-        collection.insert_one(data)
-
-    except Exception as e:
-        logger.error(e)
+def document_to_monitoring(data):
+    return ParseDict(data['body'], Monitoring())
 
 
 if __name__ == "__main__":
@@ -87,21 +66,30 @@ if __name__ == "__main__":
     database = mongo_client["data"]
     collection = database["monitoring"]
 
-    collection.create_index(
-        {
-            "time_insert": 1,  # time of insertion
-        }
-    )
-    collection.create_index({"time_access": 1, "time_insert": 1})  # time of last access
-
-    cfg = KafkaConsumerCfg(
-        topics=["monitoring"],
-        servers=args.bootstrap_servers,
-        group_id="keeper-group",
-        pool_size=2,
-        shutdown_timeout=10,
-        auto_offset_reset="latest"
+    producer_cfg = KafkaProducerCfg(
+        topic="monitoring-loader",
+        servers=args.bootstrap_servers.split(","),
     )
 
-    consumer = KafkaConsumer(consumer_func, cfg)
-    consumer.main_loop()
+    producer = KafkaProducer(producer_cfg)
+
+    time = datetime.now()
+    print(time)
+
+    cursor = collection.find({})
+
+    cnt = 0
+    for document in cursor:
+        monitoring = document_to_monitoring(document)
+        producer.send(monitoring.SerializeToString())
+        collection.update_one(
+            {'_id': document['_id']},
+            {'$set': {'time_access': time}}
+        )
+        cnt += 1
+
+    producer.flush()
+    
+    logger.info(f"Successfully inserted {cnt} messaged to topic monitoring")
+
+
