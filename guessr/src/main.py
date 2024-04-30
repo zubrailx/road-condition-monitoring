@@ -6,7 +6,7 @@ import traceback
 from datetime import datetime, timezone
 from lib.kafka_consumer import KafkaConsumer, KafkaConsumerCfg
 from lib.kafka_producer import KafkaProducer, KafkaProducerCfg
-import processing, interpolation, prediction, constants
+import processing, interpolation, prediction, constants, gps
 from collections import namedtuple
 
 import lib.proto.monitoring.monitoring_pb2 as monitoring
@@ -96,13 +96,15 @@ def consumer_func(msg):
         (acDf, gyDf, gpsDf) = get_raw_filtered_inputs(proto)
 
         (acDfi, gyDfi, gpsDfi) = interpolation.interpolate(acDf, gyDf, gpsDf)
-        entries = interpolation.get_point_raw_inputs(acDfi, gyDfi, gpsDfi)
+        speedArr = gps.calculate_speed(gpsDfi)
+
+        entries = interpolation.get_point_raw_inputs(acDfi, gyDfi, gpsDfi, speedArr)
 
         point_results = []
 
         for (acDfe, gyDfe, gpsDfe) in entries:
             acDfn, gyDfn = processing.reduce_noice(acDfe, gyDfe)
-            features = processing.extract_features(acDfn, gyDfn)
+            features = processing.extract_features(acDfn, gyDfn, gpsDfe)
             selected_features = selector.select_features(features)
             prediction = predictor.predict_one(selected_features)
             point_results.append((prediction, gpsDfe))

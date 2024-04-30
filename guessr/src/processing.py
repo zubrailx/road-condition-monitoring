@@ -35,7 +35,7 @@ def reduce_noice(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
 
 # compute magnitude on all axis, apply fast fft transformation, 
 # get 32 elements of each (accelerometer, gyroscope), max acceleromet, max gyroscope
-def extract_features(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
+def extract_features(acDf: pandas.DataFrame, gyDf: pandas.DataFrame, gpsDf: pandas.Series):
     acM = (acDf["x"] ** 2 + acDf["y"] ** 2 + acDf["z"] ** 2) ** 0.5
     gyM = (gyDf["x"] ** 2 + gyDf["y"] ** 2 + gyDf["z"] ** 2) ** 0.5
     maxAc = max(acM)
@@ -43,10 +43,11 @@ def extract_features(acDf: pandas.DataFrame, gyDf: pandas.DataFrame):
 
     acFft = np.fft.fft(acM)
     gyFft = np.fft.fft(gyM)
+    
     # frequencies = np.fft.fftfreq(window, 1/fs)
     maxFB = int(window * filter_freq / fs)
     
-    arrays = (np.abs(acFft[:maxFB]), np.abs(gyFft[:maxFB]), [maxAc, maxGy])
+    arrays = (np.abs(acFft[:maxFB]), np.abs(gyFft[:maxFB]), [maxAc, maxGy, gpsDf['speed']])
     features = np.concatenate(arrays)
     return features
 

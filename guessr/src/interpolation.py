@@ -72,7 +72,8 @@ def interpolate(
 
     return (acDf1, gyDf1, gpsDf1)
 
-def get_point_raw_inputs(acDf, gyDf, gpsDf):
+# NOTE: speed should be passed by user, but because of back compatibility it is calculated
+def get_point_raw_inputs(acDf, gyDf, gpsDf, speedArr):
   entries = []
   total = len(acDf)
   for i in range(0, len(gpsDf)):
@@ -84,5 +85,6 @@ def get_point_raw_inputs(acDf, gyDf, gpsDf):
     acE = acDf[start_i: end_i]
     gyE = gyDf[start_i: end_i]
     gpsE = gpsDf.iloc[[i]].to_dict('records')[0] # not using Series because of type casts
-    entries.append((acE, gyE, gpsE, ))
+
+    entries.append((acE, gyE, gpsE, speedArr[i]))
   return entries
