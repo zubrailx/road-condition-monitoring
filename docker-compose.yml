@@ -92,7 +92,7 @@ services:
     restart: unless-stopped
     command: kafka1:9092
     environment:
-      GUESSR_MODEL_PATH: 'guessr/model/tree-cart-features-24.pickle'
+      GUESSR_MODEL_PATH: 'guessr/model/forest-features-24.pickle'
       GUESSR_FEATURE_SELECTION_PATH: 'guessr/model/selected-features-24.json'
 
   monitoring-keeper:

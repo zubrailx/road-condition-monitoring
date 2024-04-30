@@ -22,8 +22,8 @@ def calculate_speed(gpsDf):
       lat1, lon1, lat2, lon2 = prevGpsE['latitude'], prevGpsE['longitude'], gpsE['latitude'], gpsE['longitude']
       distance = haversine_m(lat1, lon1, lat2, lon2)
       
-      diff_time_hours = (gpsE['time'] - prevGpsE['time']) / constants.second
-      speed = distance / diff_time_hours
+      diff_time_seconds = (gpsE['time'] - prevGpsE['time']) / constants.second
+      speed = distance / diff_time_seconds
       speeds[i] = speed
     prevGpsE = gpsE
   
