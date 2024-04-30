@@ -107,6 +107,13 @@ def consumer_func(msg):
             features = processing.extract_features(acDfn, gyDfn, gpsDfe)
             selected_features = selector.select_features(features)
             prediction = predictor.predict_one(selected_features)
+
+            # handle bounds
+            if prediction < 0:
+                prediction = 0.0
+            elif prediction > 1:
+                prediction = 1.0
+
             point_results.append((prediction, gpsDfe))
 
         points = Points()
