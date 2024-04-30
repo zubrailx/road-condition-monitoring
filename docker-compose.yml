@@ -92,8 +92,8 @@ services:
     restart: unless-stopped
     command: kafka1:9092
     environment:
-      GUESSR_MODEL_PATH: 'guessr/model/xgboost-features-24.pickle'
-      GUESSR_FEATURE_SELECTION_PATH: 'guessr/model/selected-features-24.json'
+      GUESSR_MODEL_PATH: 'guessr/model/xgboost-features-24-nospeed.pickle'
+      GUESSR_FEATURE_SELECTION_PATH: 'guessr/model/selected-features-24-nospeed.json'
 
   monitoring-keeper:
     # image: zubrailx/monitoring-keeper:latest
