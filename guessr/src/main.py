@@ -126,6 +126,7 @@ def point_result_to_record(d):
     point.longitude = d[1]["longitude"]
     point.time.seconds = d[1]["time"] // constants.second
     point.time.nanos = d[1]["time"] % constants.second
+    # print(point.prediction)
     return point
 
 
