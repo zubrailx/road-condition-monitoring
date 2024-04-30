@@ -6,6 +6,5 @@ second = 1000000
 
 # signal processing for input batch
 fs = second / tick
-filter_N = 2
+filter_N = 4
 filter_freq = 10
-k_features = 25
