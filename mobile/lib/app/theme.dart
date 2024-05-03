@@ -40,23 +40,27 @@ final MaterialStateProperty<Color?> switchOverlayColor =
 });
 
 final darkTheme = ThemeData.dark().copyWith(
-  scaffoldBackgroundColor: UsedColors.black.value,
-  highlightColor: UsedColors.yellow.value,
-  iconTheme: IconThemeData(
-    color: UsedColors.white.value,
-  ),
-  textTheme: const TextTheme(),
-  switchTheme: SwitchThemeData(
-    trackColor: switchTrackColor,
-    overlayColor: switchOverlayColor,
-  ),
-  inputDecorationTheme: InputDecorationTheme(
-      border: _buttonBorder,
-      focusedBorder: _buttonBorder.copyWith(
-          borderSide: BorderSide(color: UsedColors.yellow.value)),
-      focusedErrorBorder: _buttonBorder.copyWith(
-          borderSide: BorderSide(color: UsedColors.yellow.value))),
-);
+    scaffoldBackgroundColor: UsedColors.black.value,
+    highlightColor: UsedColors.yellow.value,
+    iconTheme: IconThemeData(
+      color: UsedColors.white.value,
+    ),
+    textTheme: const TextTheme(),
+    switchTheme: SwitchThemeData(
+      trackColor: switchTrackColor,
+      overlayColor: switchOverlayColor,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+        border: _buttonBorder,
+        focusedBorder: _buttonBorder.copyWith(
+            borderSide: BorderSide(color: UsedColors.yellow.value)),
+        focusedErrorBorder: _buttonBorder.copyWith(
+            borderSide: BorderSide(color: UsedColors.yellow.value))),
+    sliderTheme: SliderThemeData(
+      activeTrackColor: UsedColors.yellow.value,
+      secondaryActiveTrackColor: UsedColors.yellow.value.withOpacity(0.3),
+      thumbColor: UsedColors.yellow.value,
+    ));
 
 final talkerScreenTheme =
     TalkerScreenTheme(backgroundColor: UsedColors.black.value);

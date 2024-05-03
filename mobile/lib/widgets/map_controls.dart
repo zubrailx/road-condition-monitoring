@@ -86,13 +86,20 @@ class _MapControlsWidgetState extends State<MapControlsWidget> {
   }
 }
 
-class MapControlRawWidget extends StatelessWidget {
+class MapControlRawWidget extends StatefulWidget {
+  final double predictionMin;
+  final double predictionMax;
+  final void Function(double, double)? predictionOnChangeEnd;
   final DateTime begin;
   final DateTime end;
   final void Function(DateTime?) onBeginChange;
   final void Function(DateTime?) onEndChange;
+
   const MapControlRawWidget({
     super.key,
+    this.predictionMin = 0,
+    this.predictionMax = 1,
+    this.predictionOnChangeEnd,
     required this.begin,
     required this.end,
     required this.onBeginChange,
@@ -100,35 +107,118 @@ class MapControlRawWidget extends StatelessWidget {
   });
 
   @override
+  State<StatefulWidget> createState() {
+    return _MapControlRawState();
+  }
+}
+
+class _MapControlRawState extends State<MapControlRawWidget> {
+  late double minPrediction = widget.predictionMin;
+  late double maxPrediction = widget.predictionMax;
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 5),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            flex: 1,
-            child: TextField(
-              decoration: const InputDecoration(labelText: 'Begin'),
-              controller: TextEditingController()
-                ..text = _dateFormat.format(begin),
-              onSubmitted: (value) {
-                onBeginChange(_dateFormat.parse(value));
-              },
-            ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 30,
+                child: Row(
+                  children: [
+                    Text(minPrediction.toStringAsFixed(2)),
+                    Expanded(
+                      child: Slider(
+                        value: minPrediction,
+                        secondaryTrackValue: maxPrediction,
+                        min: 0,
+                        max: 1,
+                        label: minPrediction.toStringAsFixed(2),
+                        onChanged: (double value) {
+                          setState(() {
+                            if (value <= maxPrediction) {
+                              minPrediction = value;
+                            }
+                          });
+                        },
+                        onChangeEnd: (double value) {
+                          if (widget.predictionOnChangeEnd != null) {
+                            widget.predictionOnChangeEnd!(
+                                minPrediction, maxPrediction);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 30,
+                child: Row(
+                  children: [
+                    Text(maxPrediction.toStringAsFixed(2)),
+                    Expanded(
+                      child: Slider(
+                        value: maxPrediction,
+                        label: maxPrediction.toStringAsFixed(2),
+                        min: 0,
+                        max: 1,
+                        onChanged: (double value) {
+                          setState(() {
+                            maxPrediction = value;
+                            if (minPrediction > value) {
+                              minPrediction = value;
+                            }
+                          });
+                        },
+                        onChangeEnd: (double value) {
+                          if (widget.predictionOnChangeEnd != null) {
+                            widget.predictionOnChangeEnd!(
+                                minPrediction, maxPrediction);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           const SizedBox(
-            width: 10,
+            height: 10,
           ),
-          Expanded(
-            flex: 1,
-            child: TextField(
-              decoration: const InputDecoration(labelText: 'End'),
-              controller: TextEditingController()
-                ..text = _dateFormat.format(end),
-              onSubmitted: (value) {
-                onEndChange(_dateFormat.parse(value));
-              },
-            ),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: TextField(
+                  decoration: const InputDecoration(labelText: 'Begin'),
+                  controller: TextEditingController()
+                    ..text = _dateFormat.format(widget.begin),
+                  onSubmitted: (value) {
+                    widget.onBeginChange(_dateFormat.parse(value));
+                  },
+                ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                flex: 1,
+                child: TextField(
+                  decoration: const InputDecoration(labelText: 'End'),
+                  controller: TextEditingController()
+                    ..text = _dateFormat.format(widget.end),
+                  onSubmitted: (value) {
+                    widget.onEndChange(_dateFormat.parse(value));
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),

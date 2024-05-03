@@ -20,28 +20,19 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   late final MapController _mapController;
   late final List<String> sourcesTypes;
-  late final List<Widget> sourcesValues;
-
   late String selectedType;
   late LoadFunctionT loadFunction;
 
   DateTime rawBegin = DateTime.now().subtract(const Duration(days: 1));
   DateTime rawEnd = DateTime.now();
+  double rawPredictionMin = 0;
+  double rawPredictionMax = 1;
 
   @override
   void initState() {
     _mapController = MapController();
     sourcesTypes = ["Raw", "Aggregated"];
     selectedType = "Raw";
-    sourcesValues = <Widget>[
-      MapControlRawWidget(
-        begin: rawBegin,
-        end: rawEnd,
-        onBeginChange: _onRawBeginChange,
-        onEndChange: _onRawEndChange,
-      ),
-      const MapControlAggregatedWidget()
-    ];
     loadFunction = _getLoadFunction();
     super.initState();
   }
@@ -84,6 +75,19 @@ class _MapWidgetState extends State<MapWidget> {
       )));
     }
 
+    final List<Widget> sourcesValues = <Widget>[
+      MapControlRawWidget(
+        predictionMin: rawPredictionMin,
+        predictionMax: rawPredictionMax,
+        predictionOnChangeEnd: _predictionOnChangeEnd,
+        begin: rawBegin,
+        end: rawEnd,
+        onBeginChange: _onRawBeginChange,
+        onEndChange: _onRawEndChange,
+      ),
+      const MapControlAggregatedWidget()
+    ];
+
     children.add(Positioned(
         bottom: 0,
         left: 0,
@@ -102,8 +106,16 @@ class _MapWidgetState extends State<MapWidget> {
   LoadFunctionT _getLoadFunction() {
     switch (selectedType) {
       case "Raw":
-        return (apiUrl, z, x, y) =>
-            getPointsBeginEnd(apiUrl, z, x, y, rawBegin, rawEnd);
+        // TODO: change filtering in loadFunction to separate function for MapPoints layer
+        return (apiUrl, z, x, y) async {
+          final res =
+              await getPointsBeginEnd(apiUrl, z, x, y, rawBegin, rawEnd);
+          return res
+              .where((e) =>
+                  e.prediction >= rawPredictionMin &&
+                  e.prediction <= rawPredictionMax)
+              .toList();
+        };
       case "Aggregated":
       default:
         return (apiUrl, z, x, y) => Future.value([]);
@@ -135,5 +147,13 @@ class _MapWidgetState extends State<MapWidget> {
         loadFunction = _getLoadFunction();
       });
     }
+  }
+
+  void _predictionOnChangeEnd(double min, double max) {
+    setState(() {
+      rawPredictionMin = min;
+      rawPredictionMax = max;
+      loadFunction = _getLoadFunction();
+    });
   }
 }

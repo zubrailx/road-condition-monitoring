@@ -51,6 +51,7 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     if (oldWidget.loadFunction != widget.loadFunction) {
       cachedPoints.clear();
       visibleMarkers.clear();
+      didChangeDependencies();
     }
   }
 
@@ -61,6 +62,21 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
     final config = context.watch<ConfigurationState>();
     _updateConfiguration(config);
 
+    _loadVisibleMarkers();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // _logVisibleMarkers();
+    return MarkerLayer(markers: visibleMarkers);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  _loadVisibleMarkers() {
     final camera = MapCamera.maybeOf(context);
 
     if (camera == null) {
@@ -81,17 +97,6 @@ class _MapPointsLayerState extends State<MapPointsLayer> {
         loading = false;
       }
     }();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // _logVisibleMarkers();
-    return MarkerLayer(markers: visibleMarkers);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   _updateConfiguration(ConfigurationState config) {

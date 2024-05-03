@@ -71,7 +71,11 @@ class SensorTransmitter extends ChangeNotifier {
     if (record.time != null) {
       if (_lastUpdate == null ||
           record.time!.difference(_lastUpdate!) > _duration) {
-        _transmit();
+        if (_accelerometerRecords.isNotEmpty &&
+            _gyroscopeRecords.isNotEmpty &&
+            _gpsRecords.isNotEmpty) {
+          _transmit();
+        }
         _reset();
         _lastUpdate = record.time;
         _gpsRecords
