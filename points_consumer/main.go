@@ -19,7 +19,7 @@ import (
 )
 
 type Args struct {
-	bootstrapServers string
+	bootstrapServers  string
 	clickhouseServers string
 }
 
@@ -39,8 +39,8 @@ func processEnvironment() (Args, error) {
 	}
 
 	return Args{
-		bootstrapServers: os.Args[1],
-    clickhouseServers: os.Args[2],
+		bootstrapServers:  os.Args[1],
+		clickhouseServers: os.Args[2],
 	}, nil
 }
 
@@ -51,8 +51,9 @@ func newDialer() *kafka.Dialer {
 		hostname = uuid.New().String()
 	}
 	return &kafka.Dialer{
-		ClientID: hostname,
-		Timeout:  10 * time.Second,
+		ClientID:  hostname,
+		Timeout:   10 * time.Second,
+		DualStack: true,
 	}
 }
 
@@ -93,11 +94,11 @@ func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.D
 				continue
 			}
 
-      err = insertPoints(ctx, clickCon, &points)
-      if err != nil {
-        log.Println("error when inserting data:", err.Error())
-        continue
-      }
+			err = insertPoints(ctx, clickCon, &points)
+			if err != nil {
+				log.Println("error when inserting data:", err.Error())
+				continue
+			}
 		}
 	}
 }
@@ -129,30 +130,30 @@ func newClickhouseConn(ctx context.Context, args Args) (driver.Conn, error) {
 		return nil, err
 	}
 
-  log.Println("clickhouse connection established")
+	log.Println("clickhouse connection established")
 
 	return conn, nil
 }
 
-func insertPoints(ctx context.Context, conn driver.Conn , points *points.Points) error {
-  batch, err := conn.PrepareBatch(ctx, "INSERT INTO points")
-  if err != nil {
-    return err
-  }
+func insertPoints(ctx context.Context, conn driver.Conn, points *points.Points) error {
+	batch, err := conn.PrepareBatch(ctx, "INSERT INTO points")
+	if err != nil {
+		return err
+	}
 
-  for _, point := range points.PointRecords {
-    err := batch.Append(
-      point.Time.Seconds,
-      point.Latitude,
-      point.Longitude,
-      point.Prediction,
-    )
+	for _, point := range points.PointRecords {
+		err := batch.Append(
+			point.Time.Seconds,
+			point.Latitude,
+			point.Longitude,
+			point.Prediction,
+		)
 
-    if err != nil {
-      return err
-    }
-  }
-  return batch.Send()
+		if err != nil {
+			return err
+		}
+	}
+	return batch.Send()
 }
 
 func main() {
@@ -169,10 +170,10 @@ func main() {
 
 	dialer := newDialer()
 
-  clickCon, err := newClickhouseConn(ctx, args)
-  if err != nil {
-    log.Fatal("error when creating connection:", err)
-  }
+	clickCon, err := newClickhouseConn(ctx, args)
+	if err != nil {
+		log.Fatal("error when creating connection:", err)
+	}
 
 	go read(ctx, args, groupID, topic, dialer, clickCon)
 
