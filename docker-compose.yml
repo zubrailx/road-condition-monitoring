@@ -94,7 +94,7 @@ services:
     environment:
       GUESSR_MODEL_PATH: 'guessr/model/xgboost-features-24-nospeed.pickle'
       GUESSR_FEATURE_SELECTION_PATH: 'guessr/model/selected-features-24-nospeed.json'
-      GUESSR_POOL_SIZE: 2
+      GUESSR_POOL_SIZE: 4
 
   monitoring-keeper:
     profiles:
@@ -145,6 +145,7 @@ services:
     build:
       context: .
       dockerfile: mobile_imitator.dockerfile
+    command: mongo:27017 217.25.88.222:1883
     environment:
       MI_MONGO_USERNAME: admin
       MI_MONGO_PASSWORD: 1357924680

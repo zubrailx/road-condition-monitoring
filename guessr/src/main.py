@@ -90,6 +90,7 @@ def consumer_initializer():
 
 def consumer_func(msg):
     global predictor
+    points = Points()
     try:
         proto = Monitoring()
 
@@ -121,18 +122,21 @@ def consumer_func(msg):
 
             point_results.append((prediction, gpsDfe))
 
-        points = Points()
         points.point_records.extend(map(point_result_to_record, point_results))
-        return points
+        return (True, points)
 
     except Exception as e:
         logger.error(e)
         traceback.format_exc()
 
+    return (False, points)
 
-def consumer_callback(points: Points | None):
-    if points is not None:
-        producer.send(points.SerializeToString())
+
+
+def consumer_callback(pair):
+    if pair[0] == True:
+        print('sending')
+        producer.send(pair[1].SerializeToString())
 
 def point_result_to_record(d):
     point = PointRecord()
