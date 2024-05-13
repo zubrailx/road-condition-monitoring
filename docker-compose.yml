@@ -96,6 +96,8 @@ services:
       GUESSR_FEATURE_SELECTION_PATH: 'guessr/model/selected-features-24-nospeed.json'
 
   monitoring-keeper:
+    profiles:
+      - monitoring-keeper
     # image: zubrailx/monitoring-keeper:latest
     build:
       context: .

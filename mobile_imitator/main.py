@@ -90,5 +90,5 @@ if __name__ == "__main__":
         )
         cnt += 1
 
-    logger.info(f"Successfully inserted {cnt} messaged to topic monitoring")
+    logger.info(f"Successfully inserted {cnt} messaged to topic monitoring {time.now() - time}")
 
