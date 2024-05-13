@@ -145,11 +145,10 @@ services:
     build:
       context: .
       dockerfile: mobile_imitator.dockerfile
-    command: mongo:27017 kafka-mqtt-proxy:1883
     environment:
       MI_MONGO_USERNAME: admin
       MI_MONGO_PASSWORD: 1357924680
-      MI_POOL_SIZE: 1
+      MI_POOL_SIZE: 4
 
 volumes:
   kafka-data:
