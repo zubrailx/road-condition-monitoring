@@ -25,7 +25,6 @@ InputArgs = namedtuple("InputArgs", ["bootstrap_servers", "model_path", "feature
 logger: logging.Logger
 producer: KafkaProducer
 
-predictor: prediction.Predictor
 selector: processing.FeatureSelector
 
 MODEL_PATH = "model/tree-cart-features-24.pickle"
@@ -84,10 +83,15 @@ def get_raw_filtered_inputs(message: Monitoring):
 
     return (acDf, gyDf, gpsDf)
 
+def consumer_initializer():
+    global predictor
+    predictor = prediction.Predictor(args.model_path)
 
 def consumer_func(msg):
+    global predictor
     try:
         proto = Monitoring()
+
         proto.ParseFromString(msg.value)
 
         # time = kafka_to_timestamp(msg.timestamp)
@@ -118,13 +122,15 @@ def consumer_func(msg):
 
         points = Points()
         points.point_records.extend(map(point_result_to_record, point_results))
-
-        produce(points)
+        return points
 
     except Exception as e:
         logger.error(e)
         traceback.format_exc()
 
+
+def consumer_callback(points: Points):
+    producer.send(points.SerializeToString())
 
 def point_result_to_record(d):
     point = PointRecord()
@@ -135,11 +141,6 @@ def point_result_to_record(d):
     point.time.nanos = d[1]["time"] % constants.second
     # print(point.prediction)
     return point
-
-
-def produce(points: Points):
-    producer.send(points.SerializeToString())
-
 
 def getenv_or_default(key, default):
     value = os.getenv(key)
@@ -165,14 +166,13 @@ if __name__ == "__main__":
 
     args = process_arguments()
 
-    predictor = prediction.Predictor(args.model_path)
     selector = processing.FeatureSelector(args.features_path)
 
     cfg = KafkaConsumerCfg(
         topics=["monitoring", "monitoring-loader"],
         servers=args.bootstrap_servers,
         group_id="guessr-group",
-        pool_size=2,
+        pool_size=8,
         shutdown_timeout=10,
         auto_offset_reset="latest"
     )
@@ -183,6 +183,6 @@ if __name__ == "__main__":
     )
 
     producer = KafkaProducer(producer_cfg)
-    consumer = KafkaConsumer(consumer_func, cfg)
+    consumer = KafkaConsumer(cfg, consumer_func, consumer_initializer, consumer_callback)
 
     consumer.main_loop()

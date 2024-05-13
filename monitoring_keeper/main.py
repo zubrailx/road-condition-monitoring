@@ -54,6 +54,9 @@ def kafka_to_timestamp(date):
     )
 
 
+def consumer_initializer():
+    pass
+
 def consumer_func(msg):
     try:
         time = kafka_to_timestamp(msg.timestamp)
@@ -71,6 +74,9 @@ def consumer_func(msg):
 
     except Exception as e:
         logger.error(e)
+
+def consumer_callback():
+    pass
 
 
 if __name__ == "__main__":
@@ -103,5 +109,5 @@ if __name__ == "__main__":
         auto_offset_reset="latest"
     )
 
-    consumer = KafkaConsumer(consumer_func, cfg)
+    consumer = KafkaConsumer(cfg, consumer_func, consumer_initializer, consumer_callback)
     consumer.main_loop()

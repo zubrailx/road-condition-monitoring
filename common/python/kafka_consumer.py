@@ -1,10 +1,9 @@
 import kafka
-import concurrent.futures
-import time
 from dataclasses import dataclass
 from kafka import errors as kafka_errors
 import signal
 import logging
+import multiprocessing.pool as mp_pool
 
 log = logging.getLogger("kafka_consumer")
 
@@ -18,12 +17,12 @@ class KafkaConsumerCfg:
     shutdown_timeout: int
 
 
-class LimitedThreadPool(concurrent.futures.ThreadPoolExecutor):
+class LimitedMultiprocessingPool(mp_pool.Pool):
     pass
 
 
 class KafkaConsumer:
-    def __init__(self, consumer_func, cfg: KafkaConsumerCfg):
+    def __init__(self, cfg: KafkaConsumerCfg, consumer_func, initializer, callback):
         self.consumer_func = consumer_func
 
         self.consumer = kafka.KafkaConsumer(
@@ -35,9 +34,9 @@ class KafkaConsumer:
         )
 
         self.stop_processing = False
-        self.pool = LimitedThreadPool(max_workers=cfg.pool_size)
+        self.pool = LimitedMultiprocessingPool(processes=cfg.pool_size, initializer=initializer)
+        self.callback = callback
         self.shutdown_timeout = cfg.shutdown_timeout
-
         signal.signal(signal.SIGTERM, self.set_stop_processing)
 
     def set_stop_processing(self, *args, **kwargs):
@@ -51,7 +50,7 @@ class KafkaConsumer:
 
                 log.debug("data read from topic 'msg.topic'")
                 # only works with top-level functions
-                self.pool.submit(self.consumer_func, msg)
+                self.pool.apply_async(self.consumer_func, (msg,), callback=self.callback)
 
                 try:
                     self.consumer.commit()
@@ -62,8 +61,10 @@ class KafkaConsumer:
     def graceful_shutdown(self):
         try:
             self.consumer.close()
+            self.pool.close()
         except Exception as ex:
+            self.pool.terminate()
             raise ex
         finally:
-            self.pool.shutdown()
+            self.pool.join()
             self.set_stop_processing()
