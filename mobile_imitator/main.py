@@ -1,7 +1,5 @@
 from typing import Any
 from paho.mqtt.enums import CallbackAPIVersion
-import multiprocessing as mp
-import concurrent.futures
 import pymongo
 from datetime import datetime
 import time
@@ -12,6 +10,8 @@ import sys
 from collections import namedtuple
 from lib.proto.monitoring.monitoring_pb2 import Monitoring
 from google.protobuf.json_format import ParseDict
+import multiprocessing.pool as mp_pool
+import multiprocessing as mp
 
 
 Socket = namedtuple("Socket", "address port")
@@ -59,7 +59,7 @@ def process_arguments() -> InputArgs:
         username=username,
         password=password,
         mqtt_socket=Socket(address=mqtt_address, port=int(mqtt_port)),
-        pool_size=pool_size
+        pool_size=int(pool_size)
     )
 
 if __name__ == "__main__":
@@ -91,14 +91,12 @@ if __name__ == "__main__":
             {'$set': {'time_access': time}}
         )
 
-    pool = concurrent.futures.ThreadPoolExecutor(max_workers=args.pool_size)
+    pool = mp_pool.Pool(processes=args.pool_size)
 
-    cnt = 0
-    for document in cursor:
-        pool.submit(publish_func, document)
-        cnt += 1
+    pool.map_async(publish_func, cursor)
 
-    pool.shutdown()
+    pool.close()
+    pool.join()
 
-    logger.info(f"Successfully inserted {cnt} messaged to topic monitoring {datetime.now() - start_time}")
+    logger.info(f"Successfully inserted {len(cursor)} messaged to topic monitoring {datetime.now() - start_time}")
 
