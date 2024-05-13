@@ -134,12 +134,14 @@ services:
     command: clickhouse:9000 :8082
 
   mobile-imitator:
+    depends_on:
+      - mongo
     profiles:
       - mobile-imitator
     build:
       context: .
       dockerfile: mobile_imitator.dockerfile
-    command: mongo:27017 kafka-mqtt-proxy:1883
+    # command: mongo:27017 kafka-mqtt-proxy:1883
     environment:
       MK_MONGO_USERNAME: admin
       MK_MONGO_PASSWORD: 1357924680
@@ -147,4 +149,8 @@ services:
 volumes:
   kafka-data:
   mongo-data:
+    driver_opts:
+      type: none
+      device: ${PWD}/volumes/mongo
+      o: bind
   clickhouse-data:

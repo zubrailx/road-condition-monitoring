@@ -4,10 +4,10 @@ RUN apt install gcc
 
 WORKDIR /app
 
-COPY monitoring_keeper/requirements.txt .
+COPY mobile_imitator/requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY common ./common
-COPY monitoring_keeper ./monitoring_keeper
+COPY mobile_imitator ./mobile_imitator
 
 ENTRYPOINT ["python", "-u", "mobile_imitator/main.py"]
