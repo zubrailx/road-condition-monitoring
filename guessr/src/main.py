@@ -29,7 +29,7 @@ selector: processing.FeatureSelector
 
 MODEL_PATH = "model/tree-cart-features-24.pickle"
 FEATURE_SELECTION_PATH = "model/selected-features-24.json"
-POOL_SIZE = "2"
+POOL_SIZE = "1"
 
 def kafka_to_timestamp(date):
     # .replace(microsecond=date%1000*1000)
