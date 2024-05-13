@@ -135,7 +135,6 @@ def consumer_func(msg):
 
 def consumer_callback(pair):
     if pair[0] == True:
-        print('sending')
         producer.send(pair[1].SerializeToString())
 
 def point_result_to_record(d):

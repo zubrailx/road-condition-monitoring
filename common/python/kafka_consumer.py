@@ -75,7 +75,6 @@ class KafkaConsumer:
                 log.debug("data read from topic 'msg.topic'")
 
                 self.semaphore.acquire()
-                print('received')
 
                 self.pool.apply_async(
                     self.consumer_func, 
