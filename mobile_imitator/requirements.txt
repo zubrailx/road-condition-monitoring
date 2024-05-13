@@ -1,0 +1,4 @@
+dnspython==2.6.1
+paho-mqtt==2.0.0
+protobuf==5.26.1
+pymongo==4.7.2
