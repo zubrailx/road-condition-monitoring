@@ -45,15 +45,26 @@ class KafkaConsumer:
 
         self.stop_processing = False
         self.pool = LimitedMultiprocessingPool(processes=cfg.pool_size, initializer=initializer)
-        self.semaphore = multiprocessing.Semaphore(cfg.pool_size)
+        self.semaphore = multiprocessing.Semaphore(cfg.pool_cache_limit)
         self.callback = callback
         self.shutdown_timeout = cfg.shutdown_timeout
-        self.pool_cache_limit = cfg.pool_cache_limit
 
         signal.signal(signal.SIGTERM, self.set_stop_processing)
 
     def set_stop_processing(self, *args, **kwargs):
         self.stop_processing = True
+
+    def callback_release(self):
+        def release(*args):
+            self.callback(*args)
+            self.semaphore.release()
+        return release
+
+    def error_callback_release(self):
+        def release(*args):
+            log.error(args)
+            self.semaphore.release()
+        return release
 
     def main_loop(self):
         while not self.stop_processing:
@@ -61,13 +72,16 @@ class KafkaConsumer:
                 if self.stop_processing:
                     break
 
+                log.debug("data read from topic 'msg.topic'")
+
+                self.semaphore.acquire()
                 print('received')
 
-                log.debug("data read from topic 'msg.topic'")
                 self.pool.apply_async(
-                    with_semaphore(self.consumer_func), 
-                    (self.semaphore, msg,), 
-                    callback=self.callback
+                    self.consumer_func, 
+                    (msg,), 
+                    callback=self.callback_release(),
+                    error_callback=self.error_callback_release()
                 )
 
                 try:

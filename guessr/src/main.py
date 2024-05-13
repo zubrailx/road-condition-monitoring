@@ -161,6 +161,7 @@ def process_arguments() -> InputArgs:
 
     model_path = getenv_or_default("GUESSR_MODEL_PATH", MODEL_PATH)
     features_path = getenv_or_default("GUESSR_FEATURE_SELECTION_PATH", FEATURE_SELECTION_PATH)
+    # INFO: threads are created inside function, no need to specify much
     pool_size = getenv_or_default("GUESSR_POOL_SIZE", POOL_SIZE)
 
     return InputArgs(bootstrap_servers=sys.argv[1], model_path=model_path, features_path=features_path, pool_size=int(pool_size))
