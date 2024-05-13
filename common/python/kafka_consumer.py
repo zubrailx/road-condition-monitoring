@@ -49,7 +49,9 @@ class KafkaConsumer:
         self.stop_processing = True
 
     def handle_pool_cache_excess(self):
-        while self.pool.get_pool_cache_size() >= self.pool_cache_limit:
+        size = self.pool.get_pool_cache_size()
+        while size >= self.pool_cache_limit:
+            log.debug(f'waiting until {size} >= {self.pool_cache_limit}')
             time.sleep(0.2) # if cache exceeds - sleep
 
     def main_loop(self):

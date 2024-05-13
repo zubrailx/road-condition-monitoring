@@ -130,8 +130,9 @@ def consumer_func(msg):
         traceback.format_exc()
 
 
-def consumer_callback(points: Points):
-    producer.send(points.SerializeToString())
+def consumer_callback(points: Points | None):
+    if points is not None:
+        producer.send(points.SerializeToString())
 
 def point_result_to_record(d):
     point = PointRecord()
