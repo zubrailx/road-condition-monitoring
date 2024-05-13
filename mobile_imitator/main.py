@@ -1,7 +1,10 @@
 from typing import Any
 from paho.mqtt.enums import CallbackAPIVersion
+import multiprocessing as mp
+import concurrent.futures
 import pymongo
 from datetime import datetime
+import time
 import os
 import logging
 import paho.mqtt.client as mqtt
@@ -75,20 +78,27 @@ if __name__ == "__main__":
     database = mongo_client["data"]
     collection = database["monitoring"]
 
-    time = datetime.now()
-    print(time)
+    start_time = datetime.now()
+    print(start_time)
 
     cursor = collection.find({})
 
-    cnt = 0
-    for document in cursor:
+    def publish_func(document):
         monitoring = document_to_monitoring(document)
         mqtt_client.publish("/monitoring", monitoring.SerializeToString())
         collection.update_one(
             {'_id': document['_id']},
             {'$set': {'time_access': time}}
         )
+
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+
+    cnt = 0
+    for document in cursor:
+        pool.submit(publish_func, document)
         cnt += 1
 
-    logger.info(f"Successfully inserted {cnt} messaged to topic monitoring {time.now() - time}")
+    pool.shutdown()
+
+    logger.info(f"Successfully inserted {cnt} messaged to topic monitoring {datetime.now() - start_time}")
 

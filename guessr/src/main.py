@@ -172,7 +172,7 @@ if __name__ == "__main__":
         topics=["monitoring", "monitoring-loader"],
         servers=args.bootstrap_servers,
         group_id="guessr-group",
-        pool_size=1,
+        pool_size=2,
         shutdown_timeout=10,
         auto_offset_reset="latest"
     )

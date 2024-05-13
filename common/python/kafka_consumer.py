@@ -3,7 +3,6 @@ import concurrent.futures
 import time
 from dataclasses import dataclass
 from kafka import errors as kafka_errors
-import multiprocessing as mp
 import signal
 import logging
 
@@ -63,16 +62,8 @@ class KafkaConsumer:
     def graceful_shutdown(self):
         try:
             self.consumer.close()
-            graceful_shutdown_end = time.time() + self.shutdown_timeout
-            while graceful_shutdown_end > time.time():
-                active_child_proc_num = len(mp.active_children())
-                if active_child_proc_num == 0:
-                    break
-                time.sleep(0.1)
-            else:
-                raise
         except Exception as ex:
             raise ex
         finally:
-            self.pool.shutdown(wait=True)
+            self.pool.shutdown()
             self.set_stop_processing()
