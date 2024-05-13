@@ -1,7 +1,9 @@
+from typing import Optional
 import kafka
 from dataclasses import dataclass
 from kafka import errors as kafka_errors
 import signal
+import time
 import logging
 import multiprocessing.pool as mp_pool
 
@@ -15,10 +17,12 @@ class KafkaConsumerCfg:
     group_id: str
     pool_size: int
     shutdown_timeout: int
+    pool_cache_limit: int = 100
 
 
 class LimitedMultiprocessingPool(mp_pool.Pool):
-    pass
+    def get_pool_cache_size(self):
+        return len(self._cache)
 
 
 class KafkaConsumer:
@@ -37,10 +41,16 @@ class KafkaConsumer:
         self.pool = LimitedMultiprocessingPool(processes=cfg.pool_size, initializer=initializer)
         self.callback = callback
         self.shutdown_timeout = cfg.shutdown_timeout
+        self.pool_cache_limit = cfg.pool_cache_limit
+
         signal.signal(signal.SIGTERM, self.set_stop_processing)
 
     def set_stop_processing(self, *args, **kwargs):
         self.stop_processing = True
+
+    def handle_pool_cache_excess(self):
+        while self.pool.get_pool_cache_size() >= self.pool_cache_limit:
+            time.sleep(0.2) # if cache exceeds - sleep
 
     def main_loop(self):
         while not self.stop_processing:
@@ -48,8 +58,8 @@ class KafkaConsumer:
                 if self.stop_processing:
                     break
 
+                self.handle_pool_cache_excess()
                 log.debug("data read from topic 'msg.topic'")
-                # only works with top-level functions
                 self.pool.apply_async(self.consumer_func, (msg,), callback=self.callback)
 
                 try:

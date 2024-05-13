@@ -176,8 +176,10 @@ if __name__ == "__main__":
         group_id="guessr-group",
         pool_size=args.pool_size,
         shutdown_timeout=10,
-        auto_offset_reset="latest"
+        auto_offset_reset="latest",
     )
+
+    print(cfg)
 
     producer_cfg = KafkaProducerCfg(
         topic="points",
