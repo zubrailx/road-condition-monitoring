@@ -13,7 +13,7 @@ from lib.proto.monitoring.monitoring_pb2 import Monitoring
 
 Socket = namedtuple("Socket", "address port")
 InputArgs = namedtuple(
-    "InputArgs", ["bootstrap_servers", "mongo_socket", "username", "password"]
+    "InputArgs", ["bootstrap_servers", "mongo_socket", "username", "password", "pool_size"]
 )
 
 mongo_client: pymongo.MongoClient
@@ -21,24 +21,6 @@ database: Any
 collection: Any
 
 logger: logging.Logger
-
-
-def process_arguments() -> InputArgs:
-    try:
-        username = os.environ.get("MK_MONGO_USERNAME", "admin")
-        password = os.environ.get("MK_MONGO_PASSWORD", "pass")
-        bootstrap_servers = sys.argv[1]
-        mongo_address, mongo_port = sys.argv[2].split(":")
-    except ValueError:
-        raise ValueError(f"Look in process_argument() for valid argument passing")
-
-    return InputArgs(
-        bootstrap_servers=bootstrap_servers,
-        mongo_socket=Socket(address=mongo_address, port=int(mongo_port)),
-        username=username,
-        password=password,
-    )
-
 
 def mongo_get_client(address, port, username, password):
     mongo_connection_str = f"mongodb://{address}:{port}/"
@@ -78,6 +60,23 @@ def consumer_func(msg):
 def consumer_callback():
     pass
 
+def process_arguments() -> InputArgs:
+    try:
+        username = os.environ.get("MK_MONGO_USERNAME", "admin")
+        password = os.environ.get("MK_MONGO_PASSWORD", "pass")
+        pool_size = os.environ.get("MK_POOL_SIZE", "1")
+        bootstrap_servers = sys.argv[1]
+        mongo_address, mongo_port = sys.argv[2].split(":")
+    except ValueError:
+        raise ValueError(f"Look in process_argument() for valid argument passing")
+
+    return InputArgs(
+        bootstrap_servers=bootstrap_servers,
+        mongo_socket=Socket(address=mongo_address, port=int(mongo_port)),
+        username=username,
+        password=password,
+        pool_size=int(pool_size)
+    )
 
 if __name__ == "__main__":
     logging.basicConfig()
@@ -104,7 +103,7 @@ if __name__ == "__main__":
         topics=["monitoring"],
         servers=args.bootstrap_servers,
         group_id="keeper-group",
-        pool_size=2,
+        pool_size=args.pool_size,
         shutdown_timeout=10,
         auto_offset_reset="latest"
     )

@@ -16,30 +16,13 @@ from google.protobuf.json_format import ParseDict
 
 Socket = namedtuple("Socket", "address port")
 InputArgs = namedtuple(
-    "InputArgs", ["mongo_socket", "username", "password", "mqtt_socket"]
+    "InputArgs", ["mongo_socket", "username", "password", "mqtt_socket", "pool_size"]
 )
 
 database: Any
 collection: Any
 
 logger: logging.Logger
-
-
-def process_arguments() -> InputArgs:
-    try:
-        username = os.environ.get("MK_MONGO_USERNAME", "admin")
-        password = os.environ.get("MK_MONGO_PASSWORD", "pass")
-        mongo_address, mongo_port = sys.argv[1].split(":")
-        mqtt_address, mqtt_port = sys.argv[2].split(":")
-    except ValueError:
-        raise ValueError(f"Look in process_argument() for valid argument passing")
-
-    return InputArgs(
-        mongo_socket=Socket(address=mongo_address, port=int(mongo_port)),
-        username=username,
-        password=password,
-        mqtt_socket=Socket(address=mqtt_address, port=int(mqtt_port))
-    )
 
 
 def mongo_get_client(address, port, username, password):
@@ -61,6 +44,23 @@ def mqtt_get_client(address, port):
 def document_to_monitoring(data):
     return ParseDict(data['body'], Monitoring())
 
+def process_arguments() -> InputArgs:
+    try:
+        username = os.environ.get("MI_MONGO_USERNAME", "admin")
+        password = os.environ.get("MI_MONGO_PASSWORD", "pass")
+        pool_size = os.environ.get("MI_POOL_SIZE", "4")
+        mongo_address, mongo_port = sys.argv[1].split(":")
+        mqtt_address, mqtt_port = sys.argv[2].split(":")
+    except ValueError:
+        raise ValueError(f"Look in process_argument() for valid argument passing")
+
+    return InputArgs(
+        mongo_socket=Socket(address=mongo_address, port=int(mongo_port)),
+        username=username,
+        password=password,
+        mqtt_socket=Socket(address=mqtt_address, port=int(mqtt_port)),
+        pool_size=pool_size
+    )
 
 if __name__ == "__main__":
     logging.basicConfig()
@@ -91,7 +91,7 @@ if __name__ == "__main__":
             {'$set': {'time_access': time}}
         )
 
-    pool = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=args.pool_size)
 
     cnt = 0
     for document in cursor:

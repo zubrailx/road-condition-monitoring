@@ -23,10 +23,22 @@ collection: Any
 logger: logging.Logger
 
 
+def mongo_get_client(address, port, username, password):
+    mongo_connection_str = f"mongodb://{address}:{port}/"
+    mongo_client = pymongo.MongoClient(
+        mongo_connection_str, username=username, password=password
+    )
+    return mongo_client
+
+
+def document_to_monitoring(data):
+    return ParseDict(data['body'], Monitoring())
+
+
 def process_arguments() -> InputArgs:
     try:
-        username = os.environ.get("MK_MONGO_USERNAME", "admin")
-        password = os.environ.get("MK_MONGO_PASSWORD", "pass")
+        username = os.environ.get("ML_MONGO_USERNAME", "admin")
+        password = os.environ.get("ML_MONGO_PASSWORD", "pass")
         bootstrap_servers = sys.argv[1]
         mongo_address, mongo_port = sys.argv[2].split(":")
     except ValueError:
@@ -38,18 +50,6 @@ def process_arguments() -> InputArgs:
         username=username,
         password=password,
     )
-
-
-def mongo_get_client(address, port, username, password):
-    mongo_connection_str = f"mongodb://{address}:{port}/"
-    mongo_client = pymongo.MongoClient(
-        mongo_connection_str, username=username, password=password
-    )
-    return mongo_client
-
-
-def document_to_monitoring(data):
-    return ParseDict(data['body'], Monitoring())
 
 
 if __name__ == "__main__":

@@ -94,6 +94,7 @@ services:
     environment:
       GUESSR_MODEL_PATH: 'guessr/model/xgboost-features-24-nospeed.pickle'
       GUESSR_FEATURE_SELECTION_PATH: 'guessr/model/selected-features-24-nospeed.json'
+      GUESSR_POOL_SIZE: 4
 
   monitoring-keeper:
     profiles:
@@ -107,6 +108,7 @@ services:
     environment:
       MK_MONGO_USERNAME: admin
       MK_MONGO_PASSWORD: 1357924680
+      MK_POOL_SIZE: 1
 
   monitoring-loader:
     profiles:
@@ -116,8 +118,8 @@ services:
       dockerfile: monitoring_loader.dockerfile
     command: kafka1:9092 mongo:27017
     environment:
-      MK_MONGO_USERNAME: admin
-      MK_MONGO_PASSWORD: 1357924680
+      ML_MONGO_USERNAME: admin
+      ML_MONGO_PASSWORD: 1357924680
 
   points-consumer:
     build:
@@ -143,10 +145,11 @@ services:
     build:
       context: .
       dockerfile: mobile_imitator.dockerfile
-    # command: mongo:27017 kafka-mqtt-proxy:1883
+    command: mongo:27017 kafka-mqtt-proxy:1883
     environment:
-      MK_MONGO_USERNAME: admin
-      MK_MONGO_PASSWORD: 1357924680
+      MI_MONGO_USERNAME: admin
+      MI_MONGO_PASSWORD: 1357924680
+      MI_POOL_SIZE: 1
 
 volumes:
   kafka-data:

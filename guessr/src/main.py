@@ -20,7 +20,7 @@ from lib.proto.util_pb2 import Timestamp
 from lib.proto.points.points_pb2 import Points, PointRecord
 
 
-InputArgs = namedtuple("InputArgs", ["bootstrap_servers", "model_path", "features_path"])
+InputArgs = namedtuple("InputArgs", ["bootstrap_servers", "model_path", "features_path", "pool_size"])
 
 logger: logging.Logger
 producer: KafkaProducer
@@ -29,6 +29,7 @@ selector: processing.FeatureSelector
 
 MODEL_PATH = "model/tree-cart-features-24.pickle"
 FEATURE_SELECTION_PATH = "model/selected-features-24.json"
+POOL_SIZE = "2"
 
 def kafka_to_timestamp(date):
     # .replace(microsecond=date%1000*1000)
@@ -155,8 +156,9 @@ def process_arguments() -> InputArgs:
 
     model_path = getenv_or_default("GUESSR_MODEL_PATH", MODEL_PATH)
     features_path = getenv_or_default("GUESSR_FEATURE_SELECTION_PATH", FEATURE_SELECTION_PATH)
+    pool_size = getenv_or_default("GUESSR_POOL_SIZE", POOL_SIZE)
 
-    return InputArgs(bootstrap_servers=sys.argv[1], model_path=model_path, features_path=features_path)
+    return InputArgs(bootstrap_servers=sys.argv[1], model_path=model_path, features_path=features_path, pool_size=int(pool_size))
 
 
 if __name__ == "__main__":
@@ -172,7 +174,7 @@ if __name__ == "__main__":
         topics=["monitoring", "monitoring-loader"],
         servers=args.bootstrap_servers,
         group_id="guessr-group",
-        pool_size=8,
+        pool_size=args.pool_size,
         shutdown_timeout=10,
         auto_offset_reset="latest"
     )
