@@ -23,6 +23,7 @@ type Args struct {
 	bootstrapServers  string
 	clickhouseServers string
 	bufferSize        int
+	bufferLogPeriod   time.Duration
 	triggerThreshold  int
 	triggerPeriod     time.Duration
 }
@@ -46,6 +47,10 @@ func processEnvironment() (Args, error) {
 	if err != nil {
 		return Args{}, fmt.Errorf("error parsing bufferSize %s", err)
 	}
+	bufferLogPeriod, err := strconv.Atoi(getEnvDefault("PC_BUFFER_LOG_PERIOD", "0"))
+	if err != nil {
+		return Args{}, fmt.Errorf("error parsing bufferLogPeriod %s", err)
+	}
 	triggerThreshold, err := strconv.Atoi(getEnvDefault("PC_TRIGGER_THRESHOLD", "1000"))
 	if err != nil {
 		return Args{}, fmt.Errorf("error parsing triggerThreshold %s", err)
@@ -59,6 +64,7 @@ func processEnvironment() (Args, error) {
 		bootstrapServers:  os.Args[1],
 		clickhouseServers: os.Args[2],
 		bufferSize:        bufferSize,
+		bufferLogPeriod:   time.Duration(bufferLogPeriod) * time.Millisecond,
 		triggerThreshold:  triggerThreshold,
 		triggerPeriod:     time.Duration(triggerPeriod) * time.Millisecond,
 	}, nil
@@ -224,7 +230,7 @@ func main() {
 	defer cancel()
 
 	args, err := processEnvironment()
-  log.Println(fmt.Sprintf("%+v", args))
+	log.Println(fmt.Sprintf("%+v", args))
 	if err != nil {
 		log.Fatal("failed to process environment:", err)
 	}
@@ -235,9 +241,27 @@ func main() {
 	if err != nil {
 		log.Fatal("error when creating connection:", err)
 	}
-  defer clickConn.Close()
+	defer clickConn.Close()
 
 	pointsC := make(chan *points.PointRecord, args.bufferSize)
+
+	if args.bufferLogPeriod > 0 {
+		go func() {
+			bufferTicker := time.NewTicker(args.bufferLogPeriod)
+			defer bufferTicker.Stop()
+
+			for {
+				select {
+				case <-ctx.Done():
+					return
+
+				case <-bufferTicker.C:
+					log.Printf("current buffer size: %d\n", len(pointsC))
+					bufferTicker.Reset(args.bufferLogPeriod)
+				}
+			}
+		}()
+	}
 
 	// start read and insert goroutines
 	go read(ctx, args, groupID, topic, dialer, pointsC)
