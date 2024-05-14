@@ -127,6 +127,10 @@ services:
       dockerfile: dockerfile
     restart: unless-stopped
     command: kafka1:9092 clickhouse:9000
+    environment:
+      PC_BUFFER_SIZE: 2000
+      PC_TRIGGER_THRESHOLD: 1000
+      PC_TRIGGER_PERIOD: 5000
 
   api:
     build:

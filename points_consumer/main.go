@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -21,6 +22,9 @@ import (
 type Args struct {
 	bootstrapServers  string
 	clickhouseServers string
+	bufferSize        int
+	triggerThreshold  int
+	triggerPeriod     time.Duration
 }
 
 var wg sync.WaitGroup
@@ -38,9 +42,25 @@ func processEnvironment() (Args, error) {
 		return Args{}, fmt.Errorf("arg len should be equal 3")
 	}
 
+	bufferSize, err := strconv.Atoi(getEnvDefault("PC_BUFFER_SIZE", "2000"))
+	if err != nil {
+		return Args{}, fmt.Errorf("error parsing bufferSize %s", err)
+	}
+	triggerThreshold, err := strconv.Atoi(getEnvDefault("PC_TRIGGER_THRESHOLD", "1000"))
+	if err != nil {
+		return Args{}, fmt.Errorf("error parsing triggerThreshold %s", err)
+	}
+	triggerPeriod, err := strconv.Atoi(getEnvDefault("PC_TRIGGER_PERIOD", "5000")) // in milliseconds
+	if err != nil {
+		return Args{}, fmt.Errorf("error parsing triggerPeriod %s", err)
+	}
+
 	return Args{
 		bootstrapServers:  os.Args[1],
 		clickhouseServers: os.Args[2],
+		bufferSize:        bufferSize,
+		triggerThreshold:  triggerThreshold,
+		triggerPeriod:     time.Duration(triggerPeriod) * time.Millisecond,
 	}, nil
 }
 
@@ -66,7 +86,7 @@ func getKafkaReader(args Args, groupID, topic string, dialer *kafka.Dialer) *kaf
 	})
 }
 
-func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer, clickCon driver.Conn) {
+func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer, pointsC chan<- *points.PointRecord) {
 	wg.Add(1)
 	defer wg.Done()
 
@@ -93,12 +113,73 @@ func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.D
 				log.Println("error when unmarshalling:", err.Error())
 				continue
 			}
-
-			err = insertPoints(ctx, clickCon, &points)
-			if err != nil {
-				log.Println("error when inserting data:", err.Error())
-				continue
+			for _, point := range points.PointRecords {
+				pointsC <- point
 			}
+		}
+	}
+}
+
+// insert data in clickhouse when
+func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *points.PointRecord) error {
+	insertC := make(chan struct{})
+	defer close(insertC)
+
+	ticker := time.NewTicker(args.triggerPeriod)
+	defer ticker.Stop()
+
+	batch, err := conn.PrepareBatch(ctx, "INSERT INTO points")
+	if err != nil {
+		return err
+	}
+	defer batch.Abort()
+
+	go func() {
+		for {
+			select {
+			case <-insertC:
+				rows := batch.Rows()
+				if rows != 0 {
+					err := batch.Send()
+					if err != nil {
+						log.Println("error when inserting: ", err)
+					}
+					log.Printf("clickhouse: inserted %d rows\n", rows)
+
+					batch, err = conn.PrepareBatch(ctx, "INSERT INTO points")
+					if err != nil {
+						log.Println("error in batch: ", err)
+					}
+					defer batch.Abort()
+				}
+				ticker.Reset(args.triggerPeriod)
+			}
+		}
+	}()
+
+	for {
+		select {
+		case <-ctx.Done():
+			insertC <- struct{}{}
+			log.Println("ctx in inserter is done")
+			return nil
+
+		case point := <-pointsC:
+			err := batch.Append(
+				point.Time.Seconds,
+				point.Latitude,
+				point.Longitude,
+				point.Prediction,
+			)
+			if err != nil {
+				return err
+			}
+			if batch.Rows() >= args.triggerThreshold {
+				insertC <- struct{}{}
+			}
+
+		case <-ticker.C:
+			insertC <- struct{}{}
 		}
 	}
 }
@@ -130,30 +211,9 @@ func newClickhouseConn(ctx context.Context, args Args) (driver.Conn, error) {
 		return nil, err
 	}
 
-	log.Println("clickhouse connection established")
+	log.Println("clickhouse: connection established")
 
 	return conn, nil
-}
-
-func insertPoints(ctx context.Context, conn driver.Conn, points *points.Points) error {
-	batch, err := conn.PrepareBatch(ctx, "INSERT INTO points")
-	if err != nil {
-		return err
-	}
-
-	for _, point := range points.PointRecords {
-		err := batch.Append(
-			point.Time.Seconds,
-			point.Latitude,
-			point.Longitude,
-			point.Prediction,
-		)
-
-		if err != nil {
-			return err
-		}
-	}
-	return batch.Send()
 }
 
 func main() {
@@ -164,18 +224,24 @@ func main() {
 	defer cancel()
 
 	args, err := processEnvironment()
+  log.Println(fmt.Sprintf("%+v", args))
 	if err != nil {
 		log.Fatal("failed to process environment:", err)
 	}
 
 	dialer := newDialer()
 
-	clickCon, err := newClickhouseConn(ctx, args)
+	clickConn, err := newClickhouseConn(ctx, args)
 	if err != nil {
 		log.Fatal("error when creating connection:", err)
 	}
+  defer clickConn.Close()
 
-	go read(ctx, args, groupID, topic, dialer, clickCon)
+	pointsC := make(chan *points.PointRecord, args.bufferSize)
+
+	// start read and insert goroutines
+	go read(ctx, args, groupID, topic, dialer, pointsC)
+	go insert(ctx, args, clickConn, pointsC)
 
 	<-ctx.Done()
 	log.Println("interrupt signal received. graceful shutdown")
