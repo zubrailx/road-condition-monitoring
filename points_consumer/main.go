@@ -148,13 +148,13 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 				if rows != 0 {
 					err := batch.Send()
 					if err != nil {
-						log.Println("error when inserting: ", err)
+						log.Fatal("error when inserting: ", err)
 					}
 					log.Printf("clickhouse: inserted %d rows\n", rows)
 
 					batch, err = conn.PrepareBatch(ctx, "INSERT INTO points")
 					if err != nil {
-						log.Println("error in batch: ", err)
+						log.Fatal("error in batch: ", err)
 					}
 					defer batch.Abort()
 				}
