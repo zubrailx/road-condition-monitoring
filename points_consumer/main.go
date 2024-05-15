@@ -82,18 +82,25 @@ func newDialer() *kafka.Dialer {
 	}
 }
 
-func getKafkaReader(args Args, groupID, topic string, dialer *kafka.Dialer) *kafka.Reader {
-	return kafka.NewReader(kafka.ReaderConfig{
+func getKafkaReader(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer) (*kafka.Reader, error) {
+  reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: strings.Split(args.bootstrapServers, ","),
 		GroupID: groupID,
 		Topic:   topic,
 		Dialer:  dialer,
 	})
+
+  return reader, nil
 }
 
+// WARN: may not read messages when kafka is not started yet but reader does
+// (needs to check connection)
 func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer, pointsC chan<- *points.PointRecord) error {
-	reader := getKafkaReader(args, groupID, topic, dialer)
+	reader, err := getKafkaReader(ctx, args, groupID, topic, dialer)
 	defer reader.Close()
+  if err != nil {
+    return err
+  }
 
 	for {
 		select {
