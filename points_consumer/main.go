@@ -181,14 +181,15 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 					return err
 				}
 			}
+
 			if !timer.Stop() && !isTimed {
 				<-timer.C
 			}
 			timer.Reset(args.triggerPeriod)
-		}
 
-		if isDone {
-			break
+			if isDone {
+				break
+			}
 		}
 	}
 	return nil
