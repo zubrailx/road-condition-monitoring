@@ -140,14 +140,14 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 	}
 
 	for {
-		doSend := false
-		doEnd := false
+		isDone := false
+		isThreshold := false
+		isTimed := false
 
 		select {
 		case <-ctx.Done():
 			insertC <- struct{}{}
-			doSend = true
-			doEnd = true
+			isDone = true
 
 		case point := <-pointsC:
 			err := batch.Append(
@@ -160,14 +160,14 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 				return err
 			}
 			if batch.Rows() >= args.triggerThreshold {
-				doSend = true
+				isThreshold = true
 			}
 
 		case <-timer.C:
-			doSend = true
+			isTimed = true
 		}
 
-		if doSend {
+		if isTimed || isThreshold || isDone {
 			rows := batch.Rows()
 			if rows != 0 {
 				err := batch.Send()
@@ -175,16 +175,19 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 					return fmt.Errorf("error when inserting: %s", err)
 				}
 				log.Printf("clickhouse: inserted %d rows\n", rows)
+
+				batch, err = conn.PrepareBatch(ctx, "INSERT INTO points")
+				if err != nil {
+					return err
+				}
 			}
-			batch, err = conn.PrepareBatch(ctx, "INSERT INTO points")
-			if err != nil {
-				return err
+			if !timer.Stop() && !isTimed {
+				<-timer.C
 			}
-			timer.Stop()
 			timer.Reset(args.triggerPeriod)
 		}
 
-		if doEnd {
+		if isDone {
 			break
 		}
 	}
