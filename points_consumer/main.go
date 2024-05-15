@@ -131,44 +131,23 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 	insertC := make(chan struct{})
 	defer close(insertC)
 
-	ticker := time.NewTicker(args.triggerPeriod)
-	defer ticker.Stop()
+	timer := time.NewTimer(args.triggerPeriod)
+	defer timer.Stop()
 
 	batch, err := conn.PrepareBatch(ctx, "INSERT INTO points")
 	if err != nil {
 		return err
 	}
-	defer batch.Abort()
-
-	go func() {
-		for {
-			select {
-			case <-insertC:
-				rows := batch.Rows()
-				if rows != 0 {
-					err := batch.Send()
-					if err != nil {
-						log.Fatal("error when inserting: ", err)
-					}
-					log.Printf("clickhouse: inserted %d rows\n", rows)
-
-					batch, err = conn.PrepareBatch(ctx, "INSERT INTO points")
-					if err != nil {
-						log.Fatal("error in batch: ", err)
-					}
-					defer batch.Abort()
-				}
-				ticker.Reset(args.triggerPeriod)
-			}
-		}
-	}()
 
 	for {
+		doSend := false
+		doEnd := false
+
 		select {
 		case <-ctx.Done():
 			insertC <- struct{}{}
-			log.Println("ctx in inserter is done")
-			return nil
+			doSend = true
+			doEnd = true
 
 		case point := <-pointsC:
 			err := batch.Append(
@@ -181,13 +160,35 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 				return err
 			}
 			if batch.Rows() >= args.triggerThreshold {
-				insertC <- struct{}{}
+				doSend = true
 			}
 
-		case <-ticker.C:
-			insertC <- struct{}{}
+		case <-timer.C:
+			doSend = true
+		}
+
+		if doSend {
+			rows := batch.Rows()
+			if rows != 0 {
+				err := batch.Send()
+				if err != nil {
+					return fmt.Errorf("error when inserting: %s", err)
+				}
+				log.Printf("clickhouse: inserted %d rows\n", rows)
+			}
+			batch, err = conn.PrepareBatch(ctx, "INSERT INTO points")
+			if err != nil {
+				return err
+			}
+			timer.Stop()
+			timer.Reset(args.triggerPeriod)
+		}
+
+		if doEnd {
+			break
 		}
 	}
+	return nil
 }
 
 func newClickhouseConn(ctx context.Context, args Args) (driver.Conn, error) {
@@ -223,7 +224,7 @@ func newClickhouseConn(ctx context.Context, args Args) (driver.Conn, error) {
 }
 
 func main() {
-	const groupID = "points-group"
+	const groupID = "poPrintlnints-group"
 	const topic = "points"
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -244,6 +245,7 @@ func main() {
 	defer clickConn.Close()
 
 	pointsC := make(chan *points.PointRecord, args.bufferSize)
+	defer close(pointsC)
 
 	if args.bufferLogPeriod > 0 {
 		go func() {
