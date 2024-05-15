@@ -153,7 +153,7 @@ services:
     environment:
       MI_MONGO_USERNAME: admin
       MI_MONGO_PASSWORD: 1357924680
-      MI_POOL_SIZE: 4
+      MI_POOL_SIZE: 8
 
 volumes:
   kafka-data:

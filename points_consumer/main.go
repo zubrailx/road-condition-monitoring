@@ -8,15 +8,16 @@ import (
 	"os/signal"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
+
+	points "points-consumer/internal/proto/points"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
-	points "points-consumer/internal/proto/points"
 )
 
 type Args struct {
@@ -27,8 +28,6 @@ type Args struct {
 	triggerThreshold  int
 	triggerPeriod     time.Duration
 }
-
-var wg sync.WaitGroup
 
 func getEnvDefault(k string, fallback string) string {
 	v, found := os.LookupEnv(k)
@@ -92,25 +91,18 @@ func getKafkaReader(args Args, groupID, topic string, dialer *kafka.Dialer) *kaf
 	})
 }
 
-func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer, pointsC chan<- *points.PointRecord) {
-	wg.Add(1)
-	defer wg.Done()
-
+func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer, pointsC chan<- *points.PointRecord) error {
 	reader := getKafkaReader(args, groupID, topic, dialer)
 	defer reader.Close()
-
-	log.Println("reader ready to read messages")
 
 	for {
 		select {
 		case <-ctx.Done():
-			log.Println("ctx in reader is done")
-			return
+			return nil
 		default:
 			msg, err := reader.ReadMessage(ctx)
 			if err != nil {
-				log.Println("error in reader:", err.Error())
-				continue
+				return err
 			}
 
 			var points points.Points
@@ -128,9 +120,6 @@ func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.D
 
 // insert data in clickhouse when
 func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *points.PointRecord) error {
-	insertC := make(chan struct{})
-	defer close(insertC)
-
 	timer := time.NewTimer(args.triggerPeriod)
 	defer timer.Stop()
 
@@ -146,7 +135,6 @@ func insert(ctx context.Context, args Args, conn driver.Conn, pointsC <-chan *po
 
 		select {
 		case <-ctx.Done():
-			insertC <- struct{}{}
 			isDone = true
 
 		case point := <-pointsC:
@@ -228,10 +216,12 @@ func newClickhouseConn(ctx context.Context, args Args) (driver.Conn, error) {
 }
 
 func main() {
-	const groupID = "poPrintlnints-group"
+	const groupID = "points-group"
 	const topic = "points"
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	group, ctx := errgroup.WithContext(ctx)
+
 	defer cancel()
 
 	args, err := processEnvironment()
@@ -270,11 +260,16 @@ func main() {
 	}
 
 	// start read and insert goroutines
-	go read(ctx, args, groupID, topic, dialer, pointsC)
-	go insert(ctx, args, clickConn, pointsC)
+	group.Go(func() error {
+		return read(ctx, args, groupID, topic, dialer, pointsC)
+	})
 
-	<-ctx.Done()
-	log.Println("interrupt signal received. graceful shutdown")
-	wg.Wait()
-	log.Println("done")
+	group.Go(func() error {
+		return insert(ctx, args, clickConn, pointsC)
+	})
+
+	if err := group.Wait(); err != nil {
+		log.Println(err.Error())
+    os.Exit(1)
+	}
 }
