@@ -5,9 +5,23 @@
 Services:
 
 ```sh
-docker compose [--profile monitoring-keeper] build
-docker compose [--profile monitoring-keeper] up
+docker compose \
+    [--profile monitoring-keeper] \
+    [--profile monitoring-loader] \
+    [--profile mobile-imitator] \
+    build
+
+docker compose \
+    [--profile monitoring-keeper] \
+    [--profile monitoring-loader] \
+    [--profile mobile-imitator] \
+    up
 ```
+
+> `points-consumer` may require manual restart after kafka is ready, otherwise won't read topics.
+> ```sh
+> docker compose restart points-consumer
+> ```
 
 Mobile:
 

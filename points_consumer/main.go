@@ -93,7 +93,7 @@ func getKafkaReader(ctx context.Context, args Args, groupID, topic string, diale
   return reader, nil
 }
 
-// WARN: may not read messages when kafka is not started yet but reader does
+// WARN: may not read messages when Kafka has not started yet, but reader has
 // (needs to check connection)
 func read(ctx context.Context, args Args, groupID, topic string, dialer *kafka.Dialer, pointsC chan<- *points.PointRecord) error {
 	reader, err := getKafkaReader(ctx, args, groupID, topic, dialer)
