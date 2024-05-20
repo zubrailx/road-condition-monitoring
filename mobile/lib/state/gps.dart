@@ -83,6 +83,8 @@ class GpsState with ChangeNotifier {
     if (!_serviceEnabled) {
       _error = 'Location services are disabled.';
       showNotification(title: "Geolocation", body: _error ?? "");
+      // try resubscribe after 3 seconds
+      Future.delayed(const Duration(seconds: 3), _repeatSubscribe);
       return;
     }
 
