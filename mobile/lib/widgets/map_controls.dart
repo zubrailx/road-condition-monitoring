@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile/app/theme.dart';
+import 'package:mobile/state/configuration.dart';
 import 'package:mobile/state/gps.dart';
 import 'package:provider/provider.dart';
 
@@ -37,8 +38,12 @@ class _MapControlsWidgetState extends State<MapControlsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final config = context.watch<ConfigurationState>();
     final gpsState = context.watch<GpsState>();
     final theme = Theme.of(context);
+
+    final isLocationEnabled =
+        config.configurationData?.mapLocationEnabled ?? true;
 
     return Container(
       color: UsedColors.black.value,
@@ -69,15 +74,17 @@ class _MapControlsWidgetState extends State<MapControlsWidget> {
                     return DropdownMenuEntry(value: value, label: value);
                   }).toList()),
               const SizedBox(width: 30),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Latitude: ${gpsState.position?.latitude}"),
-                    Text("Longitude: ${gpsState.position?.longitude}"),
-                  ],
-                ),
-              )
+              (isLocationEnabled
+                  ? Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Latitude: ${gpsState.position?.latitude}"),
+                          Text("Longitude: ${gpsState.position?.longitude}"),
+                        ],
+                      ),
+                    )
+                  : const SizedBox())
             ],
           ),
         ],

@@ -132,4 +132,9 @@ class ConfigurationState with ChangeNotifier {
     configurationData?.gpsDistanceFilter = value;
     _save();
   }
+
+  setMapLocationEnabled(bool value) {
+    configurationData?.mapLocationEnabled = value;
+    _save();
+  }
 }

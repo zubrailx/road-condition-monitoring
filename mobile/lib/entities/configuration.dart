@@ -13,22 +13,25 @@ class ConfigurationData {
   UserAccountData userAccountData;
   bool mapPointsBorderEnabled;
   double mapPointsSize;
+  bool mapLocationEnabled;
 
-  ConfigurationData(
-      {required this.chartGyroscopeEnabled,
-      required this.chartAccelerometerEnabled,
-      required this.chartGpsEnabled,
-      required this.chartWindowTimeSeconds,
-      required this.chartRefreshTimeMillis,
-      required this.networkEnabled,
-      required this.networkApiURL,
-      required this.networkReceiverURL,
-      required this.networkBufferTimeSeconds,
-      required this.sensorsEnabled,
-      required this.gpsDistanceFilter,
-      required this.userAccountData,
-      required this.mapPointsBorderEnabled,
-      required this.mapPointsSize});
+  ConfigurationData({
+    required this.chartGyroscopeEnabled,
+    required this.chartAccelerometerEnabled,
+    required this.chartGpsEnabled,
+    required this.chartWindowTimeSeconds,
+    required this.chartRefreshTimeMillis,
+    required this.networkEnabled,
+    required this.networkApiURL,
+    required this.networkReceiverURL,
+    required this.networkBufferTimeSeconds,
+    required this.sensorsEnabled,
+    required this.gpsDistanceFilter,
+    required this.userAccountData,
+    required this.mapPointsBorderEnabled,
+    required this.mapPointsSize,
+    required this.mapLocationEnabled,
+  });
 
   Map<String, dynamic> toJson() {
     return {
@@ -46,6 +49,7 @@ class ConfigurationData {
       'user_account': userAccountData.toJson(),
       'map_points_border_enabled': mapPointsBorderEnabled,
       'map_points_size': mapPointsSize,
+      'map_location_enabled': mapLocationEnabled,
     };
   }
 
@@ -64,25 +68,28 @@ class ConfigurationData {
         gpsDistanceFilter: json['gps_distance_filter'],
         userAccountData: UserAccountData.fromJson(json['user_account']),
         mapPointsBorderEnabled: json['map_points_border_enabled'],
-        mapPointsSize: json['map_points_size']);
+        mapPointsSize: json['map_points_size'],
+        mapLocationEnabled: json['map_location_enabled']);
   }
 
   factory ConfigurationData.create() {
     return ConfigurationData(
-        chartGyroscopeEnabled: false,
-        chartAccelerometerEnabled: false,
-        chartGpsEnabled: false,
-        chartWindowTimeSeconds: 30,
-        chartRefreshTimeMillis: 1000,
-        networkEnabled: false,
-        networkApiURL: 'localhost:9000',
-        networkReceiverURL: 'localhost:1883',
-        networkBufferTimeSeconds: 30,
-        sensorsEnabled: true,
-        gpsDistanceFilter: 50,
-        userAccountData: UserAccountData.create(),
-        mapPointsBorderEnabled: true,
-        mapPointsSize: 10);
+      chartGyroscopeEnabled: false,
+      chartAccelerometerEnabled: false,
+      chartGpsEnabled: false,
+      chartWindowTimeSeconds: 30,
+      chartRefreshTimeMillis: 1000,
+      networkEnabled: false,
+      networkApiURL: 'localhost:9000',
+      networkReceiverURL: 'localhost:1883',
+      networkBufferTimeSeconds: 30,
+      sensorsEnabled: true,
+      gpsDistanceFilter: 50,
+      userAccountData: UserAccountData.create(),
+      mapPointsBorderEnabled: true,
+      mapPointsSize: 10,
+      mapLocationEnabled: true,
+    );
   }
 }
 

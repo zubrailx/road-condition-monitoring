@@ -101,6 +101,19 @@ class OptionsWidget extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Text("Display latest location",
+                        style: theme.textTheme.bodyLarge),
+                    Switch(
+                        value: data.mapLocationEnabled,
+                        onChanged: (_) {
+                          configuration
+                              .setMapLocationEnabled(!data.mapLocationEnabled);
+                        }),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Text("Enable points border",
                         style: theme.textTheme.bodyLarge),
                     Switch(
