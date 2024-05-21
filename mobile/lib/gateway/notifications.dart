@@ -1,5 +1,8 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get_it/get_it.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
+// TODO: add function to repeat notification when it is not visible
 class NotificationsGatewayImpl {
   final FlutterLocalNotificationsPlugin plugin;
   late final NotificationDetails details;
@@ -18,7 +21,7 @@ class NotificationsGatewayImpl {
       required String title,
       required String body,
       String? payload}) async {
-    print((await plugin.getActiveNotifications()).length);
+    GetIt.I<Talker>().debug(await plugin.getActiveNotifications());
     return plugin.show(id, title, body, details, payload: payload);
   }
 }

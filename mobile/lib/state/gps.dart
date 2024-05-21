@@ -23,7 +23,7 @@ class GpsState with ChangeNotifier {
   GpsState() {
     _record = _buildRecord();
     () async {
-      await _trySubscribeGeolocation();
+      await _trySubscribeGeolocation(true);
       if (hasError) {
         GetIt.I<Talker>().error(_error);
       }
@@ -68,23 +68,25 @@ class GpsState with ChangeNotifier {
     if (configurationData != null &&
         configurationData.gpsDistanceFilter != _distanceFilter) {
       _distanceFilter = configurationData.gpsDistanceFilter;
-      _repeatSubscribe();
+      _repeatSubscribe(true);
     }
   }
 
-  void _repeatSubscribe() async {
+  void _repeatSubscribe(bool doNotify) async {
     await _streamSubscription?.cancel();
-    await _trySubscribeGeolocation();
+    await _trySubscribeGeolocation(doNotify);
     GetIt.I<Talker>().debug("GPS: resubscribed");
   }
 
-  _trySubscribeGeolocation() async {
+  _trySubscribeGeolocation(bool doNotify) async {
     _serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!_serviceEnabled) {
       _error = 'Location services are disabled.';
-      showNotification(title: "Geolocation", body: _error ?? "");
-      // try resubscribe after 3 seconds
-      Future.delayed(const Duration(seconds: 3), _repeatSubscribe);
+      if (doNotify) {
+        showNotification(title: "Geolocation", body: _error ?? "");
+      }
+      // try resubscribe after 3 seconds, don't show notification
+      Future.delayed(const Duration(seconds: 3), () => _repeatSubscribe(false));
       return;
     }
 
@@ -94,8 +96,8 @@ class GpsState with ChangeNotifier {
     );
 
     _streamSubscription =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position? position) {
+        Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+            (Position? position) {
       final now = DateTime.now();
       _position = position;
       if (_gyroscopeUpdateTime != null) {
@@ -105,6 +107,9 @@ class GpsState with ChangeNotifier {
       _gyroscopeUpdateTime = now;
       _record = _buildRecord();
       notifyListeners();
+    }, onError: (Object o) {
+      showNotification(title: "Geolocation", body: o.toString());
+      _repeatSubscribe(false);
     });
   }
 }
