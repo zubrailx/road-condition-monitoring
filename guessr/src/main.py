@@ -109,8 +109,8 @@ def consumer_func(msg):
         point_results = []
 
         for (acDfe, gyDfe, gpsDfe) in entries:
-            acDfn, gyDfn = processing.reduce_noice(acDfe, gyDfe)
-            features = processing.extract_features(acDfn, gyDfn, gpsDfe)
+            # acDfn, gyDfn = processing.reduce_noice(acDfe, gyDfe) # NOTE: reduced by using FFT in extract_features
+            features = processing.extract_features(acDfe, gyDfe, gpsDfe)
             selected_features = selector.select_features(features)
             prediction = predictor.predict_one(selected_features)
 
@@ -184,7 +184,7 @@ if __name__ == "__main__":
         auto_offset_reset="latest",
     )
 
-    print(cfg)
+    logger.debug(cfg)
 
     producer_cfg = KafkaProducerCfg(
         topic="points",
